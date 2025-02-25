@@ -1,0 +1,263 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 2rem 0;
+  color: #2d2d2d;
+}
+
+.upload-section {
+  background: rgba(100, 108, 255, 0.04);
+  padding: 3rem;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.upload-section:hover {
+  background: rgba(100, 108, 255, 0.08);
+}
+
+.file-input {
+  padding: 2rem;
+  border: 2px dashed rgba(100, 108, 255, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+  transition: all 0.3s ease;
+}
+
+.file-input:hover {
+  border-color: #646cff;
+  background: rgba(100, 108, 255, 0.04);
+}
+
+.data-section {
+  margin-top: 3rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.table-container {
+  margin: 2rem 0;
+  overflow: auto;
+  height: 250px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+}
+
+th,
+td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+}
+
+th {
+  background: #f4f4f5;
+  color: #2d2d2d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+th:first-child {
+  border-top-left-radius: 12px;
+}
+
+th:last-child {
+  border-top-right-radius: 12px;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+td {
+  border-bottom: 1px solid #f4f4f5;
+}
+
+tr:hover td {
+  background: #f8f8f9;
+}
+
+.stats-controls {
+  margin: 2rem 0;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.column-select {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: 2px solid #e4e4e7;
+  background-color: white;
+  font-size: 1rem;
+  min-width: 200px;
+  transition: all 0.3s ease;
+  color: #2d2d2d;
+}
+
+.column-select:hover,
+.column-select:focus {
+  border-color: #646cff;
+  outline: none;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  background: #646cff;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+button:hover {
+  background: #535bf2;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  background: #c2c2c2;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stats-results {
+  margin-top: 3rem;
+  padding: 0;
+  background: transparent;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.stat-item {
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item label {
+  font-weight: 600;
+  color: #2d2d2d;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-item span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #646cff;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1a1a1a;
+    color: #ffffff;
+  }
+
+  h2 {
+    color: #ffffff;
+  }
+
+  .upload-section {
+    background: rgba(100, 108, 255, 0.1);
+  }
+
+  .upload-section:hover {
+    background: rgba(100, 108, 255, 0.15);
+  }
+
+  .data-section {
+    background: #2d2d2d;
+  }
+
+  table {
+    background: #2d2d2d;
+  }
+
+  th {
+    background: #3d3d3d;
+    color: #ffffff;
+  }
+
+  td {
+    border-bottom: 1px solid #3d3d3d;
+    color: #ffffff;
+  }
+
+  tr:hover td {
+    background: #3d3d3d;
+  }
+
+  .column-select {
+    background: #2d2d2d;
+    border-color: #3d3d3d;
+    color: #ffffff;
+  }
+
+  .stat-item {
+    background: #2d2d2d;
+  }
+
+  .stat-item label {
+    color: #ffffff;
+  }
+
+  .stat-item span {
+    color: #646cff;
+  }
+}
