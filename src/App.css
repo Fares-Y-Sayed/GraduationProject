@@ -1,4 +1,16 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+:root {
+  --primary-color: #a3ffd6;
+  --secondary-color: #50c878;
+}
+
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
@@ -8,10 +20,15 @@
 h1 {
   font-size: 2.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 h2 {
@@ -22,15 +39,18 @@ h2 {
 }
 
 .upload-section {
-  background: rgba(100, 108, 255, 0.04);
-  padding: 3rem;
+  /* background: rgba(100, 108, 255, 0.04); */
+  padding: 1rem;
   border-radius: 16px;
   text-align: center;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .upload-section:hover {
-  background: rgba(100, 108, 255, 0.08);
+  /* background: rgba(100, 108, 255, 0.08); */
 }
 
 .file-input {
@@ -44,12 +64,25 @@ h2 {
 }
 
 .file-input:hover {
-  border-color: #646cff;
+  border-color: var(--primary-color);
   background: rgba(100, 108, 255, 0.04);
 }
 
+.file-name {
+  margin-top: 1rem;
+  font-size: 30px;
+  font-weight: 600;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .data-section {
-  margin-top: 3rem;
+  margin-top: 1rem;
   background: white;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -110,13 +143,10 @@ tr:hover td {
   background: #f8f8f9;
 }
 
-.stats-controls {
+.column-select-container {
   margin: 2rem 0;
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
 }
 
 .column-select {
@@ -132,32 +162,8 @@ tr:hover td {
 
 .column-select:hover,
 .column-select:focus {
-  border-color: #646cff;
+  border-color: var(--primary-color);
   outline: none;
-}
-
-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  border: none;
-  background: #646cff;
-  color: white;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 180px;
-}
-
-button:hover {
-  background: #535bf2;
-  transform: translateY(-1px);
-}
-
-button:disabled {
-  background: #c2c2c2;
-  cursor: not-allowed;
-  transform: none;
 }
 
 .stats-results {
@@ -177,7 +183,7 @@ button:disabled {
   padding: 1.5rem;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px var(--primary-color);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -186,10 +192,16 @@ button:disabled {
 
 .stat-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px var(--primary-color);
 }
 
-.stat-item label {
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-header label {
   font-weight: 600;
   color: #2d2d2d;
   font-size: 0.875rem;
@@ -197,10 +209,48 @@ button:disabled {
   letter-spacing: 0.05em;
 }
 
-.stat-item span {
+.calculate-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary-color);
+  color: black;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calculate-btn:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+.calculate-btn:disabled {
+  background: #e4e4e7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #646cff;
+  color: var(--primary-color);
+}
+
+.stat-empty {
+  font-size: 1rem;
+  color: #a1a1aa;
+  font-style: italic;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  background: #fee2e2;
+  padding: 0.5rem;
+  border-radius: 6px;
+  text-align: center;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -214,11 +264,11 @@ button:disabled {
   }
 
   .upload-section {
-    background: rgba(100, 108, 255, 0.1);
+    /* background: rgba(100, 108, 255, 0.1); */
   }
 
   .upload-section:hover {
-    background: rgba(100, 108, 255, 0.15);
+    /* background: rgba(100, 108, 255, 0.15); */
   }
 
   .data-section {
@@ -253,11 +303,110 @@ button:disabled {
     background: #2d2d2d;
   }
 
-  .stat-item label {
+  .stat-header label {
     color: #ffffff;
   }
 
-  .stat-item span {
-    color: #646cff;
+  .stat-empty {
+    color: #71717a;
+  }
+
+  .error-message {
+    background: #450a0a;
+    color: #fca5a5;
+  }
+}
+
+/* From Uiverse.io by akshat-patel28 */
+.input-div {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0px 0px 100px var(--primary-color),
+    inset 0px 0px 10px var(--primary-color), 0px 0px 5px rgb(255, 255, 255);
+  cursor: pointer;
+  animation: flicker 2s linear infinite;
+}
+
+.icon {
+  color: var(--primary-color);
+  font-size: 2rem;
+  cursor: pointer;
+  animation: iconflicker 2s linear infinite;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  width: 100px;
+  height: 100px;
+  display: none;
+}
+
+@keyframes flicker {
+  0% {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0px 0px 100px var(--primary-color),
+      inset 0px 0px 10px var(--primary-color), 0px 0px 5px rgb(255, 255, 255);
+  }
+
+  5% {
+    border: none;
+    box-shadow: none;
+  }
+
+  10% {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0px 0px 100px var(--primary-color),
+      inset 0px 0px 10px var(--primary-color), 0px 0px 5px rgb(255, 255, 255);
+  }
+
+  25% {
+    border: none;
+    box-shadow: none;
+  }
+
+  30% {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0px 0px 100px var(--primary-color),
+      inset 0px 0px 10px var(--primary-color), 0px 0px 5px rgb(255, 255, 255);
+  }
+
+  100% {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0px 0px 100px var(--primary-color),
+      inset 0px 0px 10px var(--primary-color), 0px 0px 5px rgb(255, 255, 255);
+  }
+}
+
+@keyframes iconflicker {
+  0% {
+    opacity: 1;
+  }
+
+  5% {
+    opacity: 0.2;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  25% {
+    opacity: 0.2;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
