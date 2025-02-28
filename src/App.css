@@ -1,7 +1,7 @@
 * {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 :root {
@@ -10,10 +10,10 @@
 }
 
 .container {
-  width: 100%;
+  width: 90vw;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -410,3 +410,25 @@ tr:hover td {
     opacity: 1;
   }
 }
+
+/* Media Queries */
+/* @media (max-width: 1200px) {
+  .container {
+    max-width: 1000px;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .container {
+    max-width: 750px;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    max-width: 500px;
+    padding: 0.5rem;
+  }
+} */
