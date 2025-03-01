@@ -1,12 +1,6 @@
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  --primary-color: #a3ffd6;
-  --secondary-color: #50c878;
+h1::selection,
+.file-name::selection {
+  -webkit-text-fill-color: black;
 }
 
 .container {
@@ -166,11 +160,90 @@ tr:hover td {
   outline: none;
 }
 
-.stats-results {
+/* New */
+.stats-container {
+  margin-top: 2rem;
+}
+
+/* .tabs {
+  display: flex;
+  border-bottom: 2px solid #e4e4e7;
+  margin-bottom: 2rem;
+} */
+
+.tab-button {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #71717a;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+}
+
+.tab-button:hover {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.tab-content {
+  padding: 1rem 0;
+}
+
+.checkboxes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #3d3d3d;
+  border-radius: 12px;
+  animation: slideIn 0.5s ease;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-checkbox-container {
+  min-width: 180px;
+}
+
+.stat-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.stat-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+/* ---------------------- */
+/* .stats-results {
   margin-top: 3rem;
   padding: 0;
   background: transparent;
-}
+} */
 
 .stats-grid {
   display: grid;
@@ -188,6 +261,17 @@ tr:hover td {
   flex-direction: column;
   gap: 0.75rem;
   transition: all 0.3s ease;
+  animation: slideIn 1s ease;
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 .stat-item:hover {

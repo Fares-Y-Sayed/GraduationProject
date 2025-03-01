@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import {
   mean,
@@ -15,6 +15,15 @@ function App() {
   const [stats, setStats] = useState({});
   const [errors, setErrors] = useState({});
   const [fileName, setFileName] = useState(""); // State variable for file name
+  const [selectedStats, setSelectedStats] = useState({
+    mean: false,
+    variance: false,
+    standardDeviation: false,
+    median: false,
+    mode: false,
+    count: false,
+  });
+  const [activeTab, setActiveTab] = useState("descriptive");
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -91,30 +100,58 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    // Calculate stats when checkboxes change
+    Object.entries(selectedStats).forEach(([type, isSelected]) => {
+      if (isSelected) {
+        calculateStat(type);
+      } else {
+        setStats((prev) => ({ ...prev, [type]: null }));
+        setErrors((prev) => ({ ...prev, [type]: null }));
+      }
+    });
+  }, [selectedStats, selectedColumn]);
+
   const getColumns = () => {
     if (!data || data.length === 0) return [];
     return Object.keys(data[0]);
   };
 
-  const StatCard = ({ type, label }) => (
-    <div className="stat-item">
-      <div className="stat-header">
-        <label>{label}</label>
-        <button
-          onClick={() => calculateStat(type)}
-          className="calculate-btn"
-          disabled={!selectedColumn}
-        >
-          Calculate
-        </button>
+  const handleCheckboxChange = (type) => {
+    setSelectedStats((prev) => ({
+      ...prev,
+      [type]: !prev[type],
+    }));
+  };
+
+  const StatCard = ({ type, label }) =>
+    selectedStats[type] && (
+      <div className="stat-item">
+        <div className="stat-header">
+          <label>{label}</label>
+        </div>
+        {errors[type] ? (
+          <div className="error-message">{errors[type]}</div>
+        ) : (
+          <span className={stats[type] ? "stat-value" : "stat-empty"}>
+            {stats[type] || "Calculating..."}
+          </span>
+        )}
       </div>
-      {errors[type] ? (
-        <div className="error-message">{errors[type]}</div>
-      ) : (
-        <span className={stats[type] ? "stat-value" : "stat-empty"}>
-          {stats[type] || "Not calculated"}
-        </span>
-      )}
+    );
+
+  const StatCheckbox = ({ type, label }) => (
+    <div className="stat-checkbox-container">
+      <label className="stat-checkbox-label">
+        <input
+          type="checkbox"
+          checked={selectedStats[type]}
+          onChange={() => handleCheckboxChange(type)}
+          disabled={!selectedColumn}
+          className="stat-checkbox"
+        />
+        {label}
+      </label>
     </div>
   );
 
@@ -205,16 +242,61 @@ function App() {
           </div>
 
           {selectedColumn && (
-            <div className="stats-results">
-              <h2>Statistics for {selectedColumn}</h2>
-              <div className="stats-grid">
-                <StatCard type="mean" label="Mean" />
-                <StatCard type="variance" label="Variance" />
-                <StatCard type="standardDeviation" label="Standard Deviation" />
-                <StatCard type="median" label="Median" />
-                <StatCard type="mode" label="Mode" />
-                <StatCard type="count" label="Count" />
+            <div className="stats-container">
+              <div className="tabs">
+                <button
+                  className={`tab-button ${
+                    activeTab === "descriptive" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("descriptive")}
+                >
+                  Descriptive Statistics
+                </button>
+                <button
+                  className={`tab-button ${
+                    activeTab === "hypothesis" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveTab("hypothesis")}
+                >
+                  Hypothesis Tests
+                </button>
               </div>
+
+              {activeTab === "descriptive" && (
+                <div className="tab-content">
+                  <h2>Statistics for {selectedColumn}</h2>
+
+                  <div className="checkboxes-container">
+                    <StatCheckbox type="mean" label="Mean" />
+                    <StatCheckbox type="variance" label="Variance" />
+                    <StatCheckbox
+                      type="standardDeviation"
+                      label="Standard Deviation"
+                    />
+                    <StatCheckbox type="median" label="Median" />
+                    <StatCheckbox type="mode" label="Mode" />
+                    <StatCheckbox type="count" label="Count" />
+                  </div>
+
+                  <div className="stats-grid">
+                    <StatCard type="mean" label="Mean" />
+                    <StatCard type="variance" label="Variance" />
+                    <StatCard
+                      type="standardDeviation"
+                      label="Standard Deviation"
+                    />
+                    <StatCard type="median" label="Median" />
+                    <StatCard type="mode" label="Mode" />
+                    <StatCard type="count" label="Count" />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "hypothesis" && (
+                <div className="tab-content">
+                  <h2>Hypothesis Tests</h2>
+                </div>
+              )}
             </div>
           )}
         </div>
