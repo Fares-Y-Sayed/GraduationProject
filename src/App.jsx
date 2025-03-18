@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
 import {
   mean,
   variance,
@@ -7,14 +6,44 @@ import {
   median,
   mode,
 } from "simple-statistics";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import axios from "axios";
+import FileUpload from "./components/FileUpload";
+import DataPreview from "./components/DataPreview";
+import TestSelector from "./components/TestSelector";
+import ColumnSelector from "./components/ColumnSelector";
+import StatsPanel from "./components/StatsPanel";
+import { VARIABLE_TYPES } from "./constants";
 import "./App.css";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function App() {
   const [data, setData] = useState(null);
-  const [selectedColumn, setSelectedColumn] = useState("");
+  const [selectedColumns, setSelectedColumns] = useState([]);
   const [stats, setStats] = useState({});
   const [errors, setErrors] = useState({});
-  const [fileName, setFileName] = useState(""); // State variable for file name
+  const [tTestData, setTTestData] = useState("");
+  const [regressionData, setRegressionData] = useState(null);
   const [selectedStats, setSelectedStats] = useState({
     mean: false,
     variance: false,
@@ -24,45 +53,70 @@ function App() {
     count: false,
   });
   const [activeTab, setActiveTab] = useState("descriptive");
+  const [animatingStats, setAnimatingStats] = useState({});
+  const [chartType, setChartType] = useState("line");
+  const [columnTypes, setColumnTypes] = useState({});
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [dependentVariable, setDependentVariable] = useState(null);
+  const [independentVariables, setIndependentVariables] = useState([]);
+  const [alpha, setAlpha] = useState(0.01); // default value of 0.05 for alpha
+  const [populationMean, setPopulationMean] = useState(3); // default value for population mean
+  const [alternative, setAlternative] = useState("two-tailed"); // default value for alternative hypothesis
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setFileName(
-      file.name.substring(0, file.name.lastIndexOf(".")) || file.name
-    ); // Update file name state
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      const workbook = XLSX.read(event.target.result, { type: "binary" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-      setData(jsonData);
-      setStats({});
-      setErrors({});
-      setSelectedColumn("");
-    };
-
-    reader.readAsBinaryString(file);
+  const handleDataLoaded = (jsonData, file) => {
+    setData(jsonData);
+    setStats({});
+    setErrors({});
+    setSelectedColumns([]);
+    setAnimatingStats({});
+    initializeColumnTypes(jsonData);
   };
 
-  const getValidNumbers = () => {
-    if (!selectedColumn || !data) return [];
-    return data
-      .map((row) => parseFloat(row[selectedColumn]))
-      .filter((val) => !isNaN(val));
+  const initializeColumnTypes = (jsonData) => {
+    if (!jsonData || jsonData.length === 0) return;
+    const types = {};
+    const columns = Object.keys(jsonData[0]);
+    columns.forEach((column) => {
+      const values = jsonData.map((row) => row[column]);
+      types[column] = detectVariableType(values);
+    });
+    setColumnTypes(types);
   };
 
-  const calculateStat = (type) => {
-    const numbers = getValidNumbers();
-    setErrors((prev) => ({ ...prev, [type]: null }));
+  const detectVariableType = (values) => {
+    const numericValues = values.filter((v) => !isNaN(parseFloat(v)));
+    const uniqueValues = new Set(values);
+    if (numericValues.length === values.length) return VARIABLE_TYPES.METRIC;
+    if (uniqueValues.size <= values.length * 0.2) return VARIABLE_TYPES.NOMINAL;
+    return VARIABLE_TYPES.ORDINAL;
+  };
+
+  const getValidNumbers = (columnName) =>
+    data
+      ? data
+          .map((row) => parseFloat(row[columnName]))
+          .filter((val) => !isNaN(val))
+      : [];
+
+  const calculateStat = (type, columnName) => {
+    const numbers = getValidNumbers(columnName);
+    setErrors((prev) => ({
+      ...prev,
+      [columnName]: { ...prev[columnName], [type]: null },
+    }));
 
     if (numbers.length === 0) {
       setErrors((prev) => ({
         ...prev,
-        [type]: "No valid numerical data in this column",
+        [columnName]: {
+          ...prev[columnName],
+          [type]: "No valid numerical data in this column",
+        },
       }));
-      setStats((prev) => ({ ...prev, [type]: null }));
+      setStats((prev) => ({
+        ...prev,
+        [columnName]: { ...prev[columnName], [type]: null },
+      }));
       return;
     }
 
@@ -90,216 +144,168 @@ function App() {
         default:
           throw new Error("Unknown calculation type");
       }
-      setStats((prev) => ({ ...prev, [type]: result }));
+      setStats((prev) => ({
+        ...prev,
+        [columnName]: { ...prev[columnName], [type]: result },
+      }));
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        [type]: "Could not calculate this statistic",
+        [columnName]: {
+          ...prev[columnName],
+          [type]: "Could not calculate this statistic",
+        },
       }));
-      setStats((prev) => ({ ...prev, [type]: null }));
+      setStats((prev) => ({
+        ...prev,
+        [columnName]: { ...prev[columnName], [type]: null },
+      }));
+    }
+  };
+
+  const handleCheckboxChange = (type) => {
+    setAnimatingStats((prev) => {
+      const newState = { ...prev };
+      selectedColumns.forEach((col) => {
+        newState[col] = { ...prev[col], [type]: !selectedStats[type] };
+      });
+      return newState;
+    });
+
+    setSelectedStats((prev) => ({ ...prev, [type]: !prev[type] }));
+
+    setTimeout(() => {
+      setAnimatingStats((prev) => {
+        const newState = { ...prev };
+        selectedColumns.forEach((col) => {
+          newState[col] = { ...prev[col], [type]: false };
+        });
+        return newState;
+      });
+    }, 500);
+  };
+
+  const handleColumnSelect = (column, isDependent) => {
+    if (!selectedTest) return alert("Please select a test first");
+
+    if (selectedTest === "regression") {
+      if (isDependent) {
+        setDependentVariable(column);
+        setSelectedColumns([column, ...independentVariables]);
+      } else {
+        const newIndependentVars = independentVariables.includes(column)
+          ? independentVariables.filter((col) => col !== column)
+          : [...independentVariables, column];
+        setIndependentVariables(newIndependentVars);
+        setSelectedColumns(
+          [dependentVariable, ...newIndependentVars].filter(Boolean)
+        );
+      }
+    } else {
+      setSelectedColumns((prev) =>
+        prev.includes(column)
+          ? prev.filter((col) => col !== column)
+          : [...prev, column]
+      );
+    }
+  };
+
+  const performCalculations = async () => {
+    // Perform t-test if applicable
+    console.log(alpha, alternative, populationMean);
+    if (selectedColumns.length > 0) {
+      const fileName = window.localStorage.getItem("fileName");
+      if (fileName) {
+        try {
+          const res = await axios.post(
+            "http://localhost:3000/api/v1/tests/single-t-test",
+            {
+              fileName,
+              headerName: selectedColumns[0].trim(),
+              alpha: alpha,
+              alternative: alternative,
+              populationMean: populationMean,
+            }
+          );
+          setTTestData(res.data.data);
+        } catch (error) {
+          console.error("Error performing t-test:", error);
+        }
+      }
+    }
+
+    // Perform regression if applicable
+    if (selectedColumns.length >= 2) {
+      const fileName = window.localStorage.getItem("fileName");
+      if (fileName) {
+        try {
+          const res = await axios.post(
+            "http://localhost:3000/api/v1/regression/linear",
+            {
+              fileName,
+              dependentName: selectedColumns[0],
+              independentName: selectedColumns[1],
+            }
+          );
+          setRegressionData(res.data.data);
+        } catch (error) {
+          console.error("Error performing regression:", error);
+        }
+      }
     }
   };
 
   useEffect(() => {
-    // Calculate stats when checkboxes change
     Object.entries(selectedStats).forEach(([type, isSelected]) => {
       if (isSelected) {
-        calculateStat(type);
-      } else {
-        setStats((prev) => ({ ...prev, [type]: null }));
-        setErrors((prev) => ({ ...prev, [type]: null }));
+        selectedColumns.forEach((col) => calculateStat(type, col));
       }
     });
-  }, [selectedStats, selectedColumn]);
 
-  const getColumns = () => {
-    if (!data || data.length === 0) return [];
-    return Object.keys(data[0]);
-  };
-
-  const handleCheckboxChange = (type) => {
-    setSelectedStats((prev) => ({
-      ...prev,
-      [type]: !prev[type],
-    }));
-  };
-
-  const StatCard = ({ type, label }) =>
-    selectedStats[type] && (
-      <div className="stat-item">
-        <div className="stat-header">
-          <label>{label}</label>
-        </div>
-        {errors[type] ? (
-          <div className="error-message">{errors[type]}</div>
-        ) : (
-          <span className={stats[type] ? "stat-value" : "stat-empty"}>
-            {stats[type] || "Calculating..."}
-          </span>
-        )}
-      </div>
-    );
-
-  const StatCheckbox = ({ type, label }) => (
-    <div className="stat-checkbox-container">
-      <label className="stat-checkbox-label">
-        <input
-          type="checkbox"
-          checked={selectedStats[type]}
-          onChange={() => handleCheckboxChange(type)}
-          disabled={!selectedColumn}
-          className="stat-checkbox"
-        />
-        {label}
-      </label>
-    </div>
-  );
+    // Perform calculations whenever columns change
+    performCalculations();
+  }, [selectedStats, selectedColumns]);
 
   return (
     <div className="container">
       <h1>Statistics Calculator</h1>
-
-      {/* <div className="upload-section">
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileUpload}
-          className="file-input"
-        />
-      </div> */}
-      <div className="upload-section">
-        <label htmlFor="file-upload" className="input-div">
-          <input
-            id="file-upload"
-            className="input"
-            name="file"
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileUpload}
-          />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            fill="none"
-            stroke="currentColor"
-            className="icon"
-          >
-            <polyline points="16 16 12 12 8 16"></polyline>
-            <line y2="21" x2="12" y1="12" x1="12"></line>
-            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-            <polyline points="16 16 12 12 8 16"></polyline>
-          </svg>
-        </label>
-        {fileName && <p className="file-name">{fileName}</p>}
-      </div>
-
+      <FileUpload onDataLoaded={handleDataLoaded} />
       {data && (
-        <div className="data-section">
-          <h2>Data Preview</h2>
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  {getColumns().map((column) => (
-                    <th key={column}>{column}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.slice(0).map((row, index) => (
-                  <tr key={index}>
-                    {getColumns().map((column) => (
-                      <td key={column}>{row[column]}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="column-select-container">
-            <select
-              value={selectedColumn}
-              onChange={(e) => {
-                setSelectedColumn(e.target.value);
-                setStats({});
-                setErrors({});
-              }}
-              className="column-select"
-            >
-              <option value="">Select a column</option>
-              {getColumns().map((column) => (
-                <option key={column} value={column}>
-                  {column}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {selectedColumn && (
-            <div className="stats-container">
-              <div className="tabs">
-                <button
-                  className={`tab-button ${
-                    activeTab === "descriptive" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveTab("descriptive")}
-                >
-                  Descriptive Statistics
-                </button>
-                <button
-                  className={`tab-button ${
-                    activeTab === "hypothesis" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveTab("hypothesis")}
-                >
-                  Hypothesis Tests
-                </button>
-              </div>
-
-              {activeTab === "descriptive" && (
-                <div className="tab-content">
-                  <h2>Statistics for {selectedColumn}</h2>
-
-                  <div className="checkboxes-container">
-                    <StatCheckbox type="mean" label="Mean" />
-                    <StatCheckbox type="variance" label="Variance" />
-                    <StatCheckbox
-                      type="standardDeviation"
-                      label="Standard Deviation"
-                    />
-                    <StatCheckbox type="median" label="Median" />
-                    <StatCheckbox type="mode" label="Mode" />
-                    <StatCheckbox type="count" label="Count" />
-                  </div>
-
-                  <div className="stats-grid">
-                    <StatCard type="mean" label="Mean" />
-                    <StatCard type="variance" label="Variance" />
-                    <StatCard
-                      type="standardDeviation"
-                      label="Standard Deviation"
-                    />
-                    <StatCard type="median" label="Median" />
-                    <StatCard type="mode" label="Mode" />
-                    <StatCard type="count" label="Count" />
-                  </div>
-                </div>
-              )}
-
-              {activeTab === "hypothesis" && (
-                <div className="tab-content">
-                  <h2>Hypothesis Tests</h2>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <>
+          <DataPreview data={data} />
+          <TestSelector
+            selectedTest={selectedTest}
+            setSelectedTest={setSelectedTest}
+            setActiveTab={setActiveTab}
+          />
+          <ColumnSelector
+            columnTypes={columnTypes}
+            selectedColumns={selectedColumns}
+            handleColumnSelect={handleColumnSelect}
+            selectedTest={selectedTest}
+            activeTab={activeTab}
+            dependentVariable={dependentVariable}
+            independentVariables={independentVariables}
+            setAlpha={setAlpha}
+            setPopulationMean={setPopulationMean}
+            setAlternative={setAlternative}
+          />
+          <StatsPanel
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            selectedColumns={selectedColumns}
+            selectedStats={selectedStats}
+            handleCheckboxChange={handleCheckboxChange}
+            stats={stats}
+            errors={errors}
+            animatingStats={animatingStats}
+            data={data}
+            chartType={chartType}
+            setChartType={setChartType}
+            tTestData={tTestData}
+            regressionData={regressionData}
+          />
+        </>
       )}
     </div>
   );
