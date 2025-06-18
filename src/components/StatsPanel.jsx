@@ -20,6 +20,9 @@ function StatsPanel({
   setTTestData, // Make sure this is passed from App.jsx
 
   regressionData,
+  kolmogorovTest,
+  kolmogorovData,
+  handleDeleteKolmogorov
 }) {
   const handleDeleteTTest = (idOrColumn) => {
     setTTestData((prev) => prev.filter((item) => (item.id ?? item.column) !== idOrColumn));
@@ -165,6 +168,9 @@ function StatsPanel({
             singleTTest={singleTTest}
             tTestData={tTestData}
             handleDeleteTTest={handleDeleteTTest}
+            kolmogorovTest={kolmogorovTest}
+            kolmogorovData={kolmogorovData}
+            handleDeleteKolmogorov={handleDeleteKolmogorov}
             regressionData={regressionData}
           />
         )}

@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 
-function HypothesisTest({ selectedColumns, singleTTest, tTestData, handleDeleteTTest }) {
+function HypothesisTest({ 
+  selectedColumns, 
+  singleTTest, 
+  tTestData, 
+  handleDeleteTTest,
+  kolmogorovTest,
+  kolmogorovData,
+  handleDeleteKolmogorov 
+}) {
   const [tTestParams, setTTestParams] = useState({
     alpha: 0.05,
     alternative: "two-tailed",
@@ -20,7 +28,9 @@ function HypothesisTest({ selectedColumns, singleTTest, tTestData, handleDeleteT
 
   return (
     <div className='tab-content'>
-      <h2>Hypothesis Tests</h2>
+      <h2>Hypothesis Tests
+       
+      </h2>
       <div className='test-controls'>
         <div className="test-params" style={{ 
   marginBottom: "20px", 
@@ -104,18 +114,32 @@ function HypothesisTest({ selectedColumns, singleTTest, tTestData, handleDeleteT
             />
           </div>
         </div>
-        <button
-          onClick={() => {
-            if (selectedColumns.length === 0) {
-              alert("Please select at least one column.");
-              return;
-            }
-            selectedColumns.forEach((column) => singleTTest(column, tTestParams));
-          }}
-          className='run-test-button'>
-          Run t-Test
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={() => {
+              if (selectedColumns.length === 0) {
+                alert("Please select at least one column.");
+                return;
+              }
+              selectedColumns.forEach((column) => singleTTest(column, tTestParams));
+            }}
+            className='run-test-button'>
+            Run t-Test
+          </button>
+          <button
+            onClick={() => {
+              if (selectedColumns.length === 0) {
+                alert("Please select at least one column.");
+                return;
+              }
+              selectedColumns.forEach((column) => kolmogorovTest(column));
+            }}
+            className='run-test-button'>
+            Run Kolmogorov Test
+          </button>
+        </div>
       </div>
+      
       {Array.isArray(tTestData) && tTestData.length > 0 && (
         <div>
           <div className='t-test-results'>
@@ -151,6 +175,59 @@ function HypothesisTest({ selectedColumns, singleTTest, tTestData, handleDeleteT
                         title="Delete"
                       >
                         {/* SVG Trash Icon */}
+                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                          <line x1="10" y1="11" x2="10" y2="17" />
+                          <line x1="14" y1="11" x2="14" y2="17" />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Kolmogorov test results table */}
+      {Array.isArray(kolmogorovData) && kolmogorovData.length > 0 && (
+        <div>
+          <div className='t-test-results'>
+            <h3>Kolmogorov Test Results</h3>
+            <table className='t-test-table'>
+              <thead>
+                <tr>
+                  <th>Column</th>
+                  <th>Statistic</th>
+                  <th>Critical Value</th>
+                  <th>p-Value</th>
+                  <th>Significance Level</th>
+                  <th>Decision</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {kolmogorovData.map((result) => (
+                  <tr key={result.id}>
+                    <td>{result.column}</td>
+                    <td>{result.statistic?.toFixed(4) ?? ""}</td>
+                    <td>{result.criticalValue?.toFixed(4) ?? ""}</td>
+                    <td>{result.pValue?.toFixed(4) ?? ""}</td>
+                    <td>{result.significanceLevel?.toFixed(2) ?? ""}</td>
+                    <td>{result.isNormal ? "Normal" : "Not Normal"}</td>
+                    <td>
+                      <button
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          color: "#ef4444"
+                        }}
+                        onClick={() => handleDeleteKolmogorov(result.id)}
+                        title="Delete"
+                      >
                         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="3 6 5 6 21 6" />
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />

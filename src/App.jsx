@@ -1,7 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './components/HomePage';
-import ChartDisplay from './components/ChartDisplay';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import ChartDisplay from "./components/ChartDisplay";
 import { useState, useEffect } from "react";
 import {
   mean,
@@ -68,8 +68,8 @@ function App() {
   const [chartType, setChartType] = useState("line");
   const [columnTypes, setColumnTypes] = useState({});
   const [selectedTest, setSelectedTest] = useState(null);
-  const [showRegBtn,setShowRgBtn ] = useState(false);
-
+  const [showRegBtn, setShowRgBtn] = useState(false);
+  const [kolmogorovData, setKolmogorovData] = useState([]);
   const handleDataLoaded = (jsonData, file) => {
     setData(jsonData);
     setStats({});
@@ -198,17 +198,14 @@ function App() {
         console.error("Unexpected t-test response format:", res.data);
         return;
       }
-      setTTestData(prev => [
-        ...prev,
-        { ...result, column, id: Date.now() }
-      ]);
+      setTTestData((prev) => [...prev, { ...result, column, id: Date.now() }]);
     } catch (error) {
       console.error("Error performing single t-test:", error);
     }
   };
 
   const handleDeleteTTest = (id) => {
-    setTTestData(prev => prev.filter(item => item.id !== id));
+    setTTestData((prev) => prev.filter((item) => item.id !== id));
   };
 
   // Add the regression function here
@@ -231,10 +228,45 @@ function App() {
         params
       );
       setRegressionData(res.data.data); // Update state with regression results
-      console.log( res.data.data);
+      console.log(res.data.data);
     } catch (error) {
       console.error("Error performing regression:", error);
     }
+  };
+
+  // kolomogrov
+
+  const kolmogorovTest = async (column) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) return console.error("fileName is missing in localStorage");
+
+    const params = {
+      fileName: fileName,
+      headerName: column.trim(),
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/kolmogorov-smirnov-test",
+        params
+      );
+      const result = res.data.result || res.data.data || res.data;
+      if (!result || typeof result !== "object") {
+        console.error("Unexpected Kolmogorov test response format:", res.data);
+        return;
+      }
+      setKolmogorovData((prev) => [
+        ...prev,
+        { ...result, column, id: Date.now() },
+      ]);
+    } catch (error) {
+      console.error("Error performing Kolmogorov test:", error);
+    }
+  };
+
+  // Add delete handler for Kolmogorov results
+  const handleDeleteKolmogorov = (id) => {
+    setKolmogorovData((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleCheckboxChange = (type) => {
@@ -258,7 +290,7 @@ function App() {
       });
     }, 500);
   };
-const handleColumnSelect = (column, isDependent) => {
+  const handleColumnSelect = (column, isDependent) => {
     if (!selectedTest) return alert("Please select a test first");
 
     if (selectedTest === "regression") {
@@ -283,7 +315,6 @@ const handleColumnSelect = (column, isDependent) => {
     }
   };
 
-
   useEffect(() => {
     Object.entries(selectedStats).forEach(([type, isSelected]) => {
       if (isSelected)
@@ -300,8 +331,8 @@ const handleColumnSelect = (column, isDependent) => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/project" element={<ChartDisplay />} />
+        <Route path='/' element={<HomePage />} />
+        <Route path='/project' element={<ChartDisplay />} />
       </Routes>
       <div className='container'>
         <h1>Quick Stats</h1>
@@ -319,7 +350,7 @@ const handleColumnSelect = (column, isDependent) => {
               selectedColumns={selectedColumns}
               handleColumnSelect={handleColumnSelect}
               selectedTest={selectedTest}
-              activeTab={activeTab}  // Add this line
+              activeTab={activeTab} // Add this line
             />
             <StatsPanel
               activeTab={activeTab}
@@ -338,17 +369,20 @@ const handleColumnSelect = (column, isDependent) => {
               setTTestData={setTTestData}
               regression={regression} // Pass regression function
               regressionData={regressionData} // Pass regression data
+              kolmogorovTest={kolmogorovTest} // Pass Kolmogorov function
+              kolmogorovData={kolmogorovData} // Pass Kolmogorov data
+              handleDeleteKolmogorov={handleDeleteKolmogorov} // Pass delete handler
             />
           </>
         )}
-        {showRegBtn &&  (
+        {showRegBtn && (
           <div>
             <button
-            onClick={() => {
-              regression(selectedColumns[0], selectedColumns[1]);
-            }}
-            className='run-test-button'>
-            Run Regression
+              onClick={() => {
+                regression(selectedColumns[0], selectedColumns[1]);
+              }}
+              className='run-test-button'>
+              Run Regression
             </button>
           </div>
         )}
@@ -377,12 +411,12 @@ const handleColumnSelect = (column, isDependent) => {
             </table>
           </div>
         )}
-        
-        {/* Single T-Test Results Card */} 
-        
+
+        {/* Single T-Test Results Card */}
+
         {/* // Hide this section by default  */}
         {tTestData.length > 0 && (
-          <div style={{ marginTop: "2rem" ,display: "none"}}> 
+          <div style={{ marginTop: "2rem", display: "none" }}>
             <h2>Single T-Test Results</h2>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
               {tTestData.map((result) => (
@@ -396,9 +430,7 @@ const handleColumnSelect = (column, isDependent) => {
                     minWidth: "250px",
                     position: "relative",
                     color: "#333",
-
-                  }}
-                >
+                  }}>
                   <button
                     style={{
                       position: "absolute",
@@ -408,17 +440,24 @@ const handleColumnSelect = (column, isDependent) => {
                       border: "none",
                       cursor: "pointer",
                       color: "#ef4444",
-                      display:"none"
+                      display: "none",
                     }}
                     onClick={() => handleDeleteTTest(result.id)}
-                    title="Delete"
-                  >
+                    title='Delete'>
                     {/* Simple SVG trash icon */}
-                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
+                    <svg
+                      width='1em'
+                      height='1em'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='#ef4444'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'>
+                      <polyline points='3 6 5 6 21 6' />
+                      <path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2' />
+                      <line x1='10' y1='11' x2='10' y2='17' />
+                      <line x1='14' y1='11' x2='14' y2='17' />
                     </svg>
                   </button>
                   <div>
@@ -437,7 +476,9 @@ const handleColumnSelect = (column, isDependent) => {
           </div>
         )}
 
+      
 
+       
       </div>
     </Router>
   );
