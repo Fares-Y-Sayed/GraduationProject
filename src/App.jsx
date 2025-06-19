@@ -64,6 +64,7 @@ function App() {
     rankCorrelation: false,
   });
   const [activeTab, setActiveTab] = useState("descriptive");
+  const [activeSubTab, setActiveSubTab] = useState("statistics"); // Add this line
   const [animatingStats, setAnimatingStats] = useState({});
   const [chartType, setChartType] = useState("line");
   const [columnTypes, setColumnTypes] = useState({});
@@ -405,6 +406,8 @@ function App() {
             <StatsPanel
               activeTab={activeTab}
               setActiveTab={setActiveTab}
+              activeSubTab={activeSubTab}
+              setActiveSubTab={setActiveSubTab}
               selectedColumns={selectedColumns}
               selectedStats={selectedStats}
               handleCheckboxChange={handleCheckboxChange}

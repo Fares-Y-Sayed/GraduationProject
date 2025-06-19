@@ -6,6 +6,8 @@ import HypothesisTest from "./HypothesisTest";
 function StatsPanel({
   activeTab,
   setActiveTab,
+  activeSubTab,
+  setActiveSubTab,
   selectedColumns,
   selectedStats,
   handleCheckboxChange,
@@ -121,57 +123,57 @@ function StatsPanel({
     selectedColumns.length > 0 && (
       <div className="stats-container">
         <div className="tabs">
-          {/* Descriptive Statistics Tabs */}
           {activeTab === "descriptive" && (
             <>
               <button
                 className={`tab-button ${
-                  activeTab === "descriptive" ? "active" : ""
+                  activeSubTab === "statistics" ? "active" : ""
                 }`}
-                onClick={() => setActiveTab("descriptive")}
+                onClick={() => setActiveSubTab("statistics")}
               >
-                Descriptive Statistics
+                Statistics
               </button>
               <button
                 className={`tab-button ${
-                  activeTab === "visualization" ? "active" : ""
+                  activeSubTab === "visualization" ? "active" : ""
                 }`}
-                onClick={() => setActiveTab("visualization")}
+                onClick={() => setActiveSubTab("visualization")}
               >
                 Visualization
               </button>
             </>
           )}
-          {/* Hypothesis Tests Tabs */}
           {activeTab === "hypothesis" && (
             <>
               <button
                 className={`tab-button ${
-                  activeTab === "t-test" ? "active" : ""
+                  activeSubTab === "t-test" ? "active" : ""
                 }`}
-                onClick={() => setActiveTab("t-test")}
+                onClick={() => setActiveSubTab("t-test")}
               >
                 T-Test
               </button>
               <button
                 className={`tab-button ${
-                  activeTab === "kolmogorov" ? "active" : ""
+                  activeSubTab === "kolmogorov" ? "active" : ""
                 }`}
-                onClick={() => setActiveTab("kolmogorov")}
+                onClick={() => setActiveSubTab("kolmogorov")}
               >
                 Kolmogorov
               </button>
               <button
-                className={`tab-button ${activeTab === "sign" ? "active" : ""}`}
-                onClick={() => setActiveTab("sign")}
+                className={`tab-button ${
+                  activeSubTab === "sign" ? "active" : ""
+                }`}
+                onClick={() => setActiveSubTab("sign")}
               >
                 Sign Test
               </button>
               <button
                 className={`tab-button ${
-                  activeTab === "rankedSign" ? "active" : ""
+                  activeSubTab === "rankedSign" ? "active" : ""
                 }`}
-                onClick={() => setActiveTab("rankedSign")}
+                onClick={() => setActiveSubTab("rankedSign")}
               >
                 Ranked Sign Test
               </button>
@@ -180,7 +182,7 @@ function StatsPanel({
         </div>
 
         {/* Descriptive Tab */}
-        {activeTab === "descriptive" && (
+        {activeSubTab === "statistics" && (
           <div className="tab-content">
             <div className="checkboxes-container">
               <StatCheckbox type="mean" label="Mean" />
@@ -200,7 +202,7 @@ function StatsPanel({
         )}
 
         {/* Visualization Tab */}
-        {activeTab === "visualization" && (
+        {activeSubTab === "visualization" && (
           <ChartDisplay
             data={data}
             selectedColumns={selectedColumns}
@@ -210,7 +212,7 @@ function StatsPanel({
         )}
 
         {/* T-Test Tab */}
-        {activeTab === "t-test" && (
+        {activeSubTab === "t-test" && (
           <div className="tab-content">
             <h2>T-Test Analysis</h2>
             <div className="test-controls">
@@ -288,7 +290,7 @@ function StatsPanel({
         )}
 
         {/* Kolmogorov Tab */}
-        {activeTab === "kolmogorov" && (
+        {activeSubTab === "kolmogorov" && (
           <div className="tab-content">
             <h2>Kolmogorov-Smirnov Test</h2>
             <div className="test-controls">
@@ -365,7 +367,7 @@ function StatsPanel({
           </div>
         )}
 
-        {activeTab === "sign" && (
+        {activeSubTab === "sign" && (
           <div className="tab-content">
             <h2>Sign Test</h2>
             <div className="test-controls">
@@ -450,7 +452,7 @@ function StatsPanel({
         )}
 
         {/* Add ranked sign test content */}
-        {activeTab === "rankedSign" && (
+        {activeSubTab === "rankedSign" && (
           <div className="tab-content">
             <h2>Ranked Sign Test</h2>
             <div className="test-controls">
