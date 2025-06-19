@@ -123,6 +123,14 @@ function StatsPanel({
         <div className="tabs">
           <button
             className={`tab-button ${
+              activeTab === "descriptive" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("descriptive")}
+          >
+            Descriptive Statistics
+          </button>
+          <button
+            className={`tab-button ${
               activeTab === "visualization" ? "active" : ""
             }`}
             onClick={() => setActiveTab("visualization")}
@@ -158,6 +166,26 @@ function StatsPanel({
             Ranked Sign Test
           </button>
         </div>
+
+        {/* Descriptive Tab */}
+        {activeTab === "descriptive" && (
+          <div className="tab-content">
+            <div className="checkboxes-container">
+              <StatCheckbox type="mean" label="Mean" />
+              <StatCheckbox type="variance" label="Variance" />
+              <StatCheckbox
+                type="standardDeviation"
+                label="Standard Deviation"
+              />
+              <StatCheckbox type="median" label="Median" />
+              <StatCheckbox type="mode" label="Mode" />
+              <StatCheckbox type="count" label="Count" />
+            </div>
+            {selectedColumns.map((column) => (
+              <ColumnStatistics key={column} columnName={column} />
+            ))}
+          </div>
+        )}
 
         {/* T-Test Tab */}
         {activeTab === "t-test" && (
