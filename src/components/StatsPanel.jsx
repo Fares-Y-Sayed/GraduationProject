@@ -117,13 +117,6 @@ function StatsPanel({
     selectedColumns.length > 0 && (
       <div className="stats-container">
         <div className="tabs">
-          {/* <button
-            className={`tab-button ${
-              activeTab === "descriptive" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("descriptive")}>
-            Descriptive Statistics
-          </button> */}
           <button
             className={`tab-button ${
               activeTab === "visualization" ? "active" : ""
@@ -132,13 +125,20 @@ function StatsPanel({
           >
             Visualization
           </button>
-          {/* <button
+          <button
+            className={`tab-button ${activeTab === "t-test" ? "active" : ""}`}
+            onClick={() => setActiveTab("t-test")}
+          >
+            T-Test
+          </button>
+          <button
             className={`tab-button ${
-              activeTab === "hypothesis" ? "active" : ""
+              activeTab === "kolmogorov" ? "active" : ""
             }`}
-            onClick={() => setActiveTab("hypothesis")}>
-            Hypothesis Tests
-          </button> */}
+            onClick={() => setActiveTab("kolmogorov")}
+          >
+            Kolmogorov
+          </button>
           <button
             className={`tab-button ${activeTab === "sign" ? "active" : ""}`}
             onClick={() => setActiveTab("sign")}
@@ -147,48 +147,162 @@ function StatsPanel({
           </button>
         </div>
 
-        {activeTab === "descriptive" && (
+        {/* T-Test Tab */}
+        {activeTab === "t-test" && (
           <div className="tab-content">
-            <div className="checkboxes-container">
-              <StatCheckbox type="mean" label="Mean" />
-              <StatCheckbox type="variance" label="Variance" />
-              <StatCheckbox
-                type="standardDeviation"
-                label="Standard Deviation"
-              />
-              <StatCheckbox type="median" label="Median" />
-              <StatCheckbox type="mode" label="Mode" />
-              <StatCheckbox type="count" label="Count" />
+            <h2>T-Test Analysis</h2>
+            <div className="test-controls">
+              <button
+                onClick={() => {
+                  if (selectedColumns.length === 0) {
+                    alert("Please select at least one column.");
+                    return;
+                  }
+                  selectedColumns.forEach((column) => singleTTest(column));
+                }}
+                className="run-test-button"
+              >
+                Run T-Test
+              </button>
             </div>
-            {selectedColumns.map((column) => (
-              <ColumnStatistics key={column} columnName={column} />
-            ))}
+            {tTestData && tTestData.length > 0 && (
+              <div className="t-test-results">
+                <table className="t-test-table">
+                  <thead>
+                    <tr>
+                      <th>Column</th>
+                      <th>t-Statistic</th>
+                      <th>p-Value</th>
+                      <th>Decision</th>
+                      <th>Degrees of Freedom</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tTestData.map((result) => (
+                      <tr key={result.id ?? result.column}>
+                        <td>{result.column}</td>
+                        <td>{result.tStatistic?.toFixed(3) ?? ""}</td>
+                        <td>{result.pValue?.toFixed(3) ?? ""}</td>
+                        <td>{result.decision}</td>
+                        <td>{result.degreesOfFreedom}</td>
+                        <td>
+                          <button
+                            style={{
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              color: "#ef4444",
+                            }}
+                            onClick={() =>
+                              handleDeleteTTest(result.id ?? result.column)
+                            }
+                            title="Delete"
+                          >
+                            <svg
+                              width="1em"
+                              height="1em"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#ef4444"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                              <line x1="10" y1="11" x2="10" y2="17" />
+                              <line x1="14" y1="11" x2="14" y2="17" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
-        {activeTab === "visualization" && (
-          <ChartDisplay
-            data={data}
-            selectedColumns={selectedColumns}
-            chartType={chartType}
-            setChartType={setChartType}
-          />
+        {/* Kolmogorov Tab */}
+        {activeTab === "kolmogorov" && (
+          <div className="tab-content">
+            <h2>Kolmogorov-Smirnov Test</h2>
+            <div className="test-controls">
+              <button
+                onClick={() => {
+                  if (selectedColumns.length === 0) {
+                    alert("Please select a column.");
+                    return;
+                  }
+                  kolmogorovTest(selectedColumns[0]);
+                }}
+                className="run-test-button"
+              >
+                Run Kolmogorov Test
+              </button>
+            </div>
+            {kolmogorovData && kolmogorovData.length > 0 && (
+              <table className="t-test-table">
+                <thead>
+                  <tr>
+                    <th>Column</th>
+                    <th>Statistic</th>
+                    <th>Critical Value</th>
+                    <th>p-Value</th>
+                    <th>Is Normal</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {kolmogorovData.map((result) => (
+                    <tr key={result.id}>
+                      <td>{result.column}</td>
+                      <td>{result.statistic?.toFixed(3)}</td>
+                      <td>{result.criticalValue?.toFixed(3)}</td>
+                      <td>
+                        {typeof result.pValue === "number"
+                          ? result.pValue.toExponential(3)
+                          : result.pValue}
+                      </td>
+                      <td>{String(result.isNormal)}</td>
+                      <td>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "#ef4444",
+                          }}
+                          onClick={() => handleDeleteKolmogorov(result.id)}
+                          title="Delete"
+                        >
+                          <svg
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                            <line x1="10" y1="11" x2="10" y2="17" />
+                            <line x1="14" y1="11" x2="14" y2="17" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         )}
 
-        {activeTab === "hypothesis" && (
-          <HypothesisTest
-            selectedColumns={selectedColumns}
-            singleTTest={singleTTest}
-            tTestData={tTestData}
-            handleDeleteTTest={handleDeleteTTest}
-            kolmogorovTest={kolmogorovTest}
-            kolmogorovData={kolmogorovData}
-            handleDeleteKolmogorov={handleDeleteKolmogorov}
-            regressionData={regressionData}
-          />
-        )}
-
-        {/* Add sign test content */}
         {activeTab === "sign" && (
           <div className="tab-content">
             <h2>Sign Test</h2>
