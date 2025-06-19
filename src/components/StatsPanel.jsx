@@ -187,6 +187,16 @@ function StatsPanel({
           </div>
         )}
 
+        {/* Visualization Tab */}
+        {activeTab === "visualization" && (
+          <ChartDisplay
+            data={data}
+            selectedColumns={selectedColumns}
+            chartType={chartType}
+            setChartType={setChartType}
+          />
+        )}
+
         {/* T-Test Tab */}
         {activeTab === "t-test" && (
           <div className="tab-content">
