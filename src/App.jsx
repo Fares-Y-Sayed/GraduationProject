@@ -70,6 +70,7 @@ function App() {
   const [selectedTest, setSelectedTest] = useState(null);
   const [showRegBtn, setShowRgBtn] = useState(false);
   const [kolmogorovData, setKolmogorovData] = useState([]);
+  const [signTestData, setSignTestData] = useState(null); // Sign test data state
   const handleDataLoaded = (jsonData, file) => {
     setData(jsonData);
     setStats({});
@@ -269,6 +270,30 @@ function App() {
     setKolmogorovData((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // Sign Test function
+  const signTest = async (columns) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    const params = {
+      fileName,
+      headerNames: columns,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/sign-test",
+        params
+      );
+      setSignTestData(res.data);
+    } catch (error) {
+      console.error("Error performing Sign test:", error);
+    }
+  };
+
   const handleCheckboxChange = (type) => {
     setAnimatingStats((prev) => {
       const newState = { ...prev };
@@ -331,10 +356,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/project' element={<ChartDisplay />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/project" element={<ChartDisplay />} />
       </Routes>
-      <div className='container'>
+      <div className="container">
         <h1>Quick Stats</h1>
         <FileUpload onDataLoaded={handleDataLoaded} />
         {data && (
@@ -372,6 +397,9 @@ function App() {
               kolmogorovTest={kolmogorovTest} // Pass Kolmogorov function
               kolmogorovData={kolmogorovData} // Pass Kolmogorov data
               handleDeleteKolmogorov={handleDeleteKolmogorov} // Pass delete handler
+              signTest={signTest} // Pass Sign test function
+              signTestData={signTestData} // Pass Sign test data
+              setSignTestData={setSignTestData} // Pass set function for Sign test data
             />
           </>
         )}
@@ -381,7 +409,8 @@ function App() {
               onClick={() => {
                 regression(selectedColumns[0], selectedColumns[1]);
               }}
-              className='run-test-button'>
+              className="run-test-button"
+            >
               Run Regression
             </button>
           </div>
@@ -389,7 +418,7 @@ function App() {
         {regressionData && (
           <div style={{ marginTop: "2rem" }}>
             <h2>Regression Results</h2>
-            <table className='t-test-table'>
+            <table className="t-test-table">
               <thead>
                 <tr>
                   <th>coefficient Of Determination</th>
@@ -430,7 +459,8 @@ function App() {
                     minWidth: "250px",
                     position: "relative",
                     color: "#333",
-                  }}>
+                  }}
+                >
                   <button
                     style={{
                       position: "absolute",
@@ -443,21 +473,23 @@ function App() {
                       display: "none",
                     }}
                     onClick={() => handleDeleteTTest(result.id)}
-                    title='Delete'>
+                    title="Delete"
+                  >
                     {/* Simple SVG trash icon */}
                     <svg
-                      width='1em'
-                      height='1em'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='#ef4444'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'>
-                      <polyline points='3 6 5 6 21 6' />
-                      <path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2' />
-                      <line x1='10' y1='11' x2='10' y2='17' />
-                      <line x1='14' y1='11' x2='14' y2='17' />
+                      width="1em"
+                      height="1em"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#ef4444"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
                     </svg>
                   </button>
                   <div>
@@ -475,10 +507,6 @@ function App() {
             </div>
           </div>
         )}
-
-      
-
-       
       </div>
     </Router>
   );
