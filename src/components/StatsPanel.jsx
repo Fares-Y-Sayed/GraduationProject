@@ -121,50 +121,62 @@ function StatsPanel({
     selectedColumns.length > 0 && (
       <div className="stats-container">
         <div className="tabs">
-          <button
-            className={`tab-button ${
-              activeTab === "descriptive" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("descriptive")}
-          >
-            Descriptive Statistics
-          </button>
-          <button
-            className={`tab-button ${
-              activeTab === "visualization" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("visualization")}
-          >
-            Visualization
-          </button>
-          <button
-            className={`tab-button ${activeTab === "t-test" ? "active" : ""}`}
-            onClick={() => setActiveTab("t-test")}
-          >
-            T-Test
-          </button>
-          <button
-            className={`tab-button ${
-              activeTab === "kolmogorov" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("kolmogorov")}
-          >
-            Kolmogorov
-          </button>
-          <button
-            className={`tab-button ${activeTab === "sign" ? "active" : ""}`}
-            onClick={() => setActiveTab("sign")}
-          >
-            Sign Test
-          </button>
-          <button
-            className={`tab-button ${
-              activeTab === "rankedSign" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("rankedSign")}
-          >
-            Ranked Sign Test
-          </button>
+          {/* Descriptive Statistics Tabs */}
+          {activeTab === "descriptive" && (
+            <>
+              <button
+                className={`tab-button ${
+                  activeTab === "descriptive" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("descriptive")}
+              >
+                Descriptive Statistics
+              </button>
+              <button
+                className={`tab-button ${
+                  activeTab === "visualization" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("visualization")}
+              >
+                Visualization
+              </button>
+            </>
+          )}
+          {/* Hypothesis Tests Tabs */}
+          {activeTab === "hypothesis" && (
+            <>
+              <button
+                className={`tab-button ${
+                  activeTab === "t-test" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("t-test")}
+              >
+                T-Test
+              </button>
+              <button
+                className={`tab-button ${
+                  activeTab === "kolmogorov" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("kolmogorov")}
+              >
+                Kolmogorov
+              </button>
+              <button
+                className={`tab-button ${activeTab === "sign" ? "active" : ""}`}
+                onClick={() => setActiveTab("sign")}
+              >
+                Sign Test
+              </button>
+              <button
+                className={`tab-button ${
+                  activeTab === "rankedSign" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("rankedSign")}
+              >
+                Ranked Sign Test
+              </button>
+            </>
+          )}
         </div>
 
         {/* Descriptive Tab */}

@@ -4,7 +4,9 @@ function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
       <h2>Select Test Type</h2>
       <div className="test-buttons">
         <button
-          className={`test-button ${selectedTest === "descriptive" ? "active" : ""}`}
+          className={`test-button ${
+            selectedTest === "descriptive" ? "active" : ""
+          }`}
           onClick={() => {
             setSelectedTest("descriptive");
             setActiveTab("descriptive");
@@ -13,7 +15,9 @@ function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
           Descriptive Statistics
         </button>
         <button
-          className={`test-button ${selectedTest === "hypothesis" ? "active" : ""}`}
+          className={`test-button ${
+            selectedTest === "hypothesis" ? "active" : ""
+          }`}
           onClick={() => {
             setSelectedTest("hypothesis");
             setActiveTab("hypothesis");
@@ -22,7 +26,9 @@ function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
           Hypothesis Tests
         </button>
         <button
-          className={`test-button ${selectedTest === "regression" ? "active" : ""}`}
+          className={`test-button ${
+            selectedTest === "regression" ? "active" : ""
+          }`}
           onClick={() => {
             setSelectedTest("regression");
             setActiveTab("regression");
@@ -30,6 +36,17 @@ function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
         >
           Regression
         </button>
+        {/* <button
+          className={`test-button ${
+            selectedTest === "kolmogorov" ? "active" : ""
+          }`}
+          onClick={() => {
+            setSelectedTest("kolmogorov");
+            setActiveTab("kolmogorov");
+          }}
+        >
+          Kolmogorov
+        </button> */}
       </div>
     </div>
   );
