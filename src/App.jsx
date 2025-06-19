@@ -71,6 +71,7 @@ function App() {
   const [showRegBtn, setShowRgBtn] = useState(false);
   const [kolmogorovData, setKolmogorovData] = useState([]);
   const [signTestData, setSignTestData] = useState(null); // Sign test data state
+  const [rankedSignTestData, setRankedSignTestData] = useState(null); // Ranked sign test data state
   const handleDataLoaded = (jsonData, file) => {
     setData(jsonData);
     setStats({});
@@ -294,6 +295,30 @@ function App() {
     }
   };
 
+  // Ranked Sign Test function
+  const rankedSignTest = async (columns) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    const params = {
+      fileName,
+      headerNames: columns,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/ranked-sign-test",
+        params
+      );
+      setRankedSignTestData(res.data);
+    } catch (error) {
+      console.error("Error performing Ranked Sign test:", error);
+    }
+  };
+
   const handleCheckboxChange = (type) => {
     setAnimatingStats((prev) => {
       const newState = { ...prev };
@@ -400,6 +425,9 @@ function App() {
               signTest={signTest} // Pass Sign test function
               signTestData={signTestData} // Pass Sign test data
               setSignTestData={setSignTestData} // Pass set function for Sign test data
+              rankedSignTest={rankedSignTest} // Pass Ranked Sign test function
+              rankedSignTestData={rankedSignTestData} // Pass Ranked Sign test data
+              setRankedSignTestData={setRankedSignTestData} // Pass set function for Ranked Sign test data
             />
           </>
         )}

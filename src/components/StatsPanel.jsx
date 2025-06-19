@@ -27,6 +27,10 @@ function StatsPanel({
   signTest,
   signTestData,
   setSignTestData,
+
+  rankedSignTest,
+  rankedSignTestData,
+  setRankedSignTestData,
 }) {
   const handleDeleteTTest = (idOrColumn) => {
     setTTestData((prev) =>
@@ -144,6 +148,14 @@ function StatsPanel({
             onClick={() => setActiveTab("sign")}
           >
             Sign Test
+          </button>
+          <button
+            className={`tab-button ${
+              activeTab === "rankedSign" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("rankedSign")}
+          >
+            Ranked Sign Test
           </button>
         </div>
 
@@ -360,6 +372,93 @@ function StatsPanel({
                             color: "#ef4444",
                           }}
                           onClick={() => setSignTestData(null)}
+                          title="Delete"
+                        >
+                          <svg
+                            width="1em"
+                            height="1em"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                            <line x1="10" y1="11" x2="10" y2="17" />
+                            <line x1="14" y1="11" x2="14" y2="17" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Add ranked sign test content */}
+        {activeTab === "rankedSign" && (
+          <div className="tab-content">
+            <h2>Ranked Sign Test</h2>
+            <div className="test-controls">
+              <button
+                onClick={() => {
+                  if (selectedColumns.length !== 2) {
+                    alert(
+                      "Please select exactly two columns for Ranked Sign test."
+                    );
+                    return;
+                  }
+                  rankedSignTest(selectedColumns);
+                }}
+                className="run-test-button"
+              >
+                Run Ranked Sign Test
+              </button>
+            </div>
+            {rankedSignTestData && rankedSignTestData.result && (
+              <div style={{ marginTop: "2rem" }}>
+                <h3>Ranked Sign Test Results</h3>
+                <table className="t-test-table">
+                  <thead>
+                    <tr>
+                      <th>Statistic</th>
+                      <th>p-Value</th>
+                      <th>Significant</th>
+                      <th>Positive Rank Sum</th>
+                      <th>Negative Rank Sum</th>
+                      <th>Ties</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        {typeof rankedSignTestData.result.statistic === "number"
+                          ? rankedSignTestData.result.statistic.toFixed(3)
+                          : rankedSignTestData.result.statistic}
+                      </td>
+                      <td>
+                        {typeof rankedSignTestData.result.pValue === "number"
+                          ? rankedSignTestData.result.pValue.toExponential(6)
+                          : rankedSignTestData.result.pValue}
+                      </td>
+                      <td>{String(rankedSignTestData.result.significant)}</td>
+                      <td>{rankedSignTestData.result.positiveRankSum}</td>
+                      <td>{rankedSignTestData.result.negativeRankSum}</td>
+                      <td>{rankedSignTestData.result.ties}</td>
+                      <td>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: "#ef4444",
+                          }}
+                          onClick={() => setRankedSignTestData(null)}
                           title="Delete"
                         >
                           <svg
