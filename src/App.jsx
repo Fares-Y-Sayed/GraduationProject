@@ -434,42 +434,46 @@ function App() {
             />
           </>
         )}
-        {showRegBtn && (
-          <div>
-            <button
-              onClick={() => {
-                regression(selectedColumns[0], selectedColumns[1]);
-              }}
-              className="run-test-button"
-            >
-              Run Regression
-            </button>
-          </div>
-        )}
-        {regressionData && (
-          <div style={{ marginTop: "2rem" }}>
-            <h2>Regression Results</h2>
-            <table className="t-test-table">
-              <thead>
-                <tr>
-                  <th>coefficient Of Determination</th>
-                  <th>intercept</th>
-                  <th>linear Regression Equation</th>
-                  <th>slope</th>
-                  <th>standard Error</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{regressionData.coefficientOfDetermination}</td>
-                  <td>{regressionData.intercept}</td>
-                  <td>{regressionData.linearRegressionEquation}</td>
-                  <td>{regressionData.slope}</td>
-                  <td>{regressionData.standardError}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        {activeTab === "regression" && (
+          <>
+            {showRegBtn && (
+              <div>
+                <button
+                  onClick={() => {
+                    regression(selectedColumns[0], selectedColumns[1]);
+                  }}
+                  className="run-test-button"
+                >
+                  Run Regression
+                </button>
+              </div>
+            )}
+            {regressionData && (
+              <div style={{ marginTop: "2rem" }}>
+                <h2>Regression Results</h2>
+                <table className="t-test-table">
+                  <thead>
+                    <tr>
+                      <th>coefficient Of Determination</th>
+                      <th>intercept</th>
+                      <th>linear Regression Equation</th>
+                      <th>slope</th>
+                      <th>standard Error</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{regressionData.coefficientOfDetermination}</td>
+                      <td>{regressionData.intercept}</td>
+                      <td>{regressionData.linearRegressionEquation}</td>
+                      <td>{regressionData.slope}</td>
+                      <td>{regressionData.standardError}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
 
         {/* Single T-Test Results Card */}
