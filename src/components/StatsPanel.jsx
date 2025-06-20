@@ -26,6 +26,10 @@ function StatsPanel({
   kolmogorovData,
   handleDeleteKolmogorov,
 
+  anovaTest,
+  anovaData,
+  handleDeleteAnova,
+
   signTest,
   signTestData,
   setSignTestData,
@@ -163,6 +167,14 @@ function StatsPanel({
               </button>
               <button
                 className={`tab-button ${
+                  activeSubTab === "anova" ? "active" : ""
+                }`}
+                onClick={() => setActiveSubTab("anova")}
+              >
+                ANOVA
+              </button>
+              <button
+                className={`tab-button ${
                   activeSubTab === "sign" ? "active" : ""
                 }`}
                 onClick={() => setActiveSubTab("sign")}
@@ -238,7 +250,7 @@ function StatsPanel({
                   </button>
                 </div>
                 {tTestData && tTestData.length > 0 && (
-                  <div className="t-test-results">
+                  <div className="results-table-container">
                     <table className="t-test-table">
                       <thead>
                         <tr>
@@ -371,6 +383,86 @@ function StatsPanel({
                       ))}
                     </tbody>
                   </table>
+                )}
+              </div>
+            )}
+
+            {/* ANOVA SubTab */}
+            {activeSubTab === "anova" && (
+              <div className="tab-content">
+                <h2>ANOVA Test</h2>
+                <div className="test-controls">
+                  <button
+                    onClick={() => anovaTest(selectedColumns)}
+                    className="run-test-button"
+                  >
+                    Run ANOVA Test
+                  </button>
+                </div>
+                {anovaData && anovaData.length > 0 && (
+                  <div className="results-table-container">
+                    <table className=" t-test-results t-test-table">
+                      <thead>
+                        <tr>
+                          <th>Columns</th>
+                          <th>F-Statistic</th>
+                          <th>P-Value</th>
+                          <th>DF Between</th>
+                          <th>DF Within</th>
+                          <th>SS Between</th>
+                          <th>SS Within</th>
+                          <th>MS Between</th>
+                          <th>MS Within</th>
+                          <th>Decision</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody className="anova-table">
+                        {anovaData.map((result) => (
+                          <tr key={result.id}>
+                            <td>{result.columns.join(", ")}</td>
+                            <td>{result.fStatistic?.toFixed(4)}</td>
+                            <td>{result.pValue?.toExponential(4)}</td>
+                            <td>{result.dfBetween}</td>
+                            <td>{result.dfWithin}</td>
+                            <td>{result.ssb?.toFixed(4)}</td>
+                            <td>{result.ssw?.toFixed(4)}</td>
+                            <td>{result.msb?.toFixed(4)}</td>
+                            <td>{result.msw?.toFixed(4)}</td>
+                            <td >{result.decision}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() => handleDeleteAnova(result.id)}
+                                title="Delete"
+                              >
+                                <svg
+                                  width="1em"
+                                  height="1em"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="#ef4444"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                                  <line x1="10" y1="11" x2="10" y2="17" />
+                                  <line x1="14" y1="11" x2="14" y2="17" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             )}

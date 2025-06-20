@@ -6,6 +6,8 @@ function ColumnSelector({
   handleColumnSelect,
   selectedTest,
   activeTab,
+  dependentVariable,
+  independentVariables,
 }) {
   const getColumnsByType = (type) =>
     Object.entries(columnTypes)
@@ -28,7 +30,13 @@ function ColumnSelector({
               <input
                 type={isRadio ? "radio" : "checkbox"}
                 name={isRadio ? "dependent-column" : undefined} // Group radio buttons
-                checked={selectedColumns.includes(column)}
+                checked={
+                  activeTab === "regression"
+                    ? isRadio
+                      ? dependentVariable === column
+                      : independentVariables.includes(column)
+                    : selectedColumns.includes(column)
+                }
                 onChange={() => handleColumnSelect(column, isRadio)}
                 className="column-checkbox"
               />

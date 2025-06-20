@@ -73,6 +73,7 @@ function App() {
   const [kolmogorovData, setKolmogorovData] = useState([]);
   const [signTestData, setSignTestData] = useState(null); // Sign test data state
   const [rankedSignTestData, setRankedSignTestData] = useState(null); // Ranked sign test data state
+  const [anovaData, setAnovaData] = useState([]); // ANOVA test data state
   const handleDataLoaded = (jsonData, file) => {
     setData(jsonData);
     setStats({});
@@ -212,7 +213,7 @@ function App() {
   };
 
   // Add the regression function here
-  const regression = async (column1, ...column2) => {
+  const regression = async (dependentName, independentNames) => {
     const fileName = window.localStorage.getItem("fileName");
     if (!fileName) {
       console.error("fileName is missing in localStorage");
@@ -221,8 +222,8 @@ function App() {
 
     const params = {
       fileName,
-      dependentName: column1,
-      independentNames: column2,
+      dependentName: dependentName,
+      independentNames: independentNames,
     };
 
     try {
@@ -270,6 +271,37 @@ function App() {
   // Add delete handler for Kolmogorov results
   const handleDeleteKolmogorov = (id) => {
     setKolmogorovData((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const anovaTest = async (columns) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+    if (columns.length < 2) {
+      alert("Please select at least two columns for the ANOVA test.");
+      return;
+    }
+    const params = {
+      fileName,
+      headerNames: columns,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/anova-test",
+        params
+      );
+      const result = { ...res.data.result, id: Date.now(), columns };
+      setAnovaData((prev) => [...prev, result]);
+    } catch (error) {
+      console.error("Error performing ANOVA test:", error);
+    }
+  };
+
+  const handleDeleteAnova = (id) => {
+    setAnovaData((prev) => prev.filter((item) => item.id !== id));
   };
 
   // Sign Test function
@@ -347,7 +379,11 @@ function App() {
     if (selectedTest === "regression") {
       if (isDependent) {
         setDependentVariable(column);
-        setSelectedColumns([column, ...independentVariables]);
+        const newIndependentVars = independentVariables.filter(
+          (c) => c !== column
+        );
+        setIndependentVariables(newIndependentVars);
+        setSelectedColumns([column, ...newIndependentVars].filter(Boolean));
       } else {
         const newIndependentVars = independentVariables.includes(column)
           ? independentVariables.filter((col) => col !== column)
@@ -373,11 +409,17 @@ function App() {
     });
     // Optionally, you could call regression here if you want it to auto-run:
     console.log("Selected columns:", selectedColumns);
-    if (selectedColumns.length === 2) {
-      // regression(selectedColumns[0], selectedColumns[1]);
+    if (dependentVariable && independentVariables.length > 0) {
       setShowRgBtn(true);
+    } else {
+      setShowRgBtn(false);
     }
-  }, [selectedStats, selectedColumns]);
+  }, [
+    selectedStats,
+    selectedColumns,
+    dependentVariable,
+    independentVariables,
+  ]);
 
   return (
     <Router>
@@ -401,7 +443,9 @@ function App() {
               selectedColumns={selectedColumns}
               handleColumnSelect={handleColumnSelect}
               selectedTest={selectedTest}
-              activeTab={activeTab} // Add this line
+              activeTab={activeTab}
+              dependentVariable={dependentVariable}
+              independentVariables={independentVariables}
             />
             <StatsPanel
               activeTab={activeTab}
@@ -425,6 +469,9 @@ function App() {
               kolmogorovTest={kolmogorovTest} // Pass Kolmogorov function
               kolmogorovData={kolmogorovData} // Pass Kolmogorov data
               handleDeleteKolmogorov={handleDeleteKolmogorov} // Pass delete handler
+              anovaTest={anovaTest}
+              anovaData={anovaData}
+              handleDeleteAnova={handleDeleteAnova}
               signTest={signTest} // Pass Sign test function
               signTestData={signTestData} // Pass Sign test data
               setSignTestData={setSignTestData} // Pass set function for Sign test data
@@ -440,7 +487,7 @@ function App() {
               <div>
                 <button
                   onClick={() => {
-                    regression(selectedColumns[0], selectedColumns[1]);
+                    regression(dependentVariable, independentVariables);
                   }}
                   className="run-test-button"
                 >
@@ -457,18 +504,32 @@ function App() {
                       <th>coefficient Of Determination</th>
                       <th>intercept</th>
                       <th>linear Regression Equation</th>
-                      <th>slope</th>
+                      <th>Variable</th>
+                      <th>Slope Coefficient</th>
                       <th>standard Error</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>{regressionData.coefficientOfDetermination}</td>
-                      <td>{regressionData.intercept}</td>
-                      <td>{regressionData.linearRegressionEquation}</td>
-                      <td>{regressionData.slope}</td>
-                      <td>{regressionData.standardError}</td>
-                    </tr>
+                    {Array.isArray(regressionData.slopes) && regressionData.slopes.length > 0 ? (
+                      regressionData.slopes.map((slopeObj, idx) => (
+                        <tr key={slopeObj.variable || idx}>
+                          <td>{regressionData.coefficientOfDetermination}</td>
+                          <td>{regressionData.intercept}</td>
+                          <td>{regressionData.linearRegressionEquation}</td>
+                          <td>{slopeObj.variable}</td>
+                          <td>{slopeObj.coefficient}</td>
+                          <td>{regressionData.standardError}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td>{regressionData.coefficientOfDetermination}</td>
+                        <td>{regressionData.intercept}</td>
+                        <td>{regressionData.linearRegressionEquation}</td>
+                        <td colSpan={2}>{regressionData.slope || '-'}</td>
+                        <td>{regressionData.standardError}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
