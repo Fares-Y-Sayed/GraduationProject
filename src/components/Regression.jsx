@@ -1,49 +1,47 @@
-function Regression({selectedColumns, regressionData }) {
+function Regression({ regressionData }) {
+  if (!regressionData) {
+    return null; // Don't render anything if there's no data
+  }
+
   return (
-    <div className='tab-content'>
-      <h2>Hypothesis Tests</h2>
-      <div className='test-controls'>
-        <button
-          onClick={() => {
-            if (selectedColumns.length === 0) {
-              alert("Please select Two columns.");
-              return;
-            }
-            selectedColumns.forEach((column) => Regression(column));
-          }}
-          className='run-test-button'>
-          
-        </button>
-      </div>
-      {tTestData && (
-        <div>
-          {tTestData && (
-            <div className='t-test-results'>
-              <h3>t-Test Results</h3>
-              <table className='t-test-table'>
-                <thead>
-                  <tr>
-                    <th>t-Statistic</th>
-                    <th>p-Value</th>
-                    <th>Decision</th>
-                    <th>Degrees of Freedom</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{tTestData.tStatistic.toFixed(3)}</td>
-                    <td>{tTestData.pValue.toFixed(3)}</td>
-                    <td>{tTestData.decision}</td>
-                    <td>{tTestData.degreesOfFreedom}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+    <div className='tab-content' style={{ marginTop: "2rem" }}>
+      <h2>Regression Results</h2>
+      <table className="t-test-table">
+        <thead>
+          <tr>
+            <th>Coefficient of Determination</th>
+            <th>Intercept</th>
+            <th>Linear Regression Equation</th>
+            <th>Variable</th>
+            <th>Slope Coefficient</th>
+            <th>Standard Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.isArray(regressionData.slopes) && regressionData.slopes.length > 0 ? (
+            regressionData.slopes.map((slopeObj, idx) => (
+              <tr key={slopeObj.variable || idx}>
+                <td>{regressionData.coefficientOfDetermination}</td>
+                <td>{regressionData.intercept}</td>
+                <td>{regressionData.linearRegressionEquation}</td>
+                <td>{slopeObj.variable}</td>
+                <td>{slopeObj.coefficient}</td>
+                <td>{regressionData.standardError}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td>{regressionData.coefficientOfDetermination}</td>
+              <td>{regressionData.intercept}</td>
+              <td>{regressionData.linearRegressionEquation}</td>
+              <td colSpan={2}>{regressionData.slope || '-'}</td>
+              <td>{regressionData.standardError}</td>
+            </tr>
           )}
-        </div>
-      )}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-export default HypothesisTest;
+export default Regression;

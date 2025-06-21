@@ -1,6 +1,7 @@
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
 import HypothesisTest from "./HypothesisTest";
+import HistogramChart from "./HistogramChart";
 // import {handleDeleteTTest} from "../App"
 
 function StatsPanel({
@@ -37,6 +38,13 @@ function StatsPanel({
   rankedSignTest,
   rankedSignTestData,
   setRankedSignTestData,
+
+  tTestAlpha,
+  setTTestAlpha,
+  tTestAlternative,
+  setTTestAlternative,
+  tTestPopulationMean,
+  setTTestPopulationMean,
 }) {
   const handleDeleteTTest = (idOrColumn) => {
     setTTestData((prev) =>
@@ -235,6 +243,38 @@ function StatsPanel({
             {activeSubTab === "t-test" && (
               <div className="tab-content">
                 <h2>T-Test Analysis</h2>
+                <div className="test-parameters">
+                  <div className="test-param-item">
+                    <label>Alpha Level:</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={tTestAlpha}
+                      onChange={(e) => setTTestAlpha(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  <div className="test-param-item">
+                    <label>Alternative:</label>
+                    <select
+                      value={tTestAlternative}
+                      onChange={(e) => setTTestAlternative(e.target.value)}
+                    >
+                      <option value="two-tailed">Two-tailed</option>
+                      <option value="less">Less</option>
+                      <option value="greater">Greater</option>
+                    </select>
+                  </div>
+                  <div className="test-param-item">
+                    <label>Population Mean:</label>
+                    <input
+                      type="number"
+                      value={tTestPopulationMean}
+                      onChange={(e) =>
+                        setTTestPopulationMean(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                </div>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -242,7 +282,14 @@ function StatsPanel({
                         alert("Please select at least one column.");
                         return;
                       }
-                      selectedColumns.forEach((column) => singleTTest(column));
+                      const params = {
+                        alpha: tTestAlpha,
+                        alternative: tTestAlternative,
+                        populationMean: tTestPopulationMean,
+                      };
+                      selectedColumns.forEach((column) =>
+                        singleTTest(column, params)
+                      );
                     }}
                     className="run-test-button"
                   >
@@ -250,7 +297,7 @@ function StatsPanel({
                   </button>
                 </div>
                 {tTestData && tTestData.length > 0 && (
-                  <div className="results-table-container">
+                  <div className="t-test-results">
                     <table className="t-test-table">
                       <thead>
                         <tr>
@@ -305,6 +352,9 @@ function StatsPanel({
                       </tbody>
                     </table>
                   </div>
+                )}
+                {data && selectedColumns.length > 0 && activeSubTab === "t-test" && (
+                  <HistogramChart data={data} columns={selectedColumns} />
                 )}
               </div>
             )}
@@ -384,6 +434,9 @@ function StatsPanel({
                     </tbody>
                   </table>
                 )}
+                {data && selectedColumns.length > 0 && activeSubTab === "kolmogorov" && (
+                  <HistogramChart data={data} columns={selectedColumns} />
+                )}
               </div>
             )}
 
@@ -400,69 +453,70 @@ function StatsPanel({
                   </button>
                 </div>
                 {anovaData && anovaData.length > 0 && (
-                  <div className="results-table-container">
-                    <table className=" t-test-results t-test-table">
-                      <thead>
-                        <tr>
-                          <th>Columns</th>
-                          <th>F-Statistic</th>
-                          <th>P-Value</th>
-                          <th>DF Between</th>
-                          <th>DF Within</th>
-                          <th>SS Between</th>
-                          <th>SS Within</th>
-                          <th>MS Between</th>
-                          <th>MS Within</th>
-                          <th>Decision</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody className="anova-table">
-                        {anovaData.map((result) => (
-                          <tr key={result.id}>
-                            <td>{result.columns.join(", ")}</td>
-                            <td>{result.fStatistic?.toFixed(4)}</td>
-                            <td>{result.pValue?.toExponential(4)}</td>
-                            <td>{result.dfBetween}</td>
-                            <td>{result.dfWithin}</td>
-                            <td>{result.ssb?.toFixed(4)}</td>
-                            <td>{result.ssw?.toFixed(4)}</td>
-                            <td>{result.msb?.toFixed(4)}</td>
-                            <td>{result.msw?.toFixed(4)}</td>
-                            <td >{result.decision}</td>
-                            <td>
-                              <button
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#ef4444",
-                                }}
-                                onClick={() => handleDeleteAnova(result.id)}
-                                title="Delete"
+                  <table className=" t-test-results t-test-table">
+                    <thead>
+                      <tr>
+                        <th>Columns</th>
+                        <th>F-Statistic</th>
+                        <th>P-Value</th>
+                        <th>DF Between</th>
+                        <th>DF Within</th>
+                        <th>SS Between</th>
+                        <th>SS Within</th>
+                        <th>MS Between</th>
+                        <th>MS Within</th>
+                        <th>Decision</th>
+                        <th>Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody className="anova-table">
+                      {anovaData.map((result) => (
+                        <tr key={result.id}>
+                          <td>{result.columns.join(", ")}</td>
+                          <td>{result.fStatistic?.toFixed(4)}</td>
+                          <td>{result.pValue?.toExponential(4)}</td>
+                          <td>{result.dfBetween}</td>
+                          <td>{result.dfWithin}</td>
+                          <td>{result.ssb?.toFixed(4)}</td>
+                          <td>{result.ssw?.toFixed(4)}</td>
+                          <td>{result.msb?.toFixed(4)}</td>
+                          <td>{result.msw?.toFixed(4)}</td>
+                          <td >{result.decision}</td>
+                          <td>
+                            <button
+                              style={{
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                color: "#ef4444",
+                              }}
+                              onClick={() => handleDeleteAnova(result.id)}
+                              title="Delete"
+                            >
+                              <svg
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#ef4444"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                               >
-                                <svg
-                                  width="1em"
-                                  height="1em"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="#ef4444"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <polyline points="3 6 5 6 21 6" />
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                  <line x1="10" y1="11" x2="10" y2="17" />
-                                  <line x1="14" y1="11" x2="14" y2="17" />
-                                </svg>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                                <line x1="10" y1="11" x2="10" y2="17" />
+                                <line x1="14" y1="11" x2="14" y2="17" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+                {data && selectedColumns.length > 0 && activeSubTab === "anova" && (
+                  <HistogramChart data={data} columns={selectedColumns} />
                 )}
               </div>
             )}

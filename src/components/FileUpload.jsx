@@ -26,6 +26,7 @@ function FileUpload({ onDataLoaded }) {
     };
 
     reader.readAsBinaryString(file);
+    sendSheetData(file);
   };
 
   const sendSheetData = async (file) => {
@@ -52,10 +53,7 @@ function FileUpload({ onDataLoaded }) {
           name="file"
           type="file"
           accept=".xlsx, .xls"
-          onChange={(e) => {
-            handleFileUpload(e);
-            sendSheetData(e.target.files[0]);
-          }}
+          onChange={handleFileUpload}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"

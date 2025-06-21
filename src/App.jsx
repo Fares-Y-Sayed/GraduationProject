@@ -49,7 +49,7 @@ function App() {
   const [tTestData, setTTestData] = useState([]); // Change from "" to []
   const [dependentVariable, setDependentVariable] = useState(null);
   const [independentVariables, setIndependentVariables] = useState([]);
-  const [regressionData, setRegressionData] = useState(null); // Added for regression
+  const [regressionData, setRegressionData] = useState([]); // Will now be an array
   const [selectedStats, setSelectedStats] = useState({
     mean: false,
     variance: false,
@@ -74,6 +74,9 @@ function App() {
   const [signTestData, setSignTestData] = useState(null); // Sign test data state
   const [rankedSignTestData, setRankedSignTestData] = useState(null); // Ranked sign test data state
   const [anovaData, setAnovaData] = useState([]); // ANOVA test data state
+  const [tTestAlpha, setTTestAlpha] = useState(0.05);
+  const [tTestAlternative, setTTestAlternative] = useState("two-tailed");
+  const [tTestPopulationMean, setTTestPopulationMean] = useState(7.5);
   const handleDataLoaded = (jsonData, file) => {
     setData(jsonData);
     setStats({});
@@ -178,14 +181,7 @@ function App() {
     const fileName = window.localStorage.getItem("fileName");
     if (!fileName) return console.error("fileName is missing in localStorage");
 
-    const defaultParams = {
-      alpha: 0.05,
-      alternative: "two-tailed",
-      populationMean: 7.5,
-    };
-
     const testParams = {
-      ...defaultParams,
       ...params,
       fileName: fileName,
       headerName: column.trim(),
@@ -212,6 +208,10 @@ function App() {
     setTTestData((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const handleDeleteRegression = (id) => {
+    setRegressionData((prev) => prev.filter((item) => item.id !== id));
+  };
+
   // Add the regression function here
   const regression = async (dependentName, independentNames) => {
     const fileName = window.localStorage.getItem("fileName");
@@ -231,8 +231,8 @@ function App() {
         "http://localhost:3000/api/v1/regression/linear",
         params
       );
-      setRegressionData(res.data.data); // Update state with regression results
-      console.log(res.data.data);
+      const newResult = { ...res.data.data, id: Date.now() };
+      setRegressionData((prev) => [...prev, newResult]); // Add new result to the array
     } catch (error) {
       console.error("Error performing regression:", error);
     }
@@ -429,6 +429,7 @@ function App() {
       </Routes>
       <div className="container">
         <h1>Quick Stats</h1>
+        
         <FileUpload onDataLoaded={handleDataLoaded} />
         {data && (
           <>
@@ -464,6 +465,12 @@ function App() {
               singleTTest={singleTTest}
               tTestData={tTestData}
               setTTestData={setTTestData}
+              tTestAlpha={tTestAlpha}
+              setTTestAlpha={setTTestAlpha}
+              tTestAlternative={tTestAlternative}
+              setTTestAlternative={setTTestAlternative}
+              tTestPopulationMean={tTestPopulationMean}
+              setTTestPopulationMean={setTTestPopulationMean}
               regression={regression} // Pass regression function
               regressionData={regressionData} // Pass regression data
               kolmogorovTest={kolmogorovTest} // Pass Kolmogorov function
@@ -495,41 +502,118 @@ function App() {
                 </button>
               </div>
             )}
-            {regressionData && (
+            {regressionData.length > 0 && (
               <div style={{ marginTop: "2rem" }}>
                 <h2>Regression Results</h2>
                 <table className="t-test-table">
                   <thead>
                     <tr>
-                      <th>coefficient Of Determination</th>
-                      <th>intercept</th>
-                      <th>linear Regression Equation</th>
+                      <th>Coefficient of Determination</th>
+                      <th>Intercept</th>
+                      <th>Equation</th>
                       <th>Variable</th>
-                      <th>Slope Coefficient</th>
-                      <th>standard Error</th>
+                      <th>Slope</th>
+                      <th>Standard Error</th>
+                      <th>Delete</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {Array.isArray(regressionData.slopes) && regressionData.slopes.length > 0 ? (
-                      regressionData.slopes.map((slopeObj, idx) => (
-                        <tr key={slopeObj.variable || idx}>
-                          <td>{regressionData.coefficientOfDetermination}</td>
-                          <td>{regressionData.intercept}</td>
-                          <td>{regressionData.linearRegressionEquation}</td>
-                          <td>{slopeObj.variable}</td>
-                          <td>{slopeObj.coefficient}</td>
-                          <td>{regressionData.standardError}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td>{regressionData.coefficientOfDetermination}</td>
-                        <td>{regressionData.intercept}</td>
-                        <td>{regressionData.linearRegressionEquation}</td>
-                        <td colSpan={2}>{regressionData.slope || '-'}</td>
-                        <td>{regressionData.standardError}</td>
-                      </tr>
-                    )}
+                    {regressionData.map((result) => (
+                      <React.Fragment key={result.id}>
+                        {result.slopes && result.slopes.length > 0 ? (
+                          result.slopes.map((slope, index) => (
+                            <tr key={`${result.id}-${slope.variable}`}>
+                              {index === 0 ? (
+                                <td rowSpan={result.slopes.length || 1}>
+                                  {result.coefficientOfDetermination}
+                                </td>
+                              ) : null}
+                              {index === 0 ? (
+                                <td rowSpan={result.slopes.length || 1}>
+                                  {result.intercept}
+                                </td>
+                              ) : null}
+                              {index === 0 ? (
+                                <td rowSpan={result.slopes.length || 1}>
+                                  {result.linearRegressionEquation}
+                                </td>
+                              ) : null}
+                              <td>{slope.variable}</td>
+                              <td>{slope.coefficient}</td>
+                              {index === 0 ? (
+                                <td rowSpan={result.slopes.length || 1}>
+                                  {result.standardError}
+                                </td>
+                              ) : null}
+                              {index === 0 ? (
+                                <td rowSpan={result.slopes.length || 1}>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() =>
+                                      handleDeleteRegression(result.id)
+                                    }
+                                    title="Delete"
+                                  >
+                                    <svg
+                                      width="1em"
+                                      height="1em"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                  </button>
+                                </td>
+                              ) : null}
+                            </tr>
+                          ))
+                        ) : (
+                          <tr key={result.id}>
+                            <td>{result.coefficientOfDetermination}</td>
+                            <td>{result.intercept}</td>
+                            <td>{result.linearRegressionEquation}</td>
+                            <td colSpan="2">{result.slope || "-"}</td>
+                            <td>{result.standardError}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() => handleDeleteRegression(result.id)}
+                                title="Delete"
+                              >
+                                <svg
+                                  width="1em"
+                                  height="1em"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                                </svg>
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
                   </tbody>
                 </table>
               </div>
