@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
 import HypothesisTest from "./HypothesisTest";
@@ -131,6 +132,18 @@ function StatsPanel({
     </div>
   );
 
+  // Explanation states for each test
+  const [tTestExplanation, setTTestExplanation] = useState("");
+  const [tTestExplaining, setTTestExplaining] = useState(false);
+  const [kolmogorovExplanation, setKolmogorovExplanation] = useState("");
+  const [kolmogorovExplaining, setKolmogorovExplaining] = useState(false);
+  const [signTestExplanation, setSignTestExplanation] = useState("");
+  const [signTestExplaining, setSignTestExplaining] = useState(false);
+  const [rankedSignTestExplanation, setRankedSignTestExplanation] =
+    useState("");
+  const [rankedSignTestExplaining, setRankedSignTestExplaining] =
+    useState(false);
+
   return (
     selectedColumns.length > 0 && (
       <div className="stats-container">
@@ -250,7 +263,9 @@ function StatsPanel({
                       type="number"
                       step="0.01"
                       value={tTestAlpha}
-                      onChange={(e) => setTTestAlpha(parseFloat(e.target.value))}
+                      onChange={(e) =>
+                        setTTestAlpha(parseFloat(e.target.value))
+                      }
                     />
                   </div>
                   <div className="test-param-item">
@@ -353,8 +368,49 @@ function StatsPanel({
                     </table>
                   </div>
                 )}
-                {data && selectedColumns.length > 0 && activeSubTab === "t-test" && (
-                  <HistogramChart data={data} columns={selectedColumns} />
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "t-test" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
+                {tTestData && tTestData.length > 0 && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={tTestExplaining}
+                      onClick={async () => {
+                        setTTestExplaining(true);
+                        setTTestExplanation("");
+                        const prompt = `Explain the following t-test results in simple terms:\n${JSON.stringify(
+                          tTestData,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setTTestExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setTTestExplanation("Failed to get explanation.");
+                        }
+                        setTTestExplaining(false);
+                      }}
+                    >
+                      {tTestExplaining ? "Explaining..." : "Explain Results"}
+                    </button>
+                    {tTestExplanation && (
+                      <div className="test-explanation">{tTestExplanation}</div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -434,8 +490,55 @@ function StatsPanel({
                     </tbody>
                   </table>
                 )}
-                {data && selectedColumns.length > 0 && activeSubTab === "kolmogorov" && (
-                  <HistogramChart data={data} columns={selectedColumns} />
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "kolmogorov" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
+                {kolmogorovData && kolmogorovData.length > 0 && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={kolmogorovExplaining}
+                      onClick={async () => {
+                        setKolmogorovExplaining(true);
+                        setKolmogorovExplanation("");
+                        const prompt = `Explain the following Kolmogorov-Smirnov test results in simple terms:\n${JSON.stringify(
+                          kolmogorovData,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setKolmogorovExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setKolmogorovExplanation(
+                            "Failed to get explanation."
+                          );
+                        }
+                        setKolmogorovExplaining(false);
+                      }}
+                    >
+                      {kolmogorovExplaining
+                        ? "Explaining..."
+                        : "Explain Results"}
+                    </button>
+                    {kolmogorovExplanation && (
+                      <div className="test-explanation">
+                        {kolmogorovExplanation}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -481,7 +584,7 @@ function StatsPanel({
                           <td>{result.ssw?.toFixed(4)}</td>
                           <td>{result.msb?.toFixed(4)}</td>
                           <td>{result.msw?.toFixed(4)}</td>
-                          <td >{result.decision}</td>
+                          <td>{result.decision}</td>
                           <td>
                             <button
                               style={{
@@ -515,9 +618,11 @@ function StatsPanel({
                     </tbody>
                   </table>
                 )}
-                {data && selectedColumns.length > 0 && activeSubTab === "anova" && (
-                  <HistogramChart data={data} columns={selectedColumns} />
-                )}
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "anova" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
               </div>
             )}
 
@@ -542,67 +647,44 @@ function StatsPanel({
                   </button>
                 </div>
                 {signTestData && signTestData.result && (
-                  <div style={{ marginTop: "2rem" }}>
-                    <h3>Sign Test Results</h3>
-                    <table className="t-test-table">
-                      <thead>
-                        <tr>
-                          <th>Statistic</th>
-                          <th>p-Value</th>
-                          <th>Significant</th>
-                          <th>Positive Signs</th>
-                          <th>Negative Signs</th>
-                          <th>Ties</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            {typeof signTestData.result.statistic === "number"
-                              ? signTestData.result.statistic.toFixed(3)
-                              : signTestData.result.statistic}
-                          </td>
-                          <td>
-                            {typeof signTestData.result.pValue === "number"
-                              ? signTestData.result.pValue.toExponential(6)
-                              : signTestData.result.pValue}
-                          </td>
-                          <td>{String(signTestData.result.significant)}</td>
-                          <td>{signTestData.result.positiveSigns}</td>
-                          <td>{signTestData.result.negativeSigns}</td>
-                          <td>{signTestData.result.ties}</td>
-                          <td>
-                            <button
-                              style={{
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                color: "#ef4444",
-                              }}
-                              onClick={() => setSignTestData(null)}
-                              title="Delete"
-                            >
-                              <svg
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#ef4444"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                <line x1="10" y1="11" x2="10" y2="17" />
-                                <line x1="14" y1="11" x2="14" y2="17" />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={signTestExplaining}
+                      onClick={async () => {
+                        setSignTestExplaining(true);
+                        setSignTestExplanation("");
+                        const prompt = `Explain the following sign test results in simple terms:\n${JSON.stringify(
+                          signTestData.result,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setSignTestExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setSignTestExplanation("Failed to get explanation.");
+                        }
+                        setSignTestExplaining(false);
+                      }}
+                    >
+                      {signTestExplaining ? "Explaining..." : "Explain Results"}
+                    </button>
+                    {signTestExplanation && (
+                      <div className="test-explanation">
+                        {signTestExplanation}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -629,73 +711,48 @@ function StatsPanel({
                   </button>
                 </div>
                 {rankedSignTestData && rankedSignTestData.result && (
-                  <div style={{ marginTop: "2rem" }}>
-                    <h3>Ranked Sign Test Results</h3>
-                    <table className="t-test-table">
-                      <thead>
-                        <tr>
-                          <th>Statistic</th>
-                          <th>p-Value</th>
-                          <th>Significant</th>
-                          <th>Positive Rank Sum</th>
-                          <th>Negative Rank Sum</th>
-                          <th>Ties</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            {typeof rankedSignTestData.result.statistic ===
-                            "number"
-                              ? rankedSignTestData.result.statistic.toFixed(3)
-                              : rankedSignTestData.result.statistic}
-                          </td>
-                          <td>
-                            {typeof rankedSignTestData.result.pValue ===
-                            "number"
-                              ? rankedSignTestData.result.pValue.toExponential(
-                                  6
-                                )
-                              : rankedSignTestData.result.pValue}
-                          </td>
-                          <td>
-                            {String(rankedSignTestData.result.significant)}
-                          </td>
-                          <td>{rankedSignTestData.result.positiveRankSum}</td>
-                          <td>{rankedSignTestData.result.negativeRankSum}</td>
-                          <td>{rankedSignTestData.result.ties}</td>
-                          <td>
-                            <button
-                              style={{
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                color: "#ef4444",
-                              }}
-                              onClick={() => setRankedSignTestData(null)}
-                              title="Delete"
-                            >
-                              <svg
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#ef4444"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                <line x1="10" y1="11" x2="10" y2="17" />
-                                <line x1="14" y1="11" x2="14" y2="17" />
-                              </svg>
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={rankedSignTestExplaining}
+                      onClick={async () => {
+                        setRankedSignTestExplaining(true);
+                        setRankedSignTestExplanation("");
+                        const prompt = `Explain the following ranked sign test results in simple terms:\n${JSON.stringify(
+                          rankedSignTestData.result,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setRankedSignTestExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setRankedSignTestExplanation(
+                            "Failed to get explanation."
+                          );
+                        }
+                        setRankedSignTestExplaining(false);
+                      }}
+                    >
+                      {rankedSignTestExplaining
+                        ? "Explaining..."
+                        : "Explain Results"}
+                    </button>
+                    {rankedSignTestExplanation && (
+                      <div className="test-explanation">
+                        {rankedSignTestExplanation}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

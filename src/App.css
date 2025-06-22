@@ -693,7 +693,7 @@ tr:hover td {
   box-shadow: 0 0 0 2px #4a90e240;
 }
 
-.t-test-table{
+.t-test-table {
   margin-top: 15px;
 }
 
@@ -705,7 +705,7 @@ tr:hover td {
   margin: 20px 0;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
 }
 
@@ -721,7 +721,7 @@ tr:hover td {
 
 /* Ensure the chart fills its container */
 .chart-container canvas {
-  width:100% !important;
+  width: 100% !important;
   /* height: % !important; */
 }
 
@@ -734,14 +734,24 @@ tr:hover td {
 }
 
 @keyframes typewriter {
-  0% { width: 0; }
-  70% { width: 53%; }
-  100% { width: 0; }
+  0% {
+    width: 0;
+  }
+  70% {
+    width: 53%;
+  }
+  100% {
+    width: 0;
+  }
 }
 
 @keyframes blinkTextCursor {
-  from { border-right-color: rgba(255, 255, 255, 0.75); }
-  to { border-right-color: transparent; }
+  from {
+    border-right-color: rgba(255, 255, 255, 0.75);
+  }
+  to {
+    border-right-color: transparent;
+  }
 }
 
 .home-page {
@@ -759,12 +769,10 @@ tr:hover td {
   width: fit-content;
   margin-bottom: 1rem;
   overflow: hidden; /* Ensures the text is hidden until revealed by the animation */
-  border-right: .15em solid orange; /* Creates the cursor effect */
+  border-right: 0.15em solid orange; /* Creates the cursor effect */
   white-space: nowrap; /* Prevents the text from wrapping */
-  animation: 
-    typewriter 4s steps(40, end)  infinite,
+  animation: typewriter 4s steps(40, end) infinite,
     blinkTextCursor 500ms steps(40, end) infinite normal;
-
 }
 
 .home-page p {
@@ -785,4 +793,11 @@ tr:hover td {
 
 .navigate-button:hover {
   background-color: #0056b3;
+}
+
+.test-explanation {
+  margin-top: 1rem;
+  background-color: #2d2d2d;
+  padding: 1rem;
+  border-radius: 8px;
 }
