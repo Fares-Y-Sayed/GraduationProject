@@ -1,5 +1,5 @@
-import React from 'react';
 import { Bar } from 'react-chartjs-2';
+import PropTypes from 'prop-types';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -67,7 +67,11 @@ const HistogramChart = ({ data, columns }) => {
   
   const chartData = {
     labels: chartLabels,
-    datasets: datasets.map(({ labels, ...rest }) => rest),
+    datasets: datasets.map((ds) => {
+      // eslint-disable-next-line no-unused-vars
+      const { labels, ...rest } = ds;
+      return rest;
+    }),
   };
 
   const options = {
@@ -114,6 +118,11 @@ const HistogramChart = ({ data, columns }) => {
       <Bar data={chartData} options={options} />
     </div>
   );
+};
+
+HistogramChart.propTypes = {
+  data: PropTypes.array,
+  columns: PropTypes.array.isRequired,
 };
 
 export default HistogramChart; 

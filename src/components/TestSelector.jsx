@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
   return (
     <div className="test-selection">
@@ -51,5 +53,11 @@ function TestSelector({ selectedTest, setSelectedTest, setActiveTab }) {
     </div>
   );
 }
+
+TestSelector.propTypes = {
+  selectedTest: PropTypes.string,
+  setSelectedTest: PropTypes.func.isRequired,
+  setActiveTab: PropTypes.func.isRequired,
+};
 
 export default TestSelector;

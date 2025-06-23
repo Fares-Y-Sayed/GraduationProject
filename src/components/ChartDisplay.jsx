@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Line, Bar, Scatter, Pie } from "react-chartjs-2";
 import Plot from 'react-plotly.js'; // Import Plotly
 import {
@@ -160,5 +161,12 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
     </div>
   );
 }
+
+ChartDisplay.propTypes = {
+  data: PropTypes.array,
+  selectedColumns: PropTypes.array.isRequired,
+  chartType: PropTypes.string.isRequired,
+  setChartType: PropTypes.func.isRequired,
+};
 
 export default ChartDisplay;

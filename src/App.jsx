@@ -1,8 +1,7 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import ChartDisplay from "./components/ChartDisplay";
-import { useState, useEffect } from "react";
 import {
   mean,
   variance,
@@ -28,7 +27,10 @@ import TestSelector from "./components/TestSelector";
 import ColumnSelector from "./components/ColumnSelector";
 import StatsPanel from "./components/StatsPanel";
 import { VARIABLE_TYPES } from "./constants";
+import Typewriter from "./components/Typewriter";
+import { FaChartLine, FaMagic, FaTrash } from "react-icons/fa";
 import "./App.css";
+import ProjectPage from "./components/ProjectPage";
 
 ChartJS.register(
   CategoryScale,
@@ -77,7 +79,10 @@ function App() {
   const [tTestAlpha, setTTestAlpha] = useState(0.05);
   const [tTestAlternative, setTTestAlternative] = useState("two-tailed");
   const [tTestPopulationMean, setTTestPopulationMean] = useState(7.5);
-  const handleDataLoaded = (jsonData, file) => {
+  const [regressionExplanation, setRegressionExplanation] = useState("");
+  const [regressionExplaining, setRegressionExplaining] = useState(false);
+
+  const handleDataLoaded = (jsonData) => {
     setData(jsonData);
     setStats({});
     setErrors({});
@@ -112,70 +117,73 @@ function App() {
           .filter((val) => !isNaN(val))
       : [];
 
-  const calculateStat = (type, columnName) => {
-    const numbers = getValidNumbers(columnName);
-    setErrors((prev) => ({
-      ...prev,
-      [columnName]: { ...prev[columnName], [type]: null },
-    }));
-
-    if (numbers.length === 0) {
+  const calculateStat = useCallback(
+    (type, columnName) => {
+      const numbers = getValidNumbers(columnName);
       setErrors((prev) => ({
-        ...prev,
-        [columnName]: {
-          ...prev[columnName],
-          [type]: "No valid numerical data in this column",
-        },
-      }));
-      setStats((prev) => ({
         ...prev,
         [columnName]: { ...prev[columnName], [type]: null },
       }));
-      return;
-    }
 
-    try {
-      let result;
-      switch (type) {
-        case "mean":
-          result = mean(numbers).toFixed(2);
-          break;
-        case "variance":
-          result = variance(numbers).toFixed(2);
-          break;
-        case "standardDeviation":
-          result = standardDeviation(numbers).toFixed(2);
-          break;
-        case "median":
-          result = median(numbers).toFixed(2);
-          break;
-        case "mode":
-          result = mode(numbers).toFixed(2);
-          break;
-        case "count":
-          result = numbers.length;
-          break;
-        default:
-          throw new Error("Unknown calculation type");
+      if (numbers.length === 0) {
+        setErrors((prev) => ({
+          ...prev,
+          [columnName]: {
+            ...prev[columnName],
+            [type]: "No valid numerical data in this column",
+          },
+        }));
+        setStats((prev) => ({
+          ...prev,
+          [columnName]: { ...prev[columnName], [type]: null },
+        }));
+        return;
       }
-      setStats((prev) => ({
-        ...prev,
-        [columnName]: { ...prev[columnName], [type]: result },
-      }));
-    } catch (error) {
-      setErrors((prev) => ({
-        ...prev,
-        [columnName]: {
-          ...prev[columnName],
-          [type]: "Could not calculate this statistic",
-        },
-      }));
-      setStats((prev) => ({
-        ...prev,
-        [columnName]: { ...prev[columnName], [type]: null },
-      }));
-    }
-  };
+
+      try {
+        let result;
+        switch (type) {
+          case "mean":
+            result = mean(numbers).toFixed(2);
+            break;
+          case "variance":
+            result = variance(numbers).toFixed(2);
+            break;
+          case "standardDeviation":
+            result = standardDeviation(numbers).toFixed(2);
+            break;
+          case "median":
+            result = median(numbers).toFixed(2);
+            break;
+          case "mode":
+            result = mode(numbers).toFixed(2);
+            break;
+          case "count":
+            result = numbers.length;
+            break;
+          default:
+            throw new Error("Unknown calculation type");
+        }
+        setStats((prev) => ({
+          ...prev,
+          [columnName]: { ...prev[columnName], [type]: result },
+        }));
+      } catch (error) {
+        setErrors((prev) => ({
+          ...prev,
+          [columnName]: {
+            ...prev[columnName],
+            [type]: "Could not calculate this statistic",
+          },
+        }));
+        setStats((prev) => ({
+          ...prev,
+          [columnName]: { ...prev[columnName], [type]: null },
+        }));
+      }
+    },
+    [data]
+  );
 
   const singleTTest = async (column, params = {}) => {
     const fileName = window.localStorage.getItem("fileName");
@@ -419,275 +427,68 @@ function App() {
     selectedColumns,
     dependentVariable,
     independentVariables,
+    calculateStat,
   ]);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/project" element={<ChartDisplay />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/project" element={
+          <ProjectPage
+            data={data}
+            handleDataLoaded={handleDataLoaded}
+            selectedTest={selectedTest}
+            setSelectedTest={setSelectedTest}
+            setActiveTab={setActiveTab}
+            columnTypes={columnTypes}
+            selectedColumns={selectedColumns}
+            handleColumnSelect={handleColumnSelect}
+            activeTab={activeTab}
+            dependentVariable={dependentVariable}
+            independentVariables={independentVariables}
+            activeSubTab={activeSubTab}
+            setActiveSubTab={setActiveSubTab}
+            selectedStats={selectedStats}
+            handleCheckboxChange={handleCheckboxChange}
+            stats={stats}
+            errors={errors}
+            animatingStats={animatingStats}
+            chartType={chartType}
+            setChartType={setChartType}
+            singleTTest={singleTTest}
+            tTestData={tTestData}
+            setTTestData={setTTestData}
+            tTestAlpha={tTestAlpha}
+            setTTestAlpha={setTTestAlpha}
+            tTestAlternative={tTestAlternative}
+            setTTestAlternative={setTTestAlternative}
+            tTestPopulationMean={tTestPopulationMean}
+            setTTestPopulationMean={setTTestPopulationMean}
+            regression={regression}
+            regressionData={regressionData}
+            kolmogorovTest={kolmogorovTest}
+            kolmogorovData={kolmogorovData}
+            handleDeleteKolmogorov={handleDeleteKolmogorov}
+            anovaTest={anovaTest}
+            anovaData={anovaData}
+            handleDeleteAnova={handleDeleteAnova}
+            signTest={signTest}
+            signTestData={signTestData}
+            setSignTestData={setSignTestData}
+            rankedSignTest={rankedSignTest}
+            rankedSignTestData={rankedSignTestData}
+            setRankedSignTestData={setRankedSignTestData}
+            showRegBtn={showRegBtn}
+            handleDeleteRegression={handleDeleteRegression}
+            regressionExplaining={regressionExplaining}
+            setRegressionExplaining={setRegressionExplaining}
+            regressionExplanation={regressionExplanation}
+            setRegressionExplanation={setRegressionExplanation}
+          />
+        } />
+        <Route path="/" element={<Navigate to="/home" replace />} />
       </Routes>
-      <div className="container">
-        <h1>Quick Stats</h1>
-        
-        <FileUpload onDataLoaded={handleDataLoaded} />
-        {data && (
-          <>
-            <DataPreview data={data} />
-            <TestSelector
-              selectedTest={selectedTest}
-              setSelectedTest={setSelectedTest}
-              setActiveTab={setActiveTab}
-            />
-            <ColumnSelector
-              columnTypes={columnTypes}
-              selectedColumns={selectedColumns}
-              handleColumnSelect={handleColumnSelect}
-              selectedTest={selectedTest}
-              activeTab={activeTab}
-              dependentVariable={dependentVariable}
-              independentVariables={independentVariables}
-            />
-            <StatsPanel
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-              activeSubTab={activeSubTab}
-              setActiveSubTab={setActiveSubTab}
-              selectedColumns={selectedColumns}
-              selectedStats={selectedStats}
-              handleCheckboxChange={handleCheckboxChange}
-              stats={stats}
-              errors={errors}
-              animatingStats={animatingStats}
-              data={data}
-              chartType={chartType}
-              setChartType={setChartType}
-              singleTTest={singleTTest}
-              tTestData={tTestData}
-              setTTestData={setTTestData}
-              tTestAlpha={tTestAlpha}
-              setTTestAlpha={setTTestAlpha}
-              tTestAlternative={tTestAlternative}
-              setTTestAlternative={setTTestAlternative}
-              tTestPopulationMean={tTestPopulationMean}
-              setTTestPopulationMean={setTTestPopulationMean}
-              regression={regression} // Pass regression function
-              regressionData={regressionData} // Pass regression data
-              kolmogorovTest={kolmogorovTest} // Pass Kolmogorov function
-              kolmogorovData={kolmogorovData} // Pass Kolmogorov data
-              handleDeleteKolmogorov={handleDeleteKolmogorov} // Pass delete handler
-              anovaTest={anovaTest}
-              anovaData={anovaData}
-              handleDeleteAnova={handleDeleteAnova}
-              signTest={signTest} // Pass Sign test function
-              signTestData={signTestData} // Pass Sign test data
-              setSignTestData={setSignTestData} // Pass set function for Sign test data
-              rankedSignTest={rankedSignTest} // Pass Ranked Sign test function
-              rankedSignTestData={rankedSignTestData} // Pass Ranked Sign test data
-              setRankedSignTestData={setRankedSignTestData} // Pass set function for Ranked Sign test data
-            />
-          </>
-        )}
-        {activeTab === "regression" && (
-          <>
-            {showRegBtn && (
-              <div>
-                <button
-                  onClick={() => {
-                    regression(dependentVariable, independentVariables);
-                  }}
-                  className="run-test-button"
-                >
-                  Run Regression
-                </button>
-              </div>
-            )}
-            {regressionData.length > 0 && (
-              <div style={{ marginTop: "2rem" }}>
-                <h2>Regression Results</h2>
-                <table className="t-test-table">
-                  <thead>
-                    <tr>
-                      <th>Coefficient of Determination</th>
-                      <th>Intercept</th>
-                      <th>Equation</th>
-                      <th>Variable</th>
-                      <th>Slope</th>
-                      <th>Standard Error</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {regressionData.map((result) => (
-                      <React.Fragment key={result.id}>
-                        {result.slopes && result.slopes.length > 0 ? (
-                          result.slopes.map((slope, index) => (
-                            <tr key={`${result.id}-${slope.variable}`}>
-                              {index === 0 ? (
-                                <td rowSpan={result.slopes.length || 1}>
-                                  {result.coefficientOfDetermination}
-                                </td>
-                              ) : null}
-                              {index === 0 ? (
-                                <td rowSpan={result.slopes.length || 1}>
-                                  {result.intercept}
-                                </td>
-                              ) : null}
-                              {index === 0 ? (
-                                <td rowSpan={result.slopes.length || 1}>
-                                  {result.linearRegressionEquation}
-                                </td>
-                              ) : null}
-                              <td>{slope.variable}</td>
-                              <td>{slope.coefficient}</td>
-                              {index === 0 ? (
-                                <td rowSpan={result.slopes.length || 1}>
-                                  {result.standardError}
-                                </td>
-                              ) : null}
-                              {index === 0 ? (
-                                <td rowSpan={result.slopes.length || 1}>
-                                  <button
-                                    style={{
-                                      background: "none",
-                                      border: "none",
-                                      cursor: "pointer",
-                                      color: "#ef4444",
-                                    }}
-                                    onClick={() =>
-                                      handleDeleteRegression(result.id)
-                                    }
-                                    title="Delete"
-                                  >
-                                    <svg
-                                      width="1em"
-                                      height="1em"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth="2"
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                    >
-                                      <polyline points="3 6 5 6 21 6" />
-                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                    </svg>
-                                  </button>
-                                </td>
-                              ) : null}
-                            </tr>
-                          ))
-                        ) : (
-                          <tr key={result.id}>
-                            <td>{result.coefficientOfDetermination}</td>
-                            <td>{result.intercept}</td>
-                            <td>{result.linearRegressionEquation}</td>
-                            <td colSpan="2">{result.slope || "-"}</td>
-                            <td>{result.standardError}</td>
-                            <td>
-                              <button
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#ef4444",
-                                }}
-                                onClick={() => handleDeleteRegression(result.id)}
-                                title="Delete"
-                              >
-                                <svg
-                                  width="1em"
-                                  height="1em"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <polyline points="3 6 5 6 21 6" />
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                </svg>
-                              </button>
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Single T-Test Results Card */}
-
-        {/* // Hide this section by default  */}
-        {tTestData.length > 0 && (
-          <div style={{ marginTop: "2rem", display: "none" }}>
-            <h2>Single T-Test Results</h2>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-              {tTestData.map((result) => (
-                <div
-                  key={result.id}
-                  style={{
-                    background: "#fff",
-                    borderRadius: "12px",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                    padding: "1.5rem",
-                    minWidth: "250px",
-                    position: "relative",
-                    color: "#333",
-                  }}
-                >
-                  <button
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "#ef4444",
-                      display: "none",
-                    }}
-                    onClick={() => handleDeleteTTest(result.id)}
-                    title="Delete"
-                  >
-                    {/* Simple SVG trash icon */}
-                    <svg
-                      width="1em"
-                      height="1em"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#ef4444"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                      <line x1="10" y1="11" x2="10" y2="17" />
-                      <line x1="14" y1="11" x2="14" y2="17" />
-                    </svg>
-                  </button>
-                  <div>
-                    <strong>Column:</strong> {result.column}
-                  </div>
-                  {Object.entries(result)
-                    .filter(([key]) => !["id", "column"].includes(key))
-                    .map(([key, value]) => (
-                      <div key={key}>
-                        <strong>{key}:</strong> {String(value)}
-                      </div>
-                    ))}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
     </Router>
   );
 }

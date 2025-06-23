@@ -1,3 +1,22 @@
+import PropTypes from "prop-types";
+import {
+  FaEquals, // mean
+  FaChartLine, // variance
+  FaWaveSquare, // standard deviation
+  FaSortNumericDown, // median
+  FaHashtag, // mode
+  FaListOl, // count
+} from "react-icons/fa";
+
+const statIcons = {
+  mean: <FaEquals style={{ color: '#4f46e5', marginRight: 6 }} />,
+  variance: <FaChartLine style={{ color: '#f59e42', marginRight: 6 }} />,
+  standardDeviation: <FaWaveSquare style={{ color: '#10b981', marginRight: 6 }} />,
+  median: <FaSortNumericDown style={{ color: '#6366f1', marginRight: 6 }} />,
+  mode: <FaHashtag style={{ color: '#f43f5e', marginRight: 6 }} />,
+  count: <FaListOl style={{ color: '#fbbf24', marginRight: 6 }} />,
+};
+
 function StatCard({
   type,
   label,
@@ -14,9 +33,9 @@ function StatCard({
     : "";
 
   return (
-    <div className={`stat-item ${animationClass}`}>
+    <div className={`stat-item fade-in-up ${animationClass}`}>
       <div className='stat-header'>
-        <label>{label}</label>
+        <label>{statIcons[type]}{label}</label>
       </div>
       {errors[columnName]?.[type] ? (
         <div className='error-message'>{errors[columnName][type]}</div>
@@ -29,5 +48,15 @@ function StatCard({
     </div>
   );
 }
+
+StatCard.propTypes = {
+  type: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  columnName: PropTypes.string.isRequired,
+  stats: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+  animatingStats: PropTypes.object.isRequired,
+  selectedStats: PropTypes.object.isRequired,
+};
 
 export default StatCard;

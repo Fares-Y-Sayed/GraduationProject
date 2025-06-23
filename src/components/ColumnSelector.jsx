@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { VARIABLE_TYPES } from "../constants";
 
 function ColumnSelector({
@@ -11,7 +12,7 @@ function ColumnSelector({
 }) {
   const getColumnsByType = (type) =>
     Object.entries(columnTypes)
-      .filter(([_, colType]) => colType === type)
+      .filter(([, colType]) => colType === type)
       .map(([column]) => column);
 
   const getAllColumns = () => Object.keys(columnTypes);
@@ -46,6 +47,12 @@ function ColumnSelector({
         </div>
       </div>
     );
+  };
+
+  ColumnSection.propTypes = {
+    type: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    isRadio: PropTypes.bool,
   };
 
   return (
@@ -85,5 +92,15 @@ function ColumnSelector({
     )
   );
 }
+
+ColumnSelector.propTypes = {
+  columnTypes: PropTypes.object.isRequired,
+  selectedColumns: PropTypes.array.isRequired,
+  handleColumnSelect: PropTypes.func.isRequired,
+  selectedTest: PropTypes.string,
+  activeTab: PropTypes.string.isRequired,
+  dependentVariable: PropTypes.string,
+  independentVariables: PropTypes.array,
+};
 
 export default ColumnSelector;

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 function HypothesisTest({ 
   selectedColumns, 
@@ -143,7 +144,7 @@ function HypothesisTest({
       {Array.isArray(tTestData) && tTestData.length > 0 && (
         <div>
           <div className='t-test-results'>
-            <h3>Single T-Test Results "new"</h3>
+            <h3>Single T-Test Results {`"new"`}</h3>
             <table className='t-test-table'>
               <thead>
                 <tr>
@@ -246,6 +247,16 @@ function HypothesisTest({
     </div>
   );
 }
+
+HypothesisTest.propTypes = {
+  selectedColumns: PropTypes.array.isRequired,
+  singleTTest: PropTypes.func.isRequired,
+  tTestData: PropTypes.array.isRequired,
+  handleDeleteTTest: PropTypes.func.isRequired,
+  kolmogorovTest: PropTypes.func.isRequired,
+  kolmogorovData: PropTypes.array.isRequired,
+  handleDeleteKolmogorov: PropTypes.func.isRequired,
+};
 
 export default HypothesisTest;
 

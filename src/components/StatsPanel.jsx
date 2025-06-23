@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
-import HypothesisTest from "./HypothesisTest";
 import HistogramChart from "./HistogramChart";
+import Typewriter from "./Typewriter";
+import { FaFlask, FaChartBar, FaMagic, FaTrash, FaPlay, FaCheckCircle } from "react-icons/fa";
 // import {handleDeleteTTest} from "../App"
 
 function StatsPanel({
   activeTab,
-  setActiveTab,
   activeSubTab,
   setActiveSubTab,
   selectedColumns,
@@ -68,10 +69,15 @@ function StatsPanel({
     </div>
   );
 
+  StatCheckbox.propTypes = {
+    type: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  };
+
   const ColumnStatistics = ({ columnName }) => (
     <div className="column-statistics">
       <div className="column-header">
-        <h2>Statistics for "{columnName}"</h2>
+        <h2>Statistics for {`"${columnName}"`}</h2>
       </div>
       <div className="stats-grid">
         <StatCard
@@ -132,6 +138,10 @@ function StatsPanel({
     </div>
   );
 
+  ColumnStatistics.propTypes = {
+    columnName: PropTypes.string.isRequired,
+  };
+
   // Explanation states for each test
   const [tTestExplanation, setTTestExplanation] = useState("");
   const [tTestExplaining, setTTestExplaining] = useState(false);
@@ -143,6 +153,8 @@ function StatsPanel({
     useState("");
   const [rankedSignTestExplaining, setRankedSignTestExplaining] =
     useState(false);
+  const [anovaExplanation, setAnovaExplanation] = useState("");
+  const [anovaExplaining, setAnovaExplaining] = useState(false);
 
   return (
     selectedColumns.length > 0 && (
@@ -255,7 +267,7 @@ function StatsPanel({
             {/* T-Test SubTab */}
             {activeSubTab === "t-test" && (
               <div className="tab-content">
-                <h2>T-Test Analysis</h2>
+                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />T-Test Analysis</h2>
                 <div className="test-parameters">
                   <div className="test-param-item">
                     <label>Alpha Level:</label>
@@ -308,7 +320,7 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    Run T-Test
+                    <FaPlay style={{marginRight: 6}} /> Run T-Test
                   </button>
                 </div>
                 {tTestData && tTestData.length > 0 && (
@@ -345,21 +357,7 @@ function StatsPanel({
                                 }
                                 title="Delete"
                               >
-                                <svg
-                                  width="1em"
-                                  height="1em"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="#ef4444"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                >
-                                  <polyline points="3 6 5 6 21 6" />
-                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                  <line x1="10" y1="11" x2="10" y2="17" />
-                                  <line x1="14" y1="11" x2="14" y2="17" />
-                                </svg>
+                                <FaTrash style={{marginRight: 6}} />
                               </button>
                             </td>
                           </tr>
@@ -381,7 +379,7 @@ function StatsPanel({
                       onClick={async () => {
                         setTTestExplaining(true);
                         setTTestExplanation("");
-                        const prompt = `Explain the following t-test results in simple terms:\n${JSON.stringify(
+                        const prompt = `Explain the following t-test results in simple terms in three lines:\n${JSON.stringify(
                           tTestData,
                           null,
                           2
@@ -405,10 +403,14 @@ function StatsPanel({
                         setTTestExplaining(false);
                       }}
                     >
+                      <FaMagic style={{marginRight: 6}} />
                       {tTestExplaining ? "Explaining..." : "Explain Results"}
                     </button>
                     {tTestExplanation && (
-                      <div className="test-explanation">{tTestExplanation}</div>
+                      <div className="test-explanation">
+                        <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
+                        <Typewriter text={tTestExplanation} />
+                      </div>
                     )}
                   </div>
                 )}
@@ -418,7 +420,7 @@ function StatsPanel({
             {/* Kolmogorov SubTab */}
             {activeSubTab === "kolmogorov" && (
               <div className="tab-content">
-                <h2>Kolmogorov-Smirnov Test</h2>
+                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Kolmogorov-Smirnov Test</h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -430,7 +432,7 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    Run Kolmogorov Test
+                    <FaPlay style={{marginRight: 6}} /> Run Kolmogorov Test
                   </button>
                 </div>
                 {kolmogorovData && kolmogorovData.length > 0 && (
@@ -468,21 +470,7 @@ function StatsPanel({
                               onClick={() => handleDeleteKolmogorov(result.id)}
                               title="Delete"
                             >
-                              <svg
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#ef4444"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                <line x1="10" y1="11" x2="10" y2="17" />
-                                <line x1="14" y1="11" x2="14" y2="17" />
-                              </svg>
+                              <FaTrash style={{marginRight: 6}} />
                             </button>
                           </td>
                         </tr>
@@ -503,7 +491,7 @@ function StatsPanel({
                       onClick={async () => {
                         setKolmogorovExplaining(true);
                         setKolmogorovExplanation("");
-                        const prompt = `Explain the following Kolmogorov-Smirnov test results in simple terms:\n${JSON.stringify(
+                        const prompt = `Explain the following Kolmogorov-Smirnov test results in simple terms in three lines:\n${JSON.stringify(
                           kolmogorovData,
                           null,
                           2
@@ -529,13 +517,15 @@ function StatsPanel({
                         setKolmogorovExplaining(false);
                       }}
                     >
+                      <FaMagic style={{marginRight: 6}} />
                       {kolmogorovExplaining
                         ? "Explaining..."
                         : "Explain Results"}
                     </button>
                     {kolmogorovExplanation && (
                       <div className="test-explanation">
-                        {kolmogorovExplanation}
+                        <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
+                        <Typewriter text={kolmogorovExplanation} />
                       </div>
                     )}
                   </div>
@@ -546,13 +536,13 @@ function StatsPanel({
             {/* ANOVA SubTab */}
             {activeSubTab === "anova" && (
               <div className="tab-content">
-                <h2>ANOVA Test</h2>
+                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />ANOVA Test</h2>
                 <div className="test-controls">
                   <button
                     onClick={() => anovaTest(selectedColumns)}
                     className="run-test-button"
                   >
-                    Run ANOVA Test
+                    <FaPlay style={{marginRight: 6}} /> Run ANOVA Test
                   </button>
                 </div>
                 {anovaData && anovaData.length > 0 && (
@@ -596,21 +586,7 @@ function StatsPanel({
                               onClick={() => handleDeleteAnova(result.id)}
                               title="Delete"
                             >
-                              <svg
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="#ef4444"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                                <line x1="10" y1="11" x2="10" y2="17" />
-                                <line x1="14" y1="11" x2="14" y2="17" />
-                              </svg>
+                              <FaTrash style={{marginRight: 6}} />
                             </button>
                           </td>
                         </tr>
@@ -618,6 +594,47 @@ function StatsPanel({
                     </tbody>
                   </table>
                 )}
+                <div style={{ marginTop: "1rem" }}>
+                  <button
+                    className="run-test-button"
+                    disabled={anovaExplaining}
+                    onClick={async () => {
+                      setAnovaExplaining(true);
+                      setAnovaExplanation("");
+                      const prompt = `Explain the following ANOVA test results in simple terms in three lines:\n${JSON.stringify(
+                        anovaData,
+                        null,
+                        2
+                      )}`;
+                      try {
+                        const response = await fetch(
+                          "http://localhost:4000/generate",
+                          {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ prompt }),
+                          }
+                        );
+                        const data = await response.json();
+                        setAnovaExplanation(
+                          data.generatedText || "No explanation received."
+                        );
+                      } catch (error) {
+                        setAnovaExplanation("Failed to get explanation.");
+                      }
+                      setAnovaExplaining(false);
+                    }}
+                  >
+                    <FaMagic style={{marginRight: 6}} />
+                    {anovaExplaining ? "Explaining..." : "Explain Results"}
+                  </button>
+                  {anovaExplanation && (
+                    <div className="test-explanation">
+                      <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
+                      <Typewriter text={anovaExplanation} />
+                    </div>
+                  )}
+                </div>
                 {data &&
                   selectedColumns.length > 0 &&
                   activeSubTab === "anova" && (
@@ -629,7 +646,7 @@ function StatsPanel({
             {/* Sign Test SubTab */}
             {activeSubTab === "sign" && (
               <div className="tab-content">
-                <h2>Sign Test</h2>
+                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Sign Test</h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -643,49 +660,105 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    Run Sign Test
+                    <FaPlay style={{marginRight: 6}} /> Run Sign Test
                   </button>
                 </div>
                 {signTestData && signTestData.result && (
-                  <div style={{ marginTop: "1rem" }}>
-                    <button
-                      className="run-test-button"
-                      disabled={signTestExplaining}
-                      onClick={async () => {
-                        setSignTestExplaining(true);
-                        setSignTestExplanation("");
-                        const prompt = `Explain the following sign test results in simple terms:\n${JSON.stringify(
-                          signTestData.result,
-                          null,
-                          2
-                        )}`;
-                        try {
-                          const response = await fetch(
-                            "http://localhost:4000/generate",
-                            {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ prompt }),
-                            }
-                          );
-                          const data = await response.json();
-                          setSignTestExplanation(
-                            data.generatedText || "No explanation received."
-                          );
-                        } catch (error) {
-                          setSignTestExplanation("Failed to get explanation.");
-                        }
-                        setSignTestExplaining(false);
-                      }}
-                    >
-                      {signTestExplaining ? "Explaining..." : "Explain Results"}
-                    </button>
-                    {signTestExplanation && (
-                      <div className="test-explanation">
-                        {signTestExplanation}
-                      </div>
-                    )}
-                  </div>
+                  <>
+                    <div style={{ marginTop: "2rem" }}>
+                      <h3><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Sign Test Results</h3>
+                      <table className="t-test-table">
+                        <thead>
+                          <tr>
+                            <th>Statistic</th>
+                            <th>p-Value</th>
+                            <th>Significant</th>
+                            <th>Positive Signs</th>
+                            <th>Negative Signs</th>
+                            <th>Ties</th>
+                            <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              {typeof signTestData.result.statistic === "number"
+                                ? signTestData.result.statistic.toFixed(3)
+                                : signTestData.result.statistic}
+                            </td>
+                            <td>
+                              {typeof signTestData.result.pValue === "number"
+                                ? signTestData.result.pValue.toExponential(6)
+                                : signTestData.result.pValue}
+                            </td>
+                            <td>{String(signTestData.result.significant)}</td>
+                            <td>{signTestData.result.positiveSigns}</td>
+                            <td>{signTestData.result.negativeSigns}</td>
+                            <td>{signTestData.result.ties}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() => setSignTestData(null)}
+                                title="Delete"
+                              >
+                                <FaTrash style={{marginRight: 6}} />
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style={{ marginTop: "1rem" }}>
+                      <button
+                        className="run-test-button"
+                        disabled={signTestExplaining}
+                        onClick={async () => {
+                          setSignTestExplaining(true);
+                          setSignTestExplanation("");
+                          const prompt = `Explain the following sign test results in simple terms in three lines:\n${JSON.stringify(
+                            signTestData.result,
+                            null,
+                            2
+                          )}`;
+                          try {
+                            const response = await fetch(
+                              "http://localhost:4000/generate",
+                              {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt }),
+                              }
+                            );
+                            const data = await response.json();
+                            setSignTestExplanation(
+                              data.generatedText || "No explanation received."
+                            );
+                          } catch (error) {
+                            setSignTestExplanation(
+                              "Failed to get explanation."
+                            );
+                          }
+                          setSignTestExplaining(false);
+                        }}
+                      >
+                        <FaMagic style={{marginRight: 6}} />
+                        {signTestExplaining
+                          ? "Explaining..."
+                          : "Explain Results"}
+                      </button>
+                      {signTestExplanation && (
+                        <div className="test-explanation">
+                          <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
+                          <Typewriter text={signTestExplanation} />
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -693,7 +766,7 @@ function StatsPanel({
             {/* Ranked Sign-Test SubTab */}
             {activeSubTab === "rankedSign" && (
               <div className="tab-content">
-                <h2>Ranked Sign Test</h2>
+                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Ranked Sign Test</h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -707,53 +780,115 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    Run Ranked Sign Test
+                    <FaPlay style={{marginRight: 6}} /> Run Ranked Sign Test
                   </button>
                 </div>
                 {rankedSignTestData && rankedSignTestData.result && (
-                  <div style={{ marginTop: "1rem" }}>
-                    <button
-                      className="run-test-button"
-                      disabled={rankedSignTestExplaining}
-                      onClick={async () => {
-                        setRankedSignTestExplaining(true);
-                        setRankedSignTestExplanation("");
-                        const prompt = `Explain the following ranked sign test results in simple terms:\n${JSON.stringify(
-                          rankedSignTestData.result,
-                          null,
-                          2
-                        )}`;
-                        try {
-                          const response = await fetch(
-                            "http://localhost:4000/generate",
-                            {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ prompt }),
-                            }
-                          );
-                          const data = await response.json();
-                          setRankedSignTestExplanation(
-                            data.generatedText || "No explanation received."
-                          );
-                        } catch (error) {
-                          setRankedSignTestExplanation(
-                            "Failed to get explanation."
-                          );
-                        }
-                        setRankedSignTestExplaining(false);
-                      }}
-                    >
-                      {rankedSignTestExplaining
-                        ? "Explaining..."
-                        : "Explain Results"}
-                    </button>
-                    {rankedSignTestExplanation && (
-                      <div className="test-explanation">
-                        {rankedSignTestExplanation}
-                      </div>
-                    )}
-                  </div>
+                  <>
+                    <div style={{ marginTop: "2rem" }}>
+                      <h3><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Ranked Sign Test Results</h3>
+                      <table className="t-test-table">
+                        <thead>
+                          <tr>
+                            <th>Statistic</th>
+                            <th>p-Value</th>
+                            <th>Significant</th>
+                            <th>Positive Rank Sum</th>
+                            <th>Negative Rank Sum</th>
+                            <th>Ties</th>
+                            <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              {typeof rankedSignTestData.result.statistic ===
+                              "number"
+                                ? rankedSignTestData.result.statistic.toFixed(3)
+                                : rankedSignTestData.result.statistic}
+                            </td>
+                            <td>
+                              {typeof rankedSignTestData.result.pValue ===
+                              "number"
+                                ? rankedSignTestData.result.pValue.toExponential(
+                                    6
+                                  )
+                                : rankedSignTestData.result.pValue}
+                            </td>
+                            <td>
+                              {String(rankedSignTestData.result.significant)}
+                            </td>
+                            <td>
+                              {rankedSignTestData.result.positiveRankSum}
+                            </td>
+                            <td>
+                              {rankedSignTestData.result.negativeRankSum}
+                            </td>
+                            <td>{rankedSignTestData.result.ties}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() => setRankedSignTestData(null)}
+                                title="Delete"
+                              >
+                                <FaTrash style={{marginRight: 6}} />
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style={{ marginTop: "1rem" }}>
+                      <button
+                        className="run-test-button"
+                        disabled={rankedSignTestExplaining}
+                        onClick={async () => {
+                          setRankedSignTestExplaining(true);
+                          setRankedSignTestExplanation("");
+                          const prompt = `Explain the following ranked sign test results in simple terms in three lines:\n${JSON.stringify(
+                            rankedSignTestData.result,
+                            null,
+                            2
+                          )}`;
+                          try {
+                            const response = await fetch(
+                              "http://localhost:4000/generate",
+                              {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt }),
+                              }
+                            );
+                            const data = await response.json();
+                            setRankedSignTestExplanation(
+                              data.generatedText || "No explanation received."
+                            );
+                          } catch (error) {
+                            setRankedSignTestExplanation(
+                              "Failed to get explanation."
+                            );
+                          }
+                          setRankedSignTestExplaining(false);
+                        }}
+                      >
+                        <FaMagic style={{marginRight: 6}} />
+                        {rankedSignTestExplaining
+                          ? "Explaining..."
+                          : "Explain Results"}
+                      </button>
+                      {rankedSignTestExplanation && (
+                        <div className="test-explanation">
+                          <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
+                          <Typewriter text={rankedSignTestExplanation} />
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             )}
@@ -763,5 +898,41 @@ function StatsPanel({
     )
   );
 }
+
+StatsPanel.propTypes = {
+  activeTab: PropTypes.string.isRequired,
+  activeSubTab: PropTypes.string.isRequired,
+  setActiveSubTab: PropTypes.func.isRequired,
+  selectedColumns: PropTypes.array.isRequired,
+  selectedStats: PropTypes.object.isRequired,
+  handleCheckboxChange: PropTypes.func.isRequired,
+  stats: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+  animatingStats: PropTypes.object.isRequired,
+  data: PropTypes.array,
+  chartType: PropTypes.string.isRequired,
+  setChartType: PropTypes.func.isRequired,
+  singleTTest: PropTypes.func.isRequired,
+  tTestData: PropTypes.array.isRequired,
+  setTTestData: PropTypes.func.isRequired,
+  kolmogorovTest: PropTypes.func.isRequired,
+  kolmogorovData: PropTypes.array.isRequired,
+  handleDeleteKolmogorov: PropTypes.func.isRequired,
+  anovaTest: PropTypes.func.isRequired,
+  anovaData: PropTypes.array.isRequired,
+  handleDeleteAnova: PropTypes.func.isRequired,
+  signTest: PropTypes.func.isRequired,
+  signTestData: PropTypes.object,
+  setSignTestData: PropTypes.func.isRequired,
+  rankedSignTest: PropTypes.func.isRequired,
+  rankedSignTestData: PropTypes.object,
+  setRankedSignTestData: PropTypes.func.isRequired,
+  tTestAlpha: PropTypes.number.isRequired,
+  setTTestAlpha: PropTypes.func.isRequired,
+  tTestAlternative: PropTypes.string.isRequired,
+  setTTestAlternative: PropTypes.func.isRequired,
+  tTestPopulationMean: PropTypes.number.isRequired,
+  setTTestPopulationMean: PropTypes.func.isRequired,
+};
 
 export default StatsPanel;

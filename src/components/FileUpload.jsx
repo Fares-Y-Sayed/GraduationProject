@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
@@ -77,5 +78,9 @@ function FileUpload({ onDataLoaded }) {
     </div>
   );
 }
+
+FileUpload.propTypes = {
+  onDataLoaded: PropTypes.func.isRequired,
+};
 
 export default FileUpload;

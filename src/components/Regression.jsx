@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function Regression({ regressionData }) {
   if (!regressionData) {
     return null; // Don't render anything if there's no data
@@ -43,5 +45,9 @@ function Regression({ regressionData }) {
     </div>
   );
 }
+
+Regression.propTypes = {
+  regressionData: PropTypes.object,
+};
 
 export default Regression;
