@@ -52,6 +52,9 @@ function ProjectPage(props) {
     rankedSignTest,
     rankedSignTestData,
     setRankedSignTestData,
+    uTest,
+    uTestData,
+    setUTestData,
     showRegBtn,
     handleDeleteRegression,
     regressionExplaining,
@@ -118,6 +121,9 @@ function ProjectPage(props) {
             rankedSignTest={rankedSignTest}
             rankedSignTestData={rankedSignTestData}
             setRankedSignTestData={setRankedSignTestData}
+            uTest={uTest}
+            uTestData={uTestData}
+            setUTestData={setUTestData}
           />
         </>
       )}
@@ -137,7 +143,10 @@ function ProjectPage(props) {
           )}
           {regressionData.length > 0 && (
             <div style={{ marginTop: "2rem" }} className="fade-in-up">
-              <h2><FaChartLine style={{marginRight: 8, color: '#6366f1'}} />Regression Results</h2>
+              <h2>
+                <FaChartLine style={{ marginRight: 8, color: "#6366f1" }} />
+                Regression Results
+              </h2>
               <table className="t-test-table">
                 <thead>
                   <tr>
@@ -192,7 +201,7 @@ function ProjectPage(props) {
                                   }
                                   title="Delete"
                                 >
-                                  <FaTrash style={{marginRight: 6}} />
+                                  <FaTrash style={{ marginRight: 6 }} />
                                 </button>
                               </td>
                             ) : null}
@@ -216,7 +225,7 @@ function ProjectPage(props) {
                               onClick={() => handleDeleteRegression(result.id)}
                               title="Delete"
                             >
-                              <FaTrash style={{marginRight: 6}} />
+                              <FaTrash style={{ marginRight: 6 }} />
                             </button>
                           </td>
                         </tr>
@@ -255,7 +264,7 @@ function ProjectPage(props) {
                   setRegressionExplaining(false);
                 }}
               >
-                <FaMagic style={{marginRight: 6}} />
+                <FaMagic style={{ marginRight: 6 }} />
                 {regressionExplaining ? "Explaining..." : "Explain Results"}
               </button>
               {regressionExplanation && (
@@ -272,4 +281,4 @@ function ProjectPage(props) {
   );
 }
 
-export default ProjectPage; 
+export default ProjectPage;

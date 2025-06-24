@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import HomePage from "./components/HomePage";
 import ChartDisplay from "./components/ChartDisplay";
 import {
@@ -74,6 +79,7 @@ function App() {
   const [showRegBtn, setShowRgBtn] = useState(false);
   const [kolmogorovData, setKolmogorovData] = useState([]);
   const [signTestData, setSignTestData] = useState(null); // Sign test data state
+  const [uTestData, setUTestData] = useState(null); // U-test data state
   const [rankedSignTestData, setRankedSignTestData] = useState(null); // Ranked sign test data state
   const [anovaData, setAnovaData] = useState([]); // ANOVA test data state
   const [tTestAlpha, setTTestAlpha] = useState(0.05);
@@ -312,6 +318,30 @@ function App() {
     setAnovaData((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // U-Test function
+  const uTest = async (columns) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    const params = {
+      fileName,
+      headerNames: columns,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/u-test",
+        params
+      );
+      setUTestData(res.data);
+    } catch (error) {
+      console.error("Error performing U-test:", error);
+    }
+  };
+
   // Sign Test function
   const signTest = async (columns) => {
     const fileName = window.localStorage.getItem("fileName");
@@ -434,59 +464,65 @@ function App() {
     <Router>
       <Routes>
         <Route path="/home" element={<HomePage />} />
-        <Route path="/project" element={
-          <ProjectPage
-            data={data}
-            handleDataLoaded={handleDataLoaded}
-            selectedTest={selectedTest}
-            setSelectedTest={setSelectedTest}
-            setActiveTab={setActiveTab}
-            columnTypes={columnTypes}
-            selectedColumns={selectedColumns}
-            handleColumnSelect={handleColumnSelect}
-            activeTab={activeTab}
-            dependentVariable={dependentVariable}
-            independentVariables={independentVariables}
-            activeSubTab={activeSubTab}
-            setActiveSubTab={setActiveSubTab}
-            selectedStats={selectedStats}
-            handleCheckboxChange={handleCheckboxChange}
-            stats={stats}
-            errors={errors}
-            animatingStats={animatingStats}
-            chartType={chartType}
-            setChartType={setChartType}
-            singleTTest={singleTTest}
-            tTestData={tTestData}
-            setTTestData={setTTestData}
-            tTestAlpha={tTestAlpha}
-            setTTestAlpha={setTTestAlpha}
-            tTestAlternative={tTestAlternative}
-            setTTestAlternative={setTTestAlternative}
-            tTestPopulationMean={tTestPopulationMean}
-            setTTestPopulationMean={setTTestPopulationMean}
-            regression={regression}
-            regressionData={regressionData}
-            kolmogorovTest={kolmogorovTest}
-            kolmogorovData={kolmogorovData}
-            handleDeleteKolmogorov={handleDeleteKolmogorov}
-            anovaTest={anovaTest}
-            anovaData={anovaData}
-            handleDeleteAnova={handleDeleteAnova}
-            signTest={signTest}
-            signTestData={signTestData}
-            setSignTestData={setSignTestData}
-            rankedSignTest={rankedSignTest}
-            rankedSignTestData={rankedSignTestData}
-            setRankedSignTestData={setRankedSignTestData}
-            showRegBtn={showRegBtn}
-            handleDeleteRegression={handleDeleteRegression}
-            regressionExplaining={regressionExplaining}
-            setRegressionExplaining={setRegressionExplaining}
-            regressionExplanation={regressionExplanation}
-            setRegressionExplanation={setRegressionExplanation}
-          />
-        } />
+        <Route
+          path="/project"
+          element={
+            <ProjectPage
+              data={data}
+              handleDataLoaded={handleDataLoaded}
+              selectedTest={selectedTest}
+              setSelectedTest={setSelectedTest}
+              setActiveTab={setActiveTab}
+              columnTypes={columnTypes}
+              selectedColumns={selectedColumns}
+              handleColumnSelect={handleColumnSelect}
+              activeTab={activeTab}
+              dependentVariable={dependentVariable}
+              independentVariables={independentVariables}
+              activeSubTab={activeSubTab}
+              setActiveSubTab={setActiveSubTab}
+              selectedStats={selectedStats}
+              handleCheckboxChange={handleCheckboxChange}
+              stats={stats}
+              errors={errors}
+              animatingStats={animatingStats}
+              chartType={chartType}
+              setChartType={setChartType}
+              singleTTest={singleTTest}
+              tTestData={tTestData}
+              setTTestData={setTTestData}
+              tTestAlpha={tTestAlpha}
+              setTTestAlpha={setTTestAlpha}
+              tTestAlternative={tTestAlternative}
+              setTTestAlternative={setTTestAlternative}
+              tTestPopulationMean={tTestPopulationMean}
+              setTTestPopulationMean={setTTestPopulationMean}
+              regression={regression}
+              regressionData={regressionData}
+              kolmogorovTest={kolmogorovTest}
+              kolmogorovData={kolmogorovData}
+              handleDeleteKolmogorov={handleDeleteKolmogorov}
+              anovaTest={anovaTest}
+              anovaData={anovaData}
+              handleDeleteAnova={handleDeleteAnova}
+              signTest={signTest}
+              signTestData={signTestData}
+              setSignTestData={setSignTestData}
+              rankedSignTest={rankedSignTest}
+              rankedSignTestData={rankedSignTestData}
+              setRankedSignTestData={setRankedSignTestData}
+              uTest={uTest}
+              uTestData={uTestData}
+              setUTestData={setUTestData}
+              showRegBtn={showRegBtn}
+              handleDeleteRegression={handleDeleteRegression}
+              regressionExplaining={regressionExplaining}
+              setRegressionExplaining={setRegressionExplaining}
+              regressionExplanation={regressionExplanation}
+              setRegressionExplanation={setRegressionExplanation}
+            />
+          }
+        />
         <Route path="/" element={<Navigate to="/home" replace />} />
       </Routes>
     </Router>
