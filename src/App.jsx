@@ -411,12 +411,16 @@ function App() {
     }
 
     if (testType === "independence" && columns.length !== 2) {
-      alert("Please select exactly two columns for Chi-Square test of independence.");
+      alert(
+        "Please select exactly two columns for Chi-Square test of independence."
+      );
       return;
     }
 
     if (testType === "goodness_of_fit" && columns.length !== 1) {
-      alert("Please select exactly one column for Chi-Square goodness of fit test.");
+      alert(
+        "Please select exactly one column for Chi-Square goodness of fit test."
+      );
       return;
     }
 
@@ -424,7 +428,7 @@ function App() {
       fileName,
       headerNames: columns,
       testType: testType,
-      alpha: chiSquareAlpha
+      alpha: chiSquareAlpha,
     };
 
     try {
@@ -449,12 +453,12 @@ function App() {
 
     const testParams = {
       fileName,
-      headerName: column.trim(),
+      headerNames: [column.trim()],
       alpha: zTestAlpha,
       alternative: zTestAlternative,
       populationMean: zTestPopulationMean,
       populationStdDev: zTestPopulationStdDev,
-      ...params
+      ...params,
     };
 
     try {
@@ -555,7 +559,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<div className="route-fade"><HomePage /></div>} />
+        <Route
+          path="/home"
+          element={
+            <div className="route-fade">
+              <HomePage />
+            </div>
+          }
+        />
         <Route
           path="/project"
           element={
