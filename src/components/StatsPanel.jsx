@@ -73,6 +73,16 @@ function StatsPanel({
   setZTestPopulationMean,
   zTestPopulationStdDev,
   setZTestPopulationStdDev,
+  zTestType,
+  setZTestType,
+  zTestPopulationMean1,
+  setZTestPopulationMean1,
+  zTestPopulationMean2,
+  setZTestPopulationMean2,
+  zTestPopulationStdDev1,
+  setZTestPopulationStdDev1,
+  zTestPopulationStdDev2,
+  setZTestPopulationStdDev2,
 }) {
   const handleDeleteTTest = (idOrColumn) => {
     setTTestData((prev) =>
@@ -1384,6 +1394,16 @@ function StatsPanel({
                   </h2>
                   <div className="test-parameters">
                     <div className="test-param-item">
+                      <label>Test Type:</label>
+                      <select
+                        value={zTestType}
+                        onChange={(e) => setZTestType(e.target.value)}
+                      >
+                        <option value="single">Single Sample</option>
+                        <option value="two-sample">Two Sample</option>
+                      </select>
+                    </div>
+                    <div className="test-param-item">
                       <label>Alpha Level:</label>
                       <input
                         type="number"
@@ -1405,26 +1425,73 @@ function StatsPanel({
                         <option value="greater">Greater</option>
                       </select>
                     </div>
-                    <div className="test-param-item">
-                      <label>Population Mean:</label>
-                      <input
-                        type="number"
-                        value={zTestPopulationMean}
-                        onChange={(e) =>
-                          setZTestPopulationMean(parseFloat(e.target.value))
-                        }
-                      />
-                    </div>
-                    <div className="test-param-item">
-                      <label>Population Std Dev:</label>
-                      <input
-                        type="number"
-                        value={zTestPopulationStdDev}
-                        onChange={(e) =>
-                          setZTestPopulationStdDev(parseFloat(e.target.value))
-                        }
-                      />
-                    </div>
+                    {zTestType === "single" ? (
+                      <>
+                        <div className="test-param-item">
+                          <label>Population Mean:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationMean}
+                            onChange={(e) =>
+                              setZTestPopulationMean(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                        <div className="test-param-item">
+                          <label>Population Std Dev:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationStdDev}
+                            onChange={(e) =>
+                              setZTestPopulationStdDev(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="test-param-item">
+                          <label>Population Mean 1:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationMean1}
+                            onChange={(e) =>
+                              setZTestPopulationMean1(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                        <div className="test-param-item">
+                          <label>Population Mean 2:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationMean2}
+                            onChange={(e) =>
+                              setZTestPopulationMean2(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                        <div className="test-param-item">
+                          <label>Population Std Dev 1:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationStdDev1}
+                            onChange={(e) =>
+                              setZTestPopulationStdDev1(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                        <div className="test-param-item">
+                          <label>Population Std Dev 2:</label>
+                          <input
+                            type="number"
+                            value={zTestPopulationStdDev2}
+                            onChange={(e) =>
+                              setZTestPopulationStdDev2(parseFloat(e.target.value))
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
                   </div>
                   <div className="test-controls">
                     <button
@@ -1433,15 +1500,15 @@ function StatsPanel({
                           alert("Please select at least one column.");
                           return;
                         }
-                        const params = {
-                          alpha: zTestAlpha,
-                          alternative: zTestAlternative,
-                          populationMean: zTestPopulationMean,
-                          populationStdDev: zTestPopulationStdDev,
-                        };
-                        selectedColumns.forEach((column) =>
-                          zTest(column, params)
-                        );
+                        if (zTestType === "two-sample" && selectedColumns.length !== 2) {
+                          alert("Please select exactly two columns for two-sample Z-test.");
+                          return;
+                        }
+                        if (zTestType === "single" && selectedColumns.length !== 1) {
+                          alert("Please select exactly one column for single sample Z-test.");
+                          return;
+                        }
+                        zTest(selectedColumns);
                       }}
                       className="run-test-button"
                     >
@@ -1453,19 +1520,25 @@ function StatsPanel({
                       <table className="t-test-table">
                         <thead>
                           <tr>
-                            <th>Column</th>
+                            <th>Test Type</th>
+                            <th>Columns</th>
                             <th>Z-Statistic</th>
                             <th>p-Value</th>
                             <th>Decision</th>
-                            <th>Sample Mean</th>
-                            <th>Sample Size</th>
+                            <th>Sample Mean(s)</th>
+                            <th>Sample Size(s)</th>
                             <th>Delete</th>
                           </tr>
                         </thead>
                         <tbody>
                           {zTestData.map((result) => (
                             <tr key={result.id}>
-                              <td>{result.column}</td>
+                              <td>{result.testType === "single" ? "Single Sample" : "Two Sample"}</td>
+                              <td>
+                                {Array.isArray(result.columns) 
+                                  ? result.columns.join(" vs ") 
+                                  : result.column || result.columns}
+                              </td>
                               <td>
                                 {result.zStatistic?.toFixed(3) ??
                                   result.zValue?.toFixed(3) ??
@@ -1473,8 +1546,18 @@ function StatsPanel({
                               </td>
                               <td>{result.pValue?.toFixed(3) ?? ""}</td>
                               <td>{result.decision ?? result.result ?? ""}</td>
-                              <td>{result.sampleMean?.toFixed(3) ?? ""}</td>
-                              <td>{result.sampleSize ?? result.n ?? ""}</td>
+                              <td>
+                                {result.testType === "single" 
+                                  ? (result.sampleMean?.toFixed(3) ?? "")
+                                  : (result.sampleMean1?.toFixed(3) ?? "") + " / " + (result.sampleMean2?.toFixed(3) ?? "")
+                                }
+                              </td>
+                              <td>
+                                {result.testType === "single"
+                                  ? (result.sampleSize ?? result.n ?? "")
+                                  : (result.sampleSize1 ?? result.n1 ?? "") + " / " + (result.sampleSize2 ?? result.n2 ?? "")
+                                }
+                              </td>
                               <td>
                                 <button
                                   style={{
@@ -1617,6 +1700,16 @@ StatsPanel.propTypes = {
   setZTestPopulationMean: PropTypes.func.isRequired,
   zTestPopulationStdDev: PropTypes.number.isRequired,
   setZTestPopulationStdDev: PropTypes.func.isRequired,
+  zTestType: PropTypes.string.isRequired,
+  setZTestType: PropTypes.func.isRequired,
+  zTestPopulationMean1: PropTypes.number.isRequired,
+  setZTestPopulationMean1: PropTypes.func.isRequired,
+  zTestPopulationMean2: PropTypes.number.isRequired,
+  setZTestPopulationMean2: PropTypes.func.isRequired,
+  zTestPopulationStdDev1: PropTypes.number.isRequired,
+  setZTestPopulationStdDev1: PropTypes.func.isRequired,
+  zTestPopulationStdDev2: PropTypes.number.isRequired,
+  setZTestPopulationStdDev2: PropTypes.func.isRequired,
 };
 
 export default StatsPanel;

@@ -92,6 +92,11 @@ function App() {
   const [zTestAlternative, setZTestAlternative] = useState("two-tailed");
   const [zTestPopulationMean, setZTestPopulationMean] = useState(0);
   const [zTestPopulationStdDev, setZTestPopulationStdDev] = useState(1);
+  const [zTestType, setZTestType] = useState("single"); // "single" or "two-sample"
+  const [zTestPopulationMean1, setZTestPopulationMean1] = useState(0);
+  const [zTestPopulationMean2, setZTestPopulationMean2] = useState(0);
+  const [zTestPopulationStdDev1, setZTestPopulationStdDev1] = useState(1);
+  const [zTestPopulationStdDev2, setZTestPopulationStdDev2] = useState(1);
 
   const handleDataLoaded = (jsonData) => {
     setData(jsonData);
@@ -467,34 +472,67 @@ function App() {
   };
 
   // Z-Test function
-  const zTest = async (column, params = {}) => {
+  const zTest = async (columns, params = {}) => {
     const fileName = window.localStorage.getItem("fileName");
     if (!fileName) {
       console.error("fileName is missing in localStorage");
       return;
     }
 
-    const testParams = {
-      fileName,
-      headerNames: [column.trim()],
-      alpha: zTestAlpha,
-      alternative: zTestAlternative,
-      populationMean: zTestPopulationMean,
-      populationStdDev: zTestPopulationStdDev,
-      ...params,
-    };
+    // Determine test type based on number of columns and selected type
+    let testType = zTestType;
+    let endpoint = "";
+    let testParams = {};
+
+    if (columns.length === 1 || testType === "single") {
+      // Single sample z-test
+      testType = "single";
+      endpoint = "http://localhost:3000/api/v1/tests/z-test";
+      testParams = {
+        fileName,
+        headerNames: [columns[0].trim()],
+        alpha: zTestAlpha,
+        alternative: zTestAlternative,
+        populationMean: zTestPopulationMean,
+        populationStdDev: zTestPopulationStdDev,
+        ...params,
+      };
+    } else if (columns.length === 2 || testType === "two-sample") {
+      // Two sample z-test
+      testType = "two-sample";
+      endpoint = "http://localhost:3000/api/v1/tests/two-sample-z-test";
+      testParams = {
+        fileName,
+        headerNames: columns,
+        alpha: zTestAlpha,
+        alternative: zTestAlternative,
+        populationMean1: zTestPopulationMean1,
+        populationMean2: zTestPopulationMean2,
+        populationStdDev1: zTestPopulationStdDev1,
+        populationStdDev2: zTestPopulationStdDev2,
+        ...params,
+      };
+    } else {
+      console.error("Z-test requires exactly 1 or 2 columns");
+      return;
+    }
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/tests/z-test",
-        testParams
-      );
+      const res = await axios.post(endpoint, testParams);
       const result = res.data.result || res.data.data || res.data;
       if (!result || typeof result !== "object") {
         console.error("Unexpected z-test response format:", res.data);
         return;
       }
-      setZTestData((prev) => [...prev, { ...result, column, id: Date.now() }]);
+      setZTestData((prev) => [
+        ...prev,
+        {
+          ...result,
+          columns: columns.length === 1 ? columns[0] : columns,
+          testType: testType,
+          id: Date.now(),
+        },
+      ]);
     } catch (error) {
       console.error("Error performing z-test:", error);
     }
@@ -669,6 +707,16 @@ function App() {
                 setZTestPopulationMean={setZTestPopulationMean}
                 zTestPopulationStdDev={zTestPopulationStdDev}
                 setZTestPopulationStdDev={setZTestPopulationStdDev}
+                zTestType={zTestType}
+                setZTestType={setZTestType}
+                zTestPopulationMean1={zTestPopulationMean1}
+                setZTestPopulationMean1={setZTestPopulationMean1}
+                zTestPopulationMean2={zTestPopulationMean2}
+                setZTestPopulationMean2={setZTestPopulationMean2}
+                zTestPopulationStdDev1={zTestPopulationStdDev1}
+                setZTestPopulationStdDev1={setZTestPopulationStdDev1}
+                zTestPopulationStdDev2={zTestPopulationStdDev2}
+                setZTestPopulationStdDev2={setZTestPopulationStdDev2}
               />
             </div>
           }

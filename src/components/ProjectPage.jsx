@@ -83,6 +83,16 @@ function ProjectPage(props) {
     setZTestPopulationMean,
     zTestPopulationStdDev,
     setZTestPopulationStdDev,
+    zTestType,
+    setZTestType,
+    zTestPopulationMean1,
+    setZTestPopulationMean1,
+    zTestPopulationMean2,
+    setZTestPopulationMean2,
+    zTestPopulationStdDev1,
+    setZTestPopulationStdDev1,
+    zTestPopulationStdDev2,
+    setZTestPopulationStdDev2,
   } = props;
 
   return (
@@ -170,6 +180,16 @@ function ProjectPage(props) {
             setZTestPopulationMean={setZTestPopulationMean}
             zTestPopulationStdDev={zTestPopulationStdDev}
             setZTestPopulationStdDev={setZTestPopulationStdDev}
+            zTestType={zTestType}
+            setZTestType={setZTestType}
+            zTestPopulationMean1={zTestPopulationMean1}
+            setZTestPopulationMean1={setZTestPopulationMean1}
+            zTestPopulationMean2={zTestPopulationMean2}
+            setZTestPopulationMean2={setZTestPopulationMean2}
+            zTestPopulationStdDev1={zTestPopulationStdDev1}
+            setZTestPopulationStdDev1={setZTestPopulationStdDev1}
+            zTestPopulationStdDev2={zTestPopulationStdDev2}
+            setZTestPopulationStdDev2={setZTestPopulationStdDev2}
           />
         </>
       )}
