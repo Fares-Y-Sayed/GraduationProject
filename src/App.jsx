@@ -6,7 +6,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import HomePage from "./components/HomePage";
-import ChartDisplay from "./components/ChartDisplay";
 import {
   mean,
   variance,
@@ -26,14 +25,7 @@ import {
   Legend,
 } from "chart.js";
 import axios from "axios";
-import FileUpload from "./components/FileUpload";
-import DataPreview from "./components/DataPreview";
-import TestSelector from "./components/TestSelector";
-import ColumnSelector from "./components/ColumnSelector";
-import StatsPanel from "./components/StatsPanel";
 import { VARIABLE_TYPES } from "./constants";
-import Typewriter from "./components/Typewriter";
-import { FaChartLine, FaMagic, FaTrash } from "react-icons/fa";
 import "./App.css";
 import ProjectPage from "./components/ProjectPage";
 
@@ -85,6 +77,7 @@ function App() {
   const [tTestAlpha, setTTestAlpha] = useState(0.05);
   const [tTestAlternative, setTTestAlternative] = useState("two-tailed");
   const [tTestPopulationMean, setTTestPopulationMean] = useState(7.5);
+  const [tTestType, setTTestType] = useState("single"); // "single", "paired", "independent"
   const [regressionExplanation, setRegressionExplanation] = useState("");
   const [regressionExplaining, setRegressionExplaining] = useState(false);
 
@@ -203,35 +196,65 @@ function App() {
     [data]
   );
 
-  const singleTTest = async (column, params = {}) => {
+  const tTest = async (columns, params = {}) => {
     const fileName = window.localStorage.getItem("fileName");
     if (!fileName) return console.error("fileName is missing in localStorage");
 
-    const testParams = {
-      ...params,
-      fileName: fileName,
-      headerName: column.trim(),
-    };
+    // Determine test type based on number of columns and selected type
+    let testType = tTestType;
+    let endpoint = "";
+    let testParams = {};
+
+    if (columns.length === 1) {
+      // Single sample t-test
+      testType = "single";
+      endpoint = "http://localhost:3000/api/v1/tests/single-t-test";
+      testParams = {
+        ...params,
+        fileName: fileName,
+        headerName: columns[0].trim(),
+      };
+    } else if (columns.length === 2) {
+      // Two sample t-test (paired or independent)
+      if (testType === "paired") {
+        endpoint = "http://localhost:3000/api/v1/tests/paired-t-test";
+      } else if (testType === "independent") {
+        endpoint = "http://localhost:3000/api/v1/tests/independent-t-test";
+      } else {
+        // Default to independent if type is not specified
+        endpoint = "http://localhost:3000/api/v1/tests/independent-t-test";
+        testType = "independent";
+      }
+      testParams = {
+        ...params,
+        fileName: fileName,
+        headerNames: columns,
+      };
+    } else {
+      console.error("T-test requires exactly 1 or 2 columns");
+      return;
+    }
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/tests/single-t-test",
-        testParams
-      );
+      const res = await axios.post(endpoint, testParams);
       // Defensive: handle both .data.result and .data.data
       const result = res.data.result || res.data.data || res.data;
       if (!result || typeof result !== "object") {
         console.error("Unexpected t-test response format:", res.data);
         return;
       }
-      setTTestData((prev) => [...prev, { ...result, column, id: Date.now() }]);
+      setTTestData((prev) => [
+        ...prev,
+        {
+          ...result,
+          columns: columns.length === 1 ? columns[0] : columns,
+          testType: testType,
+          id: Date.now(),
+        },
+      ]);
     } catch (error) {
-      console.error("Error performing single t-test:", error);
+      console.error("Error performing t-test:", error);
     }
-  };
-
-  const handleDeleteTTest = (id) => {
-    setTTestData((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleDeleteRegression = (id) => {
@@ -592,7 +615,7 @@ function App() {
                 animatingStats={animatingStats}
                 chartType={chartType}
                 setChartType={setChartType}
-                singleTTest={singleTTest}
+                singleTTest={tTest}
                 tTestData={tTestData}
                 setTTestData={setTTestData}
                 tTestAlpha={tTestAlpha}
@@ -601,6 +624,8 @@ function App() {
                 setTTestAlternative={setTTestAlternative}
                 tTestPopulationMean={tTestPopulationMean}
                 setTTestPopulationMean={setTTestPopulationMean}
+                tTestType={tTestType}
+                setTTestType={setTTestType}
                 regression={regression}
                 regressionData={regressionData}
                 kolmogorovTest={kolmogorovTest}

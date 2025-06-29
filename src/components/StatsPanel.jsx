@@ -4,14 +4,7 @@ import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
 import HistogramChart from "./HistogramChart";
 import Typewriter, { ExplanationTypewriter } from "./Typewriter";
-import {
-  FaFlask,
-  FaChartBar,
-  FaMagic,
-  FaTrash,
-  FaPlay,
-  FaCheckCircle,
-} from "react-icons/fa";
+import { FaFlask, FaMagic, FaTrash, FaPlay } from "react-icons/fa";
 // import {handleDeleteTTest} from "../App"
 
 function StatsPanel({
@@ -30,6 +23,8 @@ function StatsPanel({
   singleTTest,
   tTestData,
   setTTestData, // Make sure this is passed from App.jsx
+  tTestType,
+  setTTestType,
 
   regressionData,
   kolmogorovTest,
@@ -334,6 +329,17 @@ function StatsPanel({
                   </h2>
                   <div className="test-parameters">
                     <div className="test-param-item">
+                      <label>Test Type:</label>
+                      <select
+                        value={tTestType}
+                        onChange={(e) => setTTestType(e.target.value)}
+                      >
+                        <option value="single">Single Sample</option>
+                        <option value="paired">Paired Sample</option>
+                        <option value="independent">Independent Sample</option>
+                      </select>
+                    </div>
+                    <div className="test-param-item">
                       <label>Alpha Level:</label>
                       <input
                         type="number"
@@ -355,16 +361,18 @@ function StatsPanel({
                         <option value="greater">Greater</option>
                       </select>
                     </div>
-                    <div className="test-param-item">
-                      <label>Population Mean:</label>
-                      <input
-                        type="number"
-                        value={tTestPopulationMean}
-                        onChange={(e) =>
-                          setTTestPopulationMean(parseFloat(e.target.value))
-                        }
-                      />
-                    </div>
+                    {tTestType === "single" && (
+                      <div className="test-param-item">
+                        <label>Population Mean:</label>
+                        <input
+                          type="number"
+                          value={tTestPopulationMean}
+                          onChange={(e) =>
+                            setTTestPopulationMean(parseFloat(e.target.value))
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="test-controls">
                     <button
@@ -373,14 +381,38 @@ function StatsPanel({
                           alert("Please select at least one column.");
                           return;
                         }
+
+                        // Validate column selection based on test type
+                        if (
+                          tTestType === "single" &&
+                          selectedColumns.length !== 1
+                        ) {
+                          alert(
+                            "Single sample t-test requires exactly 1 column."
+                          );
+                          return;
+                        }
+                        if (
+                          (tTestType === "paired" ||
+                            tTestType === "independent") &&
+                          selectedColumns.length !== 2
+                        ) {
+                          alert(
+                            `${
+                              tTestType === "paired" ? "Paired" : "Independent"
+                            } sample t-test requires exactly 2 columns.`
+                          );
+                          return;
+                        }
+
                         const params = {
                           alpha: tTestAlpha,
                           alternative: tTestAlternative,
-                          populationMean: tTestPopulationMean,
+                          ...(tTestType === "single" && {
+                            populationMean: tTestPopulationMean,
+                          }),
                         };
-                        selectedColumns.forEach((column) =>
-                          singleTTest(column, params)
-                        );
+                        singleTTest(selectedColumns, params);
                       }}
                       className="run-test-button"
                     >
@@ -392,7 +424,8 @@ function StatsPanel({
                       <table className="t-test-table">
                         <thead>
                           <tr>
-                            <th>Column</th>
+                            <th>Test Type</th>
+                            <th>Columns</th>
                             <th>t-Statistic</th>
                             <th>p-Value</th>
                             <th>Decision</th>
@@ -402,12 +435,31 @@ function StatsPanel({
                         </thead>
                         <tbody>
                           {tTestData.map((result) => (
-                            <tr key={result.id ?? result.column}>
-                              <td>{result.column}</td>
-                              <td>{result.tStatistic?.toFixed(3) ?? ""}</td>
+                            <tr key={result.id}>
+                              <td>
+                                {result.testType === "single"
+                                  ? "Single Sample"
+                                  : result.testType === "paired"
+                                  ? "Paired Sample"
+                                  : result.testType === "independent"
+                                  ? "Independent Sample"
+                                  : "Unknown"}
+                              </td>
+                              <td>
+                                {Array.isArray(result.columns)
+                                  ? result.columns.join(", ")
+                                  : result.columns}
+                              </td>
+                              <td>
+                                {result.tStatistic?.toFixed(3) ??
+                                  result.tValue?.toFixed(3) ??
+                                  ""}
+                              </td>
                               <td>{result.pValue?.toFixed(3) ?? ""}</td>
-                              <td>{result.decision}</td>
-                              <td>{result.degreesOfFreedom}</td>
+                              <td>{result.decision ?? result.result ?? ""}</td>
+                              <td>
+                                {result.degreesOfFreedom ?? result.df ?? ""}
+                              </td>
                               <td>
                                 <button
                                   style={{
@@ -416,11 +468,7 @@ function StatsPanel({
                                     cursor: "pointer",
                                     color: "#ef4444",
                                   }}
-                                  onClick={() =>
-                                    handleDeleteTTest(
-                                      result.id ?? result.column
-                                    )
-                                  }
+                                  onClick={() => handleDeleteTTest(result.id)}
                                   title="Delete"
                                 >
                                   <FaTrash style={{ marginRight: 6 }} />
@@ -1526,6 +1574,8 @@ StatsPanel.propTypes = {
   singleTTest: PropTypes.func.isRequired,
   tTestData: PropTypes.array.isRequired,
   setTTestData: PropTypes.func.isRequired,
+  tTestType: PropTypes.string.isRequired,
+  setTTestType: PropTypes.func.isRequired,
   kolmogorovTest: PropTypes.func.isRequired,
   kolmogorovData: PropTypes.array.isRequired,
   handleDeleteKolmogorov: PropTypes.func.isRequired,

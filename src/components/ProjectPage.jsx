@@ -38,6 +38,8 @@ function ProjectPage(props) {
     setTTestAlternative,
     tTestPopulationMean,
     setTTestPopulationMean,
+    tTestType,
+    setTTestType,
     regression,
     regressionData,
     kolmogorovTest,
@@ -129,6 +131,8 @@ function ProjectPage(props) {
             setTTestAlternative={setTTestAlternative}
             tTestPopulationMean={tTestPopulationMean}
             setTTestPopulationMean={setTTestPopulationMean}
+            tTestType={tTestType}
+            setTTestType={setTTestType}
             regression={regression}
             regressionData={regressionData}
             kolmogorovTest={kolmogorovTest}
