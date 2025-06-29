@@ -85,7 +85,9 @@ function ProjectPage(props) {
 
   return (
     <div className="container">
-      <h1>Quick Stats</h1>
+      <h1>
+        Quick Statistics Analysis <br /> (QSA)
+      </h1>
       <FileUpload onDataLoaded={handleDataLoaded} />
       {data && (
         <>
@@ -310,9 +312,7 @@ function ProjectPage(props) {
               {regressionExplanation && (
                 <div className="test-explanation">
                   <h3 className="explanation-header">
-                    <FaMagic
-                      style={{ marginRight: 8, color: "#10b981" }}
-                    />
+                    <FaMagic style={{ marginRight: 8, color: "#10b981" }} />
                     Explanation using AI
                   </h3>
                   <ExplanationTypewriter text={regressionExplanation} />
