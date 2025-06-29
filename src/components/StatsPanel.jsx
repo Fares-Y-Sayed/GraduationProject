@@ -3,8 +3,15 @@ import PropTypes from "prop-types";
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
 import HistogramChart from "./HistogramChart";
-import Typewriter from "./Typewriter";
-import { FaFlask, FaChartBar, FaMagic, FaTrash, FaPlay, FaCheckCircle } from "react-icons/fa";
+import Typewriter, { ExplanationTypewriter } from "./Typewriter";
+import {
+  FaFlask,
+  FaChartBar,
+  FaMagic,
+  FaTrash,
+  FaPlay,
+  FaCheckCircle,
+} from "react-icons/fa";
 // import {handleDeleteTTest} from "../App"
 
 function StatsPanel({
@@ -47,6 +54,30 @@ function StatsPanel({
   setTTestAlternative,
   tTestPopulationMean,
   setTTestPopulationMean,
+
+  uTest,
+  uTestData,
+  setUTestData,
+  chiSquareTest,
+  chiSquareData,
+  setChiSquareData,
+  handleDeleteChiSquare,
+  chiSquareAlpha,
+  setChiSquareAlpha,
+  chiSquareTestType,
+  setChiSquareTestType,
+  zTest,
+  zTestData,
+  setZTestData,
+  handleDeleteZTest,
+  zTestAlpha,
+  setZTestAlpha,
+  zTestAlternative,
+  setZTestAlternative,
+  zTestPopulationMean,
+  setZTestPopulationMean,
+  zTestPopulationStdDev,
+  setZTestPopulationStdDev,
 }) {
   const handleDeleteTTest = (idOrColumn) => {
     setTTestData((prev) =>
@@ -155,6 +186,12 @@ function StatsPanel({
     useState(false);
   const [anovaExplanation, setAnovaExplanation] = useState("");
   const [anovaExplaining, setAnovaExplaining] = useState(false);
+  const [uTestExplanation, setUTestExplanation] = useState("");
+  const [uTestExplaining, setUTestExplaining] = useState(false);
+  const [chiSquareExplanation, setChiSquareExplanation] = useState("");
+  const [chiSquareExplaining, setChiSquareExplaining] = useState(false);
+  const [zTestExplanation, setZTestExplanation] = useState("");
+  const [zTestExplaining, setZTestExplaining] = useState(false);
 
   return (
     selectedColumns.length > 0 && (
@@ -222,10 +259,34 @@ function StatsPanel({
               >
                 Ranked Sign Test
               </button>
+              <button
+                className={`tab-button ${
+                  activeSubTab === "u-test" ? "active" : ""
+                }`}
+                onClick={() => setActiveSubTab("u-test")}
+              >
+                U-Test
+              </button>
+              <button
+                className={`tab-button ${
+                  activeSubTab === "chi-square" ? "active" : ""
+                }`}
+                onClick={() => setActiveSubTab("chi-square")}
+              >
+                Chi-Square
+              </button>
+              <button
+                className={`tab-button ${
+                  activeSubTab === "z-test" ? "active" : ""
+                }`}
+                onClick={() => setActiveSubTab("z-test")}
+              >
+                Z-Test
+              </button>
             </>
           )}
         </div>
-
+        <div key={activeSubTab} className="tab-fade">
         {/* Descriptive Tab */}
         {activeTab === "descriptive" && (
           <>
@@ -267,7 +328,10 @@ function StatsPanel({
             {/* T-Test SubTab */}
             {activeSubTab === "t-test" && (
               <div className="tab-content">
-                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />T-Test Analysis</h2>
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  T-Test Analysis
+                </h2>
                 <div className="test-parameters">
                   <div className="test-param-item">
                     <label>Alpha Level:</label>
@@ -320,7 +384,7 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    <FaPlay style={{marginRight: 6}} /> Run T-Test
+                    <FaPlay style={{ marginRight: 6 }} /> Run T-Test
                   </button>
                 </div>
                 {tTestData && tTestData.length > 0 && (
@@ -357,7 +421,7 @@ function StatsPanel({
                                 }
                                 title="Delete"
                               >
-                                <FaTrash style={{marginRight: 6}} />
+                                <FaTrash style={{ marginRight: 6 }} />
                               </button>
                             </td>
                           </tr>
@@ -403,13 +467,18 @@ function StatsPanel({
                         setTTestExplaining(false);
                       }}
                     >
-                      <FaMagic style={{marginRight: 6}} />
+                      <FaMagic style={{ marginRight: 6 }} />
                       {tTestExplaining ? "Explaining..." : "Explain Results"}
                     </button>
                     {tTestExplanation && (
                       <div className="test-explanation">
-                        <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
-                        <Typewriter text={tTestExplanation} />
+                        <h3 className="explanation-header">
+                          <FaMagic
+                            style={{ marginRight: 8, color: "#10b981" }}
+                          />
+                          Explanation using AI
+                        </h3>
+                        <ExplanationTypewriter text={tTestExplanation} />
                       </div>
                     )}
                   </div>
@@ -420,7 +489,10 @@ function StatsPanel({
             {/* Kolmogorov SubTab */}
             {activeSubTab === "kolmogorov" && (
               <div className="tab-content">
-                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Kolmogorov-Smirnov Test</h2>
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  Kolmogorov-Smirnov Test
+                </h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -432,7 +504,7 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    <FaPlay style={{marginRight: 6}} /> Run Kolmogorov Test
+                    <FaPlay style={{ marginRight: 6 }} /> Run Kolmogorov Test
                   </button>
                 </div>
                 {kolmogorovData && kolmogorovData.length > 0 && (
@@ -470,7 +542,7 @@ function StatsPanel({
                               onClick={() => handleDeleteKolmogorov(result.id)}
                               title="Delete"
                             >
-                              <FaTrash style={{marginRight: 6}} />
+                              <FaTrash style={{ marginRight: 6 }} />
                             </button>
                           </td>
                         </tr>
@@ -517,15 +589,20 @@ function StatsPanel({
                         setKolmogorovExplaining(false);
                       }}
                     >
-                      <FaMagic style={{marginRight: 6}} />
+                      <FaMagic style={{ marginRight: 6 }} />
                       {kolmogorovExplaining
                         ? "Explaining..."
                         : "Explain Results"}
                     </button>
                     {kolmogorovExplanation && (
                       <div className="test-explanation">
-                        <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
-                        <Typewriter text={kolmogorovExplanation} />
+                        <h3 className="explanation-header">
+                          <FaMagic
+                            style={{ marginRight: 8, color: "#10b981" }}
+                          />
+                          Explanation using AI
+                        </h3>
+                        <ExplanationTypewriter text={kolmogorovExplanation} />
                       </div>
                     )}
                   </div>
@@ -536,13 +613,16 @@ function StatsPanel({
             {/* ANOVA SubTab */}
             {activeSubTab === "anova" && (
               <div className="tab-content">
-                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />ANOVA Test</h2>
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  ANOVA Test
+                </h2>
                 <div className="test-controls">
                   <button
                     onClick={() => anovaTest(selectedColumns)}
                     className="run-test-button"
                   >
-                    <FaPlay style={{marginRight: 6}} /> Run ANOVA Test
+                    <FaPlay style={{ marginRight: 6 }} /> Run ANOVA Test
                   </button>
                 </div>
                 {anovaData && anovaData.length > 0 && (
@@ -586,7 +666,7 @@ function StatsPanel({
                               onClick={() => handleDeleteAnova(result.id)}
                               title="Delete"
                             >
-                              <FaTrash style={{marginRight: 6}} />
+                              <FaTrash style={{ marginRight: 6 }} />
                             </button>
                           </td>
                         </tr>
@@ -594,6 +674,11 @@ function StatsPanel({
                     </tbody>
                   </table>
                 )}
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "anova" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
                 <div style={{ marginTop: "1rem" }}>
                   <button
                     className="run-test-button"
@@ -625,28 +710,29 @@ function StatsPanel({
                       setAnovaExplaining(false);
                     }}
                   >
-                    <FaMagic style={{marginRight: 6}} />
+                    <FaMagic style={{ marginRight: 6 }} />
                     {anovaExplaining ? "Explaining..." : "Explain Results"}
                   </button>
                   {anovaExplanation && (
                     <div className="test-explanation">
-                      <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
-                      <Typewriter text={anovaExplanation} />
+                      <h3 className="explanation-header">
+                        <FaMagic style={{ marginRight: 8, color: "#10b981" }} />
+                        Explanation using AI
+                      </h3>
+                      <ExplanationTypewriter text={anovaExplanation} />
                     </div>
                   )}
                 </div>
-                {data &&
-                  selectedColumns.length > 0 &&
-                  activeSubTab === "anova" && (
-                    <HistogramChart data={data} columns={selectedColumns} />
-                  )}
               </div>
             )}
 
             {/* Sign Test SubTab */}
             {activeSubTab === "sign" && (
               <div className="tab-content">
-                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Sign Test</h2>
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  Sign Test
+                </h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -660,13 +746,16 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    <FaPlay style={{marginRight: 6}} /> Run Sign Test
+                    <FaPlay style={{ marginRight: 6 }} /> Run Sign Test
                   </button>
                 </div>
                 {signTestData && signTestData.result && (
                   <>
                     <div style={{ marginTop: "2rem" }}>
-                      <h3><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Sign Test Results</h3>
+                      <h3>
+                        <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                        Sign Test Results
+                      </h3>
                       <table className="t-test-table">
                         <thead>
                           <tr>
@@ -706,7 +795,7 @@ function StatsPanel({
                                 onClick={() => setSignTestData(null)}
                                 title="Delete"
                               >
-                                <FaTrash style={{marginRight: 6}} />
+                                <FaTrash style={{ marginRight: 6 }} />
                               </button>
                             </td>
                           </tr>
@@ -746,15 +835,20 @@ function StatsPanel({
                           setSignTestExplaining(false);
                         }}
                       >
-                        <FaMagic style={{marginRight: 6}} />
+                        <FaMagic style={{ marginRight: 6 }} />
                         {signTestExplaining
                           ? "Explaining..."
                           : "Explain Results"}
                       </button>
                       {signTestExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
-                          <Typewriter text={signTestExplanation} />
+                          <h3 className="explanation-header">
+                            <FaMagic
+                              style={{ marginRight: 8, color: "#10b981" }}
+                            />
+                            Explanation using AI
+                          </h3>
+                          <ExplanationTypewriter text={signTestExplanation} />
                         </div>
                       )}
                     </div>
@@ -766,7 +860,10 @@ function StatsPanel({
             {/* Ranked Sign-Test SubTab */}
             {activeSubTab === "rankedSign" && (
               <div className="tab-content">
-                <h2><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Ranked Sign Test</h2>
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  Ranked Sign Test
+                </h2>
                 <div className="test-controls">
                   <button
                     onClick={() => {
@@ -780,13 +877,16 @@ function StatsPanel({
                     }}
                     className="run-test-button"
                   >
-                    <FaPlay style={{marginRight: 6}} /> Run Ranked Sign Test
+                    <FaPlay style={{ marginRight: 6 }} /> Run Ranked Sign Test
                   </button>
                 </div>
                 {rankedSignTestData && rankedSignTestData.result && (
                   <>
                     <div style={{ marginTop: "2rem" }}>
-                      <h3><FaFlask style={{marginRight: 8, color: '#6366f1'}} />Ranked Sign Test Results</h3>
+                      <h3>
+                        <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                        Ranked Sign Test Results
+                      </h3>
                       <table className="t-test-table">
                         <thead>
                           <tr>
@@ -818,12 +918,8 @@ function StatsPanel({
                             <td>
                               {String(rankedSignTestData.result.significant)}
                             </td>
-                            <td>
-                              {rankedSignTestData.result.positiveRankSum}
-                            </td>
-                            <td>
-                              {rankedSignTestData.result.negativeRankSum}
-                            </td>
+                            <td>{rankedSignTestData.result.positiveRankSum}</td>
+                            <td>{rankedSignTestData.result.negativeRankSum}</td>
                             <td>{rankedSignTestData.result.ties}</td>
                             <td>
                               <button
@@ -836,7 +932,7 @@ function StatsPanel({
                                 onClick={() => setRankedSignTestData(null)}
                                 title="Delete"
                               >
-                                <FaTrash style={{marginRight: 6}} />
+                                <FaTrash style={{ marginRight: 6 }} />
                               </button>
                             </td>
                           </tr>
@@ -876,15 +972,20 @@ function StatsPanel({
                           setRankedSignTestExplaining(false);
                         }}
                       >
-                        <FaMagic style={{marginRight: 6}} />
+                        <FaMagic style={{ marginRight: 6 }} />
                         {rankedSignTestExplaining
                           ? "Explaining..."
                           : "Explain Results"}
                       </button>
                       {rankedSignTestExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header"><FaMagic style={{marginRight: 8, color: '#10b981'}} />Explanation using AI</h3>
-                          <Typewriter text={rankedSignTestExplanation} />
+                          <h3 className="explanation-header">
+                            <FaMagic
+                              style={{ marginRight: 8, color: "#10b981" }}
+                            />
+                            Explanation using AI
+                          </h3>
+                          <ExplanationTypewriter text={rankedSignTestExplanation} />
                         </div>
                       )}
                     </div>
@@ -892,8 +993,452 @@ function StatsPanel({
                 )}
               </div>
             )}
+
+            {/* U-Test SubTab */}
+            {activeSubTab === "u-test" && (
+              <div className="tab-content">
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  U-Test
+                </h2>
+                <div className="test-controls">
+                  <button
+                    onClick={() => {
+                      if (selectedColumns.length !== 2) {
+                        alert("Please select exactly two columns for U-Test.");
+                        return;
+                      }
+                      uTest(selectedColumns);
+                    }}
+                    className="run-test-button"
+                  >
+                    <FaPlay style={{ marginRight: 6 }} /> Run U-Test
+                  </button>
+                </div>
+                {uTestData && uTestData.result && (
+                  <>
+                    <div style={{ marginTop: "2rem" }}>
+                      <h3>
+                        <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                        U-Test Results
+                      </h3>
+                      <table className="t-test-table">
+                        <thead>
+                          <tr>
+                            <th>U</th>
+                            <th>U1</th>
+                            <th>U2</th>
+                            <th>p-Value</th>
+                            <th>Significant</th>
+                            <th>n1</th>
+                            <th>n2</th>
+                            <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{uTestData.result.U}</td>
+                            <td>{uTestData.result.U1}</td>
+                            <td>{uTestData.result.U2}</td>
+                            <td>{uTestData.result.pValue}</td>
+                            <td>{String(uTestData.result.significant)}</td>
+                            <td>{uTestData.result.n1}</td>
+                            <td>{uTestData.result.n2}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() => setUTestData(null)}
+                                title="Delete"
+                              >
+                                <FaTrash style={{ marginRight: 6 }} />
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div style={{ marginTop: "1rem" }}>
+                      <button
+                        className="run-test-button"
+                        disabled={uTestExplaining}
+                        onClick={async () => {
+                          setUTestExplaining(true);
+                          setUTestExplanation("");
+                          const prompt = `Explain the following U-Test results in simple terms in three lines:\n${JSON.stringify(
+                            uTestData.result,
+                            null,
+                            2
+                          )}`;
+                          try {
+                            const response = await fetch(
+                              "http://localhost:4000/generate",
+                              {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt }),
+                              }
+                            );
+                            const data = await response.json();
+                            setUTestExplanation(
+                              data.generatedText || "No explanation received."
+                            );
+                          } catch (error) {
+                            setUTestExplanation("Failed to get explanation.");
+                          }
+                          setUTestExplaining(false);
+                        }}
+                      >
+                        <FaMagic style={{ marginRight: 6 }} />
+                        {uTestExplaining ? "Explaining..." : "Explain Results"}
+                      </button>
+                      {uTestExplanation && (
+                        <div className="test-explanation">
+                          <h3 className="explanation-header">
+                            <FaMagic
+                              style={{ marginRight: 8, color: "#10b981" }}
+                            />
+                            Explanation using AI
+                          </h3>
+                          <ExplanationTypewriter text={uTestExplanation} />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Chi-Square Test SubTab */}
+            {activeSubTab === "chi-square" && (
+              <div className="tab-content">
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  Chi-Square Test
+                </h2>
+                <div className="test-parameters">
+                  <div className="test-param-item">
+                    <label>Alpha Level:</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={chiSquareAlpha}
+                      onChange={(e) =>
+                        setChiSquareAlpha(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className="test-param-item">
+                    <label>Test Type:</label>
+                    <select
+                      value={chiSquareTestType}
+                      onChange={(e) => setChiSquareTestType(e.target.value)}
+                    >
+                      <option value="independence">Test of Independence</option>
+                      <option value="goodness-of-fit">Goodness of Fit</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="test-controls">
+                  <button
+                    onClick={() => {
+                      if (chiSquareTestType === "independence" && selectedColumns.length !== 2) {
+                        alert("Please select exactly two columns for Chi-Square test of independence.");
+                        return;
+                      }
+                      if (chiSquareTestType === "goodness-of-fit" && selectedColumns.length !== 1) {
+                        alert("Please select exactly one column for Chi-Square goodness of fit test.");
+                        return;
+                      }
+                      const type = chiSquareTestType === "goodness-of-fit" ? "goodness-of-fit" : chiSquareTestType;
+                      chiSquareTest(selectedColumns, type);
+                    }}
+                    className="run-test-button"
+                  >
+                    <FaPlay style={{ marginRight: 6 }} /> Run Chi-Square Test
+                  </button>
+                </div>
+                {chiSquareData && chiSquareData.length > 0 && (
+                  <div className="t-test-results">
+                    <table className="t-test-table">
+                      <thead>
+                        <tr>
+                          <th>Test Type</th>
+                          <th>Columns</th>
+                          <th>Chi-Square Statistic</th>
+                          <th>p-Value</th>
+                          <th>Degrees of Freedom</th>
+                          <th>Decision</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {chiSquareData.map((result) => (
+                          <tr key={result.id}>
+                            <td>{result.testType === "independence" ? "Independence" : "Goodness of Fit"}</td>
+                            <td>{Array.isArray(result.columns) ? result.columns.join(", ") : result.columns}</td>
+                            <td>{result.chiSquareStatistic?.toFixed(4) ?? result.statistic?.toFixed(4) ?? ""}</td>
+                            <td>{result.pValue?.toFixed(4) ?? ""}</td>
+                            <td>{result.degreesOfFreedom ?? result.df ?? ""}</td>
+                            <td>{result.decision ?? result.result ?? ""}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() =>
+                                  handleDeleteChiSquare(result.id)
+                                }
+                                title="Delete"
+                              >
+                                <FaTrash style={{ marginRight: 6 }} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "chi-square" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
+                {chiSquareData && chiSquareData.length > 0 && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={chiSquareExplaining}
+                      onClick={async () => {
+                        setChiSquareExplaining(true);
+                        setChiSquareExplanation("");
+                        const prompt = `Explain the following Chi-Square test results in simple terms in three lines:\n${JSON.stringify(
+                          chiSquareData,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setChiSquareExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setChiSquareExplanation("Failed to get explanation.");
+                        }
+                        setChiSquareExplaining(false);
+                      }}
+                    >
+                      <FaMagic style={{ marginRight: 6 }} />
+                      {chiSquareExplaining ? "Explaining..." : "Explain Results"}
+                    </button>
+                    {chiSquareExplanation && (
+                      <div className="test-explanation">
+                        <h3 className="explanation-header">
+                          <FaMagic
+                            style={{ marginRight: 8, color: "#10b981" }}
+                          />
+                          Explanation using AI
+                        </h3>
+                        <ExplanationTypewriter text={chiSquareExplanation} />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Z-Test SubTab */}
+            {activeSubTab === "z-test" && (
+              <div className="tab-content">
+                <h2>
+                  <FaFlask style={{ marginRight: 8, color: "#6366f1" }} />
+                  Z-Test Analysis
+                </h2>
+                <div className="test-parameters">
+                  <div className="test-param-item">
+                    <label>Alpha Level:</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={zTestAlpha}
+                      onChange={(e) =>
+                        setZTestAlpha(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className="test-param-item">
+                    <label>Alternative:</label>
+                    <select
+                      value={zTestAlternative}
+                      onChange={(e) => setZTestAlternative(e.target.value)}
+                    >
+                      <option value="two-tailed">Two-tailed</option>
+                      <option value="less">Less</option>
+                      <option value="greater">Greater</option>
+                    </select>
+                  </div>
+                  <div className="test-param-item">
+                    <label>Population Mean:</label>
+                    <input
+                      type="number"
+                      value={zTestPopulationMean}
+                      onChange={(e) =>
+                        setZTestPopulationMean(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                  <div className="test-param-item">
+                    <label>Population Std Dev:</label>
+                    <input
+                      type="number"
+                      value={zTestPopulationStdDev}
+                      onChange={(e) =>
+                        setZTestPopulationStdDev(parseFloat(e.target.value))
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="test-controls">
+                  <button
+                    onClick={() => {
+                      if (selectedColumns.length === 0) {
+                        alert("Please select at least one column.");
+                        return;
+                      }
+                      const params = {
+                        alpha: zTestAlpha,
+                        alternative: zTestAlternative,
+                        populationMean: zTestPopulationMean,
+                        populationStdDev: zTestPopulationStdDev,
+                      };
+                      selectedColumns.forEach((column) =>
+                        zTest(column, params)
+                      );
+                    }}
+                    className="run-test-button"
+                  >
+                    <FaPlay style={{ marginRight: 6 }} /> Run Z-Test
+                  </button>
+                </div>
+                {zTestData && zTestData.length > 0 && (
+                  <div className="t-test-results">
+                    <table className="t-test-table">
+                      <thead>
+                        <tr>
+                          <th>Column</th>
+                          <th>Z-Statistic</th>
+                          <th>p-Value</th>
+                          <th>Decision</th>
+                          <th>Sample Mean</th>
+                          <th>Sample Size</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {zTestData.map((result) => (
+                          <tr key={result.id}>
+                            <td>{result.column}</td>
+                            <td>{result.zStatistic?.toFixed(3) ?? result.zValue?.toFixed(3) ?? ""}</td>
+                            <td>{result.pValue?.toFixed(3) ?? ""}</td>
+                            <td>{result.decision ?? result.result ?? ""}</td>
+                            <td>{result.sampleMean?.toFixed(3) ?? ""}</td>
+                            <td>{result.sampleSize ?? result.n ?? ""}</td>
+                            <td>
+                              <button
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  color: "#ef4444",
+                                }}
+                                onClick={() =>
+                                  handleDeleteZTest(result.id)
+                                }
+                                title="Delete"
+                              >
+                                <FaTrash style={{ marginRight: 6 }} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {data &&
+                  selectedColumns.length > 0 &&
+                  activeSubTab === "z-test" && (
+                    <HistogramChart data={data} columns={selectedColumns} />
+                  )}
+                {zTestData && zTestData.length > 0 && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
+                      className="run-test-button"
+                      disabled={zTestExplaining}
+                      onClick={async () => {
+                        setZTestExplaining(true);
+                        setZTestExplanation("");
+                        const prompt = `Explain the following Z-test results in simple terms in three lines:\n${JSON.stringify(
+                          zTestData,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ prompt }),
+                            }
+                          );
+                          const data = await response.json();
+                          setZTestExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                        } catch (error) {
+                          setZTestExplanation("Failed to get explanation.");
+                        }
+                        setZTestExplaining(false);
+                      }}
+                    >
+                      <FaMagic style={{ marginRight: 6 }} />
+                      {zTestExplaining ? "Explaining..." : "Explain Results"}
+                    </button>
+                    {zTestExplanation && (
+                      <div className="test-explanation">
+                        <h3 className="explanation-header">
+                          <FaMagic
+                            style={{ marginRight: 8, color: "#10b981" }}
+                          />
+                          Explanation using AI
+                        </h3>
+                        <ExplanationTypewriter text={zTestExplanation} />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </>
         )}
+        </div>
       </div>
     )
   );
@@ -933,6 +1478,29 @@ StatsPanel.propTypes = {
   setTTestAlternative: PropTypes.func.isRequired,
   tTestPopulationMean: PropTypes.number.isRequired,
   setTTestPopulationMean: PropTypes.func.isRequired,
+  uTest: PropTypes.func.isRequired,
+  uTestData: PropTypes.object,
+  setUTestData: PropTypes.func.isRequired,
+  chiSquareTest: PropTypes.func.isRequired,
+  chiSquareData: PropTypes.array.isRequired,
+  setChiSquareData: PropTypes.func.isRequired,
+  handleDeleteChiSquare: PropTypes.func.isRequired,
+  chiSquareAlpha: PropTypes.number.isRequired,
+  setChiSquareAlpha: PropTypes.func.isRequired,
+  chiSquareTestType: PropTypes.string.isRequired,
+  setChiSquareTestType: PropTypes.func.isRequired,
+  zTest: PropTypes.func.isRequired,
+  zTestData: PropTypes.array.isRequired,
+  setZTestData: PropTypes.func.isRequired,
+  handleDeleteZTest: PropTypes.func.isRequired,
+  zTestAlpha: PropTypes.number.isRequired,
+  setZTestAlpha: PropTypes.func.isRequired,
+  zTestAlternative: PropTypes.string.isRequired,
+  setZTestAlternative: PropTypes.func.isRequired,
+  zTestPopulationMean: PropTypes.number.isRequired,
+  setZTestPopulationMean: PropTypes.func.isRequired,
+  zTestPopulationStdDev: PropTypes.number.isRequired,
+  setZTestPopulationStdDev: PropTypes.func.isRequired,
 };
 
 export default StatsPanel;

@@ -5,7 +5,7 @@ import TestSelector from "./TestSelector";
 import ColumnSelector from "./ColumnSelector";
 import StatsPanel from "./StatsPanel";
 import { FaChartLine, FaMagic, FaTrash } from "react-icons/fa";
-import Typewriter from "./Typewriter";
+import Typewriter, { ExplanationTypewriter } from "./Typewriter";
 
 function ProjectPage(props) {
   const {
@@ -52,12 +52,35 @@ function ProjectPage(props) {
     rankedSignTest,
     rankedSignTestData,
     setRankedSignTestData,
+    uTest,
+    uTestData,
+    setUTestData,
     showRegBtn,
     handleDeleteRegression,
     regressionExplaining,
     setRegressionExplaining,
     regressionExplanation,
     setRegressionExplanation,
+    chiSquareTest,
+    chiSquareData,
+    setChiSquareData,
+    handleDeleteChiSquare,
+    chiSquareAlpha,
+    setChiSquareAlpha,
+    chiSquareTestType,
+    setChiSquareTestType,
+    zTest,
+    zTestData,
+    setZTestData,
+    handleDeleteZTest,
+    zTestAlpha,
+    setZTestAlpha,
+    zTestAlternative,
+    setZTestAlternative,
+    zTestPopulationMean,
+    setZTestPopulationMean,
+    zTestPopulationStdDev,
+    setZTestPopulationStdDev,
   } = props;
 
   return (
@@ -118,6 +141,29 @@ function ProjectPage(props) {
             rankedSignTest={rankedSignTest}
             rankedSignTestData={rankedSignTestData}
             setRankedSignTestData={setRankedSignTestData}
+            uTest={uTest}
+            uTestData={uTestData}
+            setUTestData={setUTestData}
+            chiSquareTest={chiSquareTest}
+            chiSquareData={chiSquareData}
+            setChiSquareData={setChiSquareData}
+            handleDeleteChiSquare={handleDeleteChiSquare}
+            chiSquareAlpha={chiSquareAlpha}
+            setChiSquareAlpha={setChiSquareAlpha}
+            chiSquareTestType={chiSquareTestType}
+            setChiSquareTestType={setChiSquareTestType}
+            zTest={zTest}
+            zTestData={zTestData}
+            setZTestData={setZTestData}
+            handleDeleteZTest={handleDeleteZTest}
+            zTestAlpha={zTestAlpha}
+            setZTestAlpha={setZTestAlpha}
+            zTestAlternative={zTestAlternative}
+            setZTestAlternative={setZTestAlternative}
+            zTestPopulationMean={zTestPopulationMean}
+            setZTestPopulationMean={setZTestPopulationMean}
+            zTestPopulationStdDev={zTestPopulationStdDev}
+            setZTestPopulationStdDev={setZTestPopulationStdDev}
           />
         </>
       )}
@@ -137,7 +183,10 @@ function ProjectPage(props) {
           )}
           {regressionData.length > 0 && (
             <div style={{ marginTop: "2rem" }} className="fade-in-up">
-              <h2><FaChartLine style={{marginRight: 8, color: '#6366f1'}} />Regression Results</h2>
+              <h2>
+                <FaChartLine style={{ marginRight: 8, color: "#6366f1" }} />
+                Regression Results
+              </h2>
               <table className="t-test-table">
                 <thead>
                   <tr>
@@ -192,7 +241,7 @@ function ProjectPage(props) {
                                   }
                                   title="Delete"
                                 >
-                                  <FaTrash style={{marginRight: 6}} />
+                                  <FaTrash style={{ marginRight: 6 }} />
                                 </button>
                               </td>
                             ) : null}
@@ -216,7 +265,7 @@ function ProjectPage(props) {
                               onClick={() => handleDeleteRegression(result.id)}
                               title="Delete"
                             >
-                              <FaTrash style={{marginRight: 6}} />
+                              <FaTrash style={{ marginRight: 6 }} />
                             </button>
                           </td>
                         </tr>
@@ -255,13 +304,18 @@ function ProjectPage(props) {
                   setRegressionExplaining(false);
                 }}
               >
-                <FaMagic style={{marginRight: 6}} />
+                <FaMagic style={{ marginRight: 6 }} />
                 {regressionExplaining ? "Explaining..." : "Explain Results"}
               </button>
               {regressionExplanation && (
                 <div className="test-explanation">
-                  <h3 className="explanation-header">Explanation using AI</h3>
-                  <Typewriter text={regressionExplanation} />
+                  <h3 className="explanation-header">
+                    <FaMagic
+                      style={{ marginRight: 8, color: "#10b981" }}
+                    />
+                    Explanation using AI
+                  </h3>
+                  <ExplanationTypewriter text={regressionExplanation} />
                 </div>
               )}
             </div>
@@ -272,4 +326,4 @@ function ProjectPage(props) {
   );
 }
 
-export default ProjectPage; 
+export default ProjectPage;

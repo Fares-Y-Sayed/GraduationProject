@@ -745,11 +745,17 @@ tr:hover td {
   }
 }
 
-@keyframes blinkTextCursor {
-  from {
-    border-right-color: rgba(255, 255, 255, 0.75);
+@keyframes blinkTextCursorWhite {
+  0% {
+    border-right-color: rgba(255, 255, 255, 1);
   }
-  to {
+  49% {
+    border-right-color: rgba(255, 255, 255, 1);
+  }
+  50% {
+    border-right-color: transparent;
+  }
+  100% {
     border-right-color: transparent;
   }
 }
@@ -768,11 +774,22 @@ tr:hover td {
   font-size: 2.5rem;
   width: fit-content;
   margin-bottom: 1rem;
-  overflow: hidden; /* Ensures the text is hidden until revealed by the animation */
-  border-right: 0.15em solid orange; /* Creates the cursor effect */
-  white-space: nowrap; /* Prevents the text from wrapping */
-  animation: typewriter 4s steps(40, end) infinite,
-    blinkTextCursor 500ms steps(40, end) infinite normal;
+  overflow: hidden;
+  border-right: 0.15em solid orange;
+  white-space: nowrap;
+  /* animation: typewriter 4s steps(40, end) infinite, blinkTextCursor 500ms steps(40, end) infinite normal; */
+}
+
+.typewriter-text {
+  font-size: 2.5rem;
+  width: fit-content;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-right: 0.15em solid #fff;
+  animation: blinkTextCursorWhite 1s steps(40, end) infinite;
+  white-space: pre-line;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .home-page p {
@@ -800,6 +817,10 @@ tr:hover td {
   background-color: #3d3d3d;
   padding: 20px;
   border-radius: 8px;
+  word-break: break-word;
+  white-space: pre-line;
+  width: 100%;
+
 }
 
 .explanation-header {
@@ -818,4 +839,43 @@ tr:hover td {
 
 .anova-table td:last-child {
   width: 250px;
+}
+
+.tab-fade {
+  animation: fadeInTab 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.route-fade {
+  animation: fadeInRoute 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadeInRoute {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.explanation-typewriter-line {
+  display: block;
+  margin-bottom: 1.1em;
+  font-size: 1rem;
+  color: #ffffff;
+  line-height: 1.5;
+  white-space: pre-line;
+  word-break: break-word;
+  max-width: 100%;
 }

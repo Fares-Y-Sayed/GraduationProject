@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import HomePage from "./components/HomePage";
 import ChartDisplay from "./components/ChartDisplay";
 import {
@@ -74,6 +79,7 @@ function App() {
   const [showRegBtn, setShowRgBtn] = useState(false);
   const [kolmogorovData, setKolmogorovData] = useState([]);
   const [signTestData, setSignTestData] = useState(null); // Sign test data state
+  const [uTestData, setUTestData] = useState(null); // U-test data state
   const [rankedSignTestData, setRankedSignTestData] = useState(null); // Ranked sign test data state
   const [anovaData, setAnovaData] = useState([]); // ANOVA test data state
   const [tTestAlpha, setTTestAlpha] = useState(0.05);
@@ -81,6 +87,18 @@ function App() {
   const [tTestPopulationMean, setTTestPopulationMean] = useState(7.5);
   const [regressionExplanation, setRegressionExplanation] = useState("");
   const [regressionExplaining, setRegressionExplaining] = useState(false);
+
+  // Chi-Square test states
+  const [chiSquareData, setChiSquareData] = useState([]);
+  const [chiSquareAlpha, setChiSquareAlpha] = useState(0.05);
+  const [chiSquareTestType, setChiSquareTestType] = useState("independence"); // "independence" or "goodness_of_fit"
+
+  // Z-test states
+  const [zTestData, setZTestData] = useState([]);
+  const [zTestAlpha, setZTestAlpha] = useState(0.05);
+  const [zTestAlternative, setZTestAlternative] = useState("two-tailed");
+  const [zTestPopulationMean, setZTestPopulationMean] = useState(0);
+  const [zTestPopulationStdDev, setZTestPopulationStdDev] = useState(1);
 
   const handleDataLoaded = (jsonData) => {
     setData(jsonData);
@@ -312,6 +330,30 @@ function App() {
     setAnovaData((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // U-Test function
+  const uTest = async (columns) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    const params = {
+      fileName,
+      headerNames: columns,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/u-test",
+        params
+      );
+      setUTestData(res.data);
+    } catch (error) {
+      console.error("Error performing U-test:", error);
+    }
+  };
+
   // Sign Test function
   const signTest = async (columns) => {
     const fileName = window.localStorage.getItem("fileName");
@@ -358,6 +400,86 @@ function App() {
     } catch (error) {
       console.error("Error performing Ranked Sign test:", error);
     }
+  };
+
+  // Chi-Square Test function
+  const chiSquareTest = async (columns, testType = "independence") => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    if (testType === "independence" && columns.length !== 2) {
+      alert("Please select exactly two columns for Chi-Square test of independence.");
+      return;
+    }
+
+    if (testType === "goodness_of_fit" && columns.length !== 1) {
+      alert("Please select exactly one column for Chi-Square goodness of fit test.");
+      return;
+    }
+
+    const params = {
+      fileName,
+      headerNames: columns,
+      testType: testType,
+      alpha: chiSquareAlpha
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/chi-square-test",
+        params
+      );
+      const result = { ...res.data.result, id: Date.now(), columns, testType };
+      setChiSquareData((prev) => [...prev, result]);
+    } catch (error) {
+      console.error("Error performing Chi-Square test:", error);
+    }
+  };
+
+  // Z-Test function
+  const zTest = async (column, params = {}) => {
+    const fileName = window.localStorage.getItem("fileName");
+    if (!fileName) {
+      console.error("fileName is missing in localStorage");
+      return;
+    }
+
+    const testParams = {
+      fileName,
+      headerName: column.trim(),
+      alpha: zTestAlpha,
+      alternative: zTestAlternative,
+      populationMean: zTestPopulationMean,
+      populationStdDev: zTestPopulationStdDev,
+      ...params
+    };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/v1/tests/z-test",
+        testParams
+      );
+      const result = res.data.result || res.data.data || res.data;
+      if (!result || typeof result !== "object") {
+        console.error("Unexpected z-test response format:", res.data);
+        return;
+      }
+      setZTestData((prev) => [...prev, { ...result, column, id: Date.now() }]);
+    } catch (error) {
+      console.error("Error performing z-test:", error);
+    }
+  };
+
+  // Delete handlers for new tests
+  const handleDeleteChiSquare = (id) => {
+    setChiSquareData((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleDeleteZTest = (id) => {
+    setZTestData((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleCheckboxChange = (type) => {
@@ -433,60 +555,88 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/project" element={
-          <ProjectPage
-            data={data}
-            handleDataLoaded={handleDataLoaded}
-            selectedTest={selectedTest}
-            setSelectedTest={setSelectedTest}
-            setActiveTab={setActiveTab}
-            columnTypes={columnTypes}
-            selectedColumns={selectedColumns}
-            handleColumnSelect={handleColumnSelect}
-            activeTab={activeTab}
-            dependentVariable={dependentVariable}
-            independentVariables={independentVariables}
-            activeSubTab={activeSubTab}
-            setActiveSubTab={setActiveSubTab}
-            selectedStats={selectedStats}
-            handleCheckboxChange={handleCheckboxChange}
-            stats={stats}
-            errors={errors}
-            animatingStats={animatingStats}
-            chartType={chartType}
-            setChartType={setChartType}
-            singleTTest={singleTTest}
-            tTestData={tTestData}
-            setTTestData={setTTestData}
-            tTestAlpha={tTestAlpha}
-            setTTestAlpha={setTTestAlpha}
-            tTestAlternative={tTestAlternative}
-            setTTestAlternative={setTTestAlternative}
-            tTestPopulationMean={tTestPopulationMean}
-            setTTestPopulationMean={setTTestPopulationMean}
-            regression={regression}
-            regressionData={regressionData}
-            kolmogorovTest={kolmogorovTest}
-            kolmogorovData={kolmogorovData}
-            handleDeleteKolmogorov={handleDeleteKolmogorov}
-            anovaTest={anovaTest}
-            anovaData={anovaData}
-            handleDeleteAnova={handleDeleteAnova}
-            signTest={signTest}
-            signTestData={signTestData}
-            setSignTestData={setSignTestData}
-            rankedSignTest={rankedSignTest}
-            rankedSignTestData={rankedSignTestData}
-            setRankedSignTestData={setRankedSignTestData}
-            showRegBtn={showRegBtn}
-            handleDeleteRegression={handleDeleteRegression}
-            regressionExplaining={regressionExplaining}
-            setRegressionExplaining={setRegressionExplaining}
-            regressionExplanation={regressionExplanation}
-            setRegressionExplanation={setRegressionExplanation}
-          />
-        } />
+        <Route path="/home" element={<div className="route-fade"><HomePage /></div>} />
+        <Route
+          path="/project"
+          element={
+            <div className="route-fade">
+              <ProjectPage
+                data={data}
+                handleDataLoaded={handleDataLoaded}
+                selectedTest={selectedTest}
+                setSelectedTest={setSelectedTest}
+                setActiveTab={setActiveTab}
+                columnTypes={columnTypes}
+                selectedColumns={selectedColumns}
+                handleColumnSelect={handleColumnSelect}
+                activeTab={activeTab}
+                dependentVariable={dependentVariable}
+                independentVariables={independentVariables}
+                activeSubTab={activeSubTab}
+                setActiveSubTab={setActiveSubTab}
+                selectedStats={selectedStats}
+                handleCheckboxChange={handleCheckboxChange}
+                stats={stats}
+                errors={errors}
+                animatingStats={animatingStats}
+                chartType={chartType}
+                setChartType={setChartType}
+                singleTTest={singleTTest}
+                tTestData={tTestData}
+                setTTestData={setTTestData}
+                tTestAlpha={tTestAlpha}
+                setTTestAlpha={setTTestAlpha}
+                tTestAlternative={tTestAlternative}
+                setTTestAlternative={setTTestAlternative}
+                tTestPopulationMean={tTestPopulationMean}
+                setTTestPopulationMean={setTTestPopulationMean}
+                regression={regression}
+                regressionData={regressionData}
+                kolmogorovTest={kolmogorovTest}
+                kolmogorovData={kolmogorovData}
+                handleDeleteKolmogorov={handleDeleteKolmogorov}
+                anovaTest={anovaTest}
+                anovaData={anovaData}
+                handleDeleteAnova={handleDeleteAnova}
+                signTest={signTest}
+                signTestData={signTestData}
+                setSignTestData={setSignTestData}
+                rankedSignTest={rankedSignTest}
+                rankedSignTestData={rankedSignTestData}
+                setRankedSignTestData={setRankedSignTestData}
+                uTest={uTest}
+                uTestData={uTestData}
+                setUTestData={setUTestData}
+                showRegBtn={showRegBtn}
+                handleDeleteRegression={handleDeleteRegression}
+                regressionExplaining={regressionExplaining}
+                setRegressionExplaining={setRegressionExplaining}
+                regressionExplanation={regressionExplanation}
+                setRegressionExplanation={setRegressionExplanation}
+                chiSquareTest={chiSquareTest}
+                chiSquareData={chiSquareData}
+                setChiSquareData={setChiSquareData}
+                handleDeleteChiSquare={handleDeleteChiSquare}
+                chiSquareAlpha={chiSquareAlpha}
+                setChiSquareAlpha={setChiSquareAlpha}
+                chiSquareTestType={chiSquareTestType}
+                setChiSquareTestType={setChiSquareTestType}
+                zTest={zTest}
+                zTestData={zTestData}
+                setZTestData={setZTestData}
+                handleDeleteZTest={handleDeleteZTest}
+                zTestAlpha={zTestAlpha}
+                setZTestAlpha={setZTestAlpha}
+                zTestAlternative={zTestAlternative}
+                setZTestAlternative={setZTestAlternative}
+                zTestPopulationMean={zTestPopulationMean}
+                setZTestPopulationMean={setZTestPopulationMean}
+                zTestPopulationStdDev={zTestPopulationStdDev}
+                setZTestPopulationStdDev={setZTestPopulationStdDev}
+              />
+            </div>
+          }
+        />
         <Route path="/" element={<Navigate to="/home" replace />} />
       </Routes>
     </Router>
