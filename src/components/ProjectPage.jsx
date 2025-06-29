@@ -4,7 +4,7 @@ import DataPreview from "./DataPreview";
 import TestSelector from "./TestSelector";
 import ColumnSelector from "./ColumnSelector";
 import StatsPanel from "./StatsPanel";
-import { FaChartLine, FaMagic, FaTrash } from "react-icons/fa";
+import { FaChartLine, FaMagic, FaTrash, FaPlay } from "react-icons/fa";
 import Typewriter, { ExplanationTypewriter } from "./Typewriter";
 
 function ProjectPage(props) {
@@ -179,14 +179,14 @@ function ProjectPage(props) {
                 }}
                 className="run-test-button"
               >
-                Run Regression
+                <FaPlay style={{ marginRight: 6 }} /> Run Regression
               </button>
             </div>
           )}
           {regressionData.length > 0 && (
             <div style={{ marginTop: "2rem" }} className="fade-in-up">
               <h2>
-                <FaChartLine style={{ marginRight: 8, color: "#6366f1" }} />
+                <FaChartLine style={{ marginRight: 8, color: "#a3ffd6" }} />
                 Regression Results
               </h2>
               <table className="t-test-table">

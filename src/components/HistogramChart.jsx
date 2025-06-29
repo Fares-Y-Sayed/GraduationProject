@@ -1,8 +1,23 @@
-import { Bar } from 'react-chartjs-2';
-import PropTypes from 'prop-types';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Bar } from "react-chartjs-2";
+import PropTypes from "prop-types";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const HistogramChart = ({ data, columns }) => {
   if (!data || !columns || columns.length === 0) {
@@ -10,7 +25,9 @@ const HistogramChart = ({ data, columns }) => {
   }
 
   const createHistogramData = (columnData) => {
-    const values = columnData.filter(val => !isNaN(val) && val !== null).map(Number);
+    const values = columnData
+      .filter((val) => !isNaN(val) && val !== null)
+      .map(Number);
     if (values.length === 0) return { labels: [], freqs: [] };
 
     const min = Math.min(...values);
@@ -27,9 +44,10 @@ const HistogramChart = ({ data, columns }) => {
       labels.push(`${binStart.toFixed(2)} - ${binEnd.toFixed(2)}`);
     }
 
-    values.forEach(value => {
+    values.forEach((value) => {
       let binIndex = Math.floor((value - min) / binWidth);
-      if (value === max) { // Ensure the max value falls into the last bin
+      if (value === max) {
+        // Ensure the max value falls into the last bin
         binIndex = binCount - 1;
       }
       if (binIndex >= 0 && binIndex < binCount) {
@@ -41,21 +59,24 @@ const HistogramChart = ({ data, columns }) => {
   };
 
   const colorPalette = [
-    'rgba(54, 162, 235, 0.6)',
-    'rgba(255, 99, 132, 0.6)',
-    'rgba(75, 192, 192, 0.6)',
-    'rgba(255, 206, 86, 0.6)',
-    'rgba(153, 102, 255, 0.6)',
+    "rgba(96, 240, 175, 0.6)",
+    "rgba(61, 125, 96, 0.6)",
+    "rgba(96, 175, 240, 0.6)",
+    "rgba(143, 102, 224, 0.6)",
+    "rgba(80, 200, 120, 0.6)",
   ];
 
   const datasets = columns.map((col, index) => {
-    const columnData = data.map(row => row[col]);
+    const columnData = data.map((row) => row[col]);
     const { labels, freqs } = createHistogramData(columnData);
     return {
       label: `${col} Distribution`,
       data: freqs,
       backgroundColor: colorPalette[index % colorPalette.length],
-      borderColor: colorPalette[index % colorPalette.length].replace('0.6', '1'),
+      borderColor: colorPalette[index % colorPalette.length].replace(
+        "0.6",
+        "1"
+      ),
       borderWidth: 1,
       barPercentage: 1.0,
       categoryPercentage: 1.0,
@@ -64,7 +85,7 @@ const HistogramChart = ({ data, columns }) => {
   });
 
   const chartLabels = datasets.length > 0 ? datasets[0].labels : [];
-  
+
   const chartData = {
     labels: chartLabels,
     datasets: datasets.map((ds) => {
@@ -79,15 +100,15 @@ const HistogramChart = ({ data, columns }) => {
     maintainAspectRatio: false,
     animation: {
       duration: 1000,
-      easing: 'easeInOutQuad',
+      easing: "easeInOutQuad",
     },
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
-        text: 'Distribution Chart',
+        text: "Distribution Chart",
         font: {
           size: 18,
         },
@@ -97,7 +118,7 @@ const HistogramChart = ({ data, columns }) => {
       x: {
         title: {
           display: true,
-          text: 'Value Bins',
+          text: "Value Bins",
         },
         grid: {
           display: false,
@@ -106,7 +127,7 @@ const HistogramChart = ({ data, columns }) => {
       y: {
         title: {
           display: true,
-          text: 'Frequency',
+          text: "Frequency",
         },
         beginAtZero: true,
       },
@@ -114,7 +135,10 @@ const HistogramChart = ({ data, columns }) => {
   };
 
   return (
-    <div className="chart-container" style={{ marginTop: '2rem', height: '400px' }}>
+    <div
+      className="chart-container"
+      style={{ marginTop: "2rem", height: "400px" }}
+    >
       <Bar data={chartData} options={options} />
     </div>
   );
@@ -125,4 +149,4 @@ HistogramChart.propTypes = {
   columns: PropTypes.array.isRequired,
 };
 
-export default HistogramChart; 
+export default HistogramChart;
