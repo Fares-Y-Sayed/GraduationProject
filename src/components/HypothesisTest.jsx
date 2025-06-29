@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { useTheme } from "../contexts/ThemeContext";
 
 function HypothesisTest({ 
   selectedColumns, 
@@ -10,6 +11,8 @@ function HypothesisTest({
   kolmogorovData,
   handleDeleteKolmogorov 
 }) {
+  const { isDarkMode } = useTheme();
+  
   const [tTestParams, setTTestParams] = useState({
     alpha: 0.05,
     alternative: "two-tailed",
@@ -20,12 +23,38 @@ function HypothesisTest({
     const { name, value } = e.target;
     setTTestParams(prev => ({
       ...prev,
-      [name]: name === "alpha" || name === "populationMean" ? Number(value) : value
+      [name]: name === 'alpha' || name === 'populationMean' ? parseFloat(value) : value
     }));
   };
 
-  // Option 1: Pass handleDeleteTTest from the parent (recommended)
-  const safeDelete = typeof handleDeleteTTest === "function" ? handleDeleteTTest : () => {};
+  const safeDelete = (id) => {
+    if (typeof handleDeleteTTest === 'function') {
+      handleDeleteTTest(id);
+    } else {
+      console.warn('handleDeleteTTest is not a function');
+    }
+  };
+
+  const inputStyle = {
+    padding: "8px",
+    borderRadius: "6px",
+    border: `1px solid var(--primary-color)`,
+    backgroundColor: isDarkMode ? "#2d2d2d" : "#fafafa",
+    color: isDarkMode ? "white" : "#484b6a",
+    cursor: "pointer",
+  };
+
+  const labelStyle = {
+    marginRight: "10px",
+    fontSize: "0.9rem",
+    fontWeight: "600",
+    color: "var(--text-primary)"
+  };
+
+  const optionStyle = {
+    backgroundColor: isDarkMode ? "#2d2d2d" : "#fafafa",
+    color: isDarkMode ? "white" : "#484b6a"
+  };
 
   return (
     <div className='tab-content'>
@@ -44,11 +73,7 @@ function HypothesisTest({
   color: "white"
 }}>
           <div>
-            <label style={{ 
-      marginRight: "10px",
-      fontSize: "0.9rem",
-      fontWeight: "600"
-    }}>Alpha Level:</label>
+            <label style={labelStyle}>Alpha:</label>
             <input
               type="number"
               name="alpha"
@@ -57,61 +82,31 @@ function HypothesisTest({
               step="0.01"
               min="0"
               max="1"
-              style={{ 
-        width: "80px",
-        padding: "8px",
-        borderRadius: "6px",
-        border: "1px solidr #a3ffd6",
-        backgroundColor: "#2d2d2d",
-        color: "white"
-      }}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label style={{ 
-      marginRight: "10px",
-      fontSize: "0.9rem",
-      fontWeight: "600"
-    }}>Alternative:</label>
+            <label style={labelStyle}>Alternative:</label>
             <select
               name="alternative"
               value={tTestParams.alternative}
               onChange={handleParamChange}
-              style={{
-        padding: "8px",
-        borderRadius: "6px",
-        border: "1px solid #a3ffd6",
-        backgroundColor: "",
-        color: "white",
-        cursor: "pointer",
-        
-      }}
+              style={inputStyle}
             >
-              <option value="two-tailed" style={{ backgroundColor: "#2d2d2d" }}>Two-tailed</option>
-              <option value="greater" style={{ backgroundColor: "#2d2d2d" }}>greater</option>
-              <option value="less" style={{ backgroundColor: "#2d2d2d" }}>less</option>
+              <option value="two-tailed" style={optionStyle}>Two-tailed</option>
+              <option value="greater" style={optionStyle}>greater</option>
+              <option value="less" style={optionStyle}>less</option>
             </select>
           </div>
           <div>
-            <label style={{ 
-      marginRight: "10px",
-      fontSize: "0.9rem",
-      fontWeight: "600"
-    }}>Population Mean:</label>
+            <label style={labelStyle}>Population Mean:</label>
             <input
               type="number"
               name="populationMean"
               value={tTestParams.populationMean}
               onChange={handleParamChange}
               step="0.1"
-              style={{ 
-        width: "80px",
-        padding: "8px",
-        borderRadius: "6px",
-        border: "1px solid #a3ffd6",
-        backgroundColor: "#2d2d2d",
-        color: "white"
-      }}
+              style={inputStyle}
             />
           </div>
         </div>

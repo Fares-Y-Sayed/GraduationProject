@@ -1,6 +1,5 @@
+import React from "react";
 import PropTypes from "prop-types";
-import { Line, Bar, Scatter, Pie } from "react-chartjs-2";
-import Plot from "react-plotly.js"; // Import Plotly
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,8 +10,10 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement,
 } from "chart.js";
+import { Line, Bar, Scatter, Pie } from "react-chartjs-2";
+import Plot from "react-plotly.js";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Register Chart.js components
 ChartJS.register(
@@ -21,38 +22,47 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
-  ArcElement, // Required for pie charts
   Title,
   Tooltip,
   Legend
 );
 
-function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
+const ChartDisplay = ({ data, selectedColumns, chartType, setChartType }) => {
+  const { isDarkMode } = useTheme();
+
   const generateChartData = () => {
     if (!data || selectedColumns.length === 0) return null;
 
-    // Special handling for pie chart
     if (chartType === "pie") {
-      const pieData = selectedColumns.map((column) => {
+      // For pie chart, calculate averages
+      const averages = selectedColumns.map((column) => {
         const values = data
           .map((row) => parseFloat(row[column]))
           .filter((val) => !isNaN(val));
-        return values.reduce((sum, val) => sum + val, 0) / values.length;
+        return values.length > 0
+          ? values.reduce((sum, val) => sum + val, 0) / values.length
+          : 0;
       });
 
       return {
         labels: selectedColumns,
         datasets: [
           {
-            data: pieData,
-            backgroundColor: selectedColumns.map(
-              (_, index) =>
-                `hsla(${index * (360 / selectedColumns.length)}, 70%, 60%, 0.8)`
-            ),
-            borderColor: selectedColumns.map(
-              (_, index) =>
-                `hsla(${index * (360 / selectedColumns.length)}, 70%, 60%, 1)`
-            ),
+            data: averages,
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.8)",
+              "rgba(54, 162, 235, 0.8)",
+              "rgba(255, 206, 86, 0.8)",
+              "rgba(75, 192, 192, 0.8)",
+              "rgba(153, 102, 255, 0.8)",
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+            ],
             borderWidth: 1,
           },
         ],
@@ -101,17 +111,13 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
         position: chartType === "pie" ? "right" : "top",
         labels: {
           padding: 20,
-          color: window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "#fff"
-            : "#2d2d2d",
+          color: isDarkMode ? "#fff" : "#484b6a",
         },
       },
       title: {
         display: true,
         text: chartType === "pie" ? "Variable Averages" : "Data Comparison",
-        color: window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "#fff"
-          : "#2d2d2d",
+        color: isDarkMode ? "#fff" : "#484b6a",
       },
     },
     scales:
@@ -121,9 +127,9 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
             y: {
               beginAtZero: true,
               grid: {
-                color: window.matchMedia("(prefers-color-scheme: dark)").matches
+                color: isDarkMode
                   ? "rgba(255, 255, 255, 0.1)"
-                  : "rgba(0, 0, 0, 0.1)",
+                  : "rgba(72, 75, 106, 0.1)",
               },
             },
           },
@@ -164,19 +170,10 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
                 xaxis: { title: "Variables" },
                 yaxis: { title: "Values" },
                 boxmode: "group",
-                paper_bgcolor: window.matchMedia("(prefers-color-scheme: dark)")
-                  .matches
-                  ? "#2d2d2d"
-                  : "#fff",
-                plot_bgcolor: window.matchMedia("(prefers-color-scheme: dark)")
-                  .matches
-                  ? "#2d2d2d"
-                  : "#fff",
+                paper_bgcolor: isDarkMode ? "#2d2d2d" : "#fafafa",
+                plot_bgcolor: isDarkMode ? "#2d2d2d" : "#fafafa",
                 font: {
-                  color: window.matchMedia("(prefers-color-scheme: dark)")
-                    .matches
-                    ? "#fff"
-                    : "#2d2d2d",
+                  color: isDarkMode ? "#fff" : "#484b6a",
                 },
               }}
               config={{ responsive: true }}

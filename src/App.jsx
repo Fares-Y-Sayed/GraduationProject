@@ -28,6 +28,7 @@ import axios from "axios";
 import { VARIABLE_TYPES } from "./constants";
 import "./App.css";
 import ProjectPage from "./components/ProjectPage";
+import ThemeToggle from "./components/ThemeToggle";
 
 ChartJS.register(
   CategoryScale,
@@ -619,6 +620,7 @@ function App() {
 
   return (
     <Router>
+      <ThemeToggle />
       <Routes>
         <Route
           path="/home"

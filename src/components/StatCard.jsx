@@ -7,19 +7,9 @@ import {
   FaHashtag, // mode
   FaListOl, // count
 } from "react-icons/fa";
+import { useTheme } from "../contexts/ThemeContext";
 
-const statIcons = {
-  mean: <FaEquals style={{ color: "#a3ffd6", marginRight: 6 }} />,
-  variance: <FaChartLine style={{ color: "#a3ffd6", marginRight: 6 }} />,
-  standardDeviation: (
-    <FaWaveSquare style={{ color: "#a3ffd6", marginRight: 6 }} />
-  ),
-  median: <FaSortNumericDown style={{ color: "#a3ffd6", marginRight: 6 }} />,
-  mode: <FaHashtag style={{ color: "#a3ffd6", marginRight: 6 }} />,
-  count: <FaListOl style={{ color: "#a3ffd6", marginRight: 6 }} />,
-};
-
-function StatCard({
+const StatCard = ({
   type,
   label,
   columnName,
@@ -27,7 +17,21 @@ function StatCard({
   errors,
   animatingStats,
   selectedStats,
-}) {
+}) => {
+  const { isDarkMode } = useTheme();
+  const iconColor = isDarkMode ? "#a3ffd6" : "#484b6a";
+
+  const statIcons = {
+    mean: <FaEquals style={{ color: iconColor, marginRight: 6 }} />,
+    variance: <FaChartLine style={{ color: iconColor, marginRight: 6 }} />,
+    standardDeviation: (
+      <FaWaveSquare style={{ color: iconColor, marginRight: 6 }} />
+    ),
+    median: <FaSortNumericDown style={{ color: iconColor, marginRight: 6 }} />,
+    mode: <FaHashtag style={{ color: iconColor, marginRight: 6 }} />,
+    count: <FaListOl style={{ color: iconColor, marginRight: 6 }} />,
+  };
+
   if (!selectedStats[type]) return null;
 
   const animationClass = animatingStats[columnName]?.[type]
@@ -53,7 +57,7 @@ function StatCard({
       )}
     </div>
   );
-}
+};
 
 StatCard.propTypes = {
   type: PropTypes.string.isRequired,
