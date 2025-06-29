@@ -1443,7 +1443,9 @@ function StatsPanel({
                             type="number"
                             value={zTestPopulationStdDev}
                             onChange={(e) =>
-                              setZTestPopulationStdDev(parseFloat(e.target.value))
+                              setZTestPopulationStdDev(
+                                parseFloat(e.target.value)
+                              )
                             }
                           />
                         </div>
@@ -1456,7 +1458,9 @@ function StatsPanel({
                             type="number"
                             value={zTestPopulationMean1}
                             onChange={(e) =>
-                              setZTestPopulationMean1(parseFloat(e.target.value))
+                              setZTestPopulationMean1(
+                                parseFloat(e.target.value)
+                              )
                             }
                           />
                         </div>
@@ -1466,7 +1470,9 @@ function StatsPanel({
                             type="number"
                             value={zTestPopulationMean2}
                             onChange={(e) =>
-                              setZTestPopulationMean2(parseFloat(e.target.value))
+                              setZTestPopulationMean2(
+                                parseFloat(e.target.value)
+                              )
                             }
                           />
                         </div>
@@ -1476,7 +1482,9 @@ function StatsPanel({
                             type="number"
                             value={zTestPopulationStdDev1}
                             onChange={(e) =>
-                              setZTestPopulationStdDev1(parseFloat(e.target.value))
+                              setZTestPopulationStdDev1(
+                                parseFloat(e.target.value)
+                              )
                             }
                           />
                         </div>
@@ -1486,7 +1494,9 @@ function StatsPanel({
                             type="number"
                             value={zTestPopulationStdDev2}
                             onChange={(e) =>
-                              setZTestPopulationStdDev2(parseFloat(e.target.value))
+                              setZTestPopulationStdDev2(
+                                parseFloat(e.target.value)
+                              )
                             }
                           />
                         </div>
@@ -1500,12 +1510,22 @@ function StatsPanel({
                           alert("Please select at least one column.");
                           return;
                         }
-                        if (zTestType === "two-sample" && selectedColumns.length !== 2) {
-                          alert("Please select exactly two columns for two-sample Z-test.");
+                        if (
+                          zTestType === "two-sample" &&
+                          selectedColumns.length !== 2
+                        ) {
+                          alert(
+                            "Please select exactly two columns for two-sample Z-test."
+                          );
                           return;
                         }
-                        if (zTestType === "single" && selectedColumns.length !== 1) {
-                          alert("Please select exactly one column for single sample Z-test.");
+                        if (
+                          zTestType === "single" &&
+                          selectedColumns.length !== 1
+                        ) {
+                          alert(
+                            "Please select exactly one column for single sample Z-test."
+                          );
                           return;
                         }
                         zTest(selectedColumns);
@@ -1533,10 +1553,14 @@ function StatsPanel({
                         <tbody>
                           {zTestData.map((result) => (
                             <tr key={result.id}>
-                              <td>{result.testType === "single" ? "Single Sample" : "Two Sample"}</td>
                               <td>
-                                {Array.isArray(result.columns) 
-                                  ? result.columns.join(" vs ") 
+                                {result.testType === "single"
+                                  ? "Single Sample"
+                                  : "Two Sample"}
+                              </td>
+                              <td>
+                                {Array.isArray(result.columns)
+                                  ? result.columns.join(" vs ")
                                   : result.column || result.columns}
                               </td>
                               <td>
@@ -1547,16 +1571,18 @@ function StatsPanel({
                               <td>{result.pValue?.toFixed(3) ?? ""}</td>
                               <td>{result.decision ?? result.result ?? ""}</td>
                               <td>
-                                {result.testType === "single" 
-                                  ? (result.sampleMean?.toFixed(3) ?? "")
-                                  : (result.sampleMean1?.toFixed(3) ?? "") + " / " + (result.sampleMean2?.toFixed(3) ?? "")
-                                }
+                                {result.testType === "single"
+                                  ? result.sampleMean?.toFixed(3) ?? ""
+                                  : (result.mean1?.toFixed(3) ?? "") +
+                                    " - " +
+                                    (result.mean2?.toFixed(3) ?? "")}
                               </td>
                               <td>
                                 {result.testType === "single"
-                                  ? (result.sampleSize ?? result.n ?? "")
-                                  : (result.sampleSize1 ?? result.n1 ?? "") + " / " + (result.sampleSize2 ?? result.n2 ?? "")
-                                }
+                                  ? result.sampleSize ?? result.n ?? ""
+                                  : (result.sampleSize1 ?? result.n1 ?? "") +
+                                    " - " +
+                                    (result.sampleSize2 ?? result.n2 ?? "")}
                               </td>
                               <td>
                                 <button

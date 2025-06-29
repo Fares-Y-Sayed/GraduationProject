@@ -488,7 +488,7 @@ function App() {
     if (columns.length === 1 || testType === "single") {
       // Single sample z-test
       testType = "single";
-      endpoint = "http://localhost:3000/api/v1/tests/z-test";
+      endpoint = "http://localhost:3000/api/v1/tests//single-z-test";
       testParams = {
         fileName,
         headerNames: [columns[0].trim()],
