@@ -7,6 +7,7 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
@@ -22,6 +23,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -179,7 +181,11 @@ const ChartDisplay = ({ data, selectedColumns, chartType, setChartType }) => {
               config={{ responsive: true }}
             />
           ) : (
-            <ChartType data={chartData} options={chartOptions} />
+            <ChartType 
+              key={`${chartType}-${selectedColumns.join('-')}`}
+              data={chartData} 
+              options={chartOptions} 
+            />
           )}
         </div>
       </div>

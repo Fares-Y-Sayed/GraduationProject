@@ -590,7 +590,11 @@ function StatsPanel({
                                 ? result.pValue.toExponential(3)
                                 : result.pValue}
                             </td>
-                            <td>{String(result.isNormal)}</td>
+                            <td>
+                              {result.isNormal 
+                                ? "Normal Distribution" 
+                                : "Not Normal Distribution"}
+                            </td>
                             <td>
                               <button
                                 style={{
@@ -847,7 +851,11 @@ function StatsPanel({
                                   ? signTestData.result.pValue.toExponential(6)
                                   : signTestData.result.pValue}
                               </td>
-                              <td>{String(signTestData.result.significant)}</td>
+                              <td>
+                                {signTestData.result.significant 
+                                  ? "Reject H0 (Significant)" 
+                                  : "Fail to Reject H0 (Not Significant)"}
+                              </td>
                               <td>{signTestData.result.positiveSigns}</td>
                               <td>{signTestData.result.negativeSigns}</td>
                               <td>{signTestData.result.ties}</td>
@@ -989,7 +997,9 @@ function StatsPanel({
                                   : rankedSignTestData.result.pValue}
                               </td>
                               <td>
-                                {String(rankedSignTestData.result.significant)}
+                                {rankedSignTestData.result.significant 
+                                  ? "Reject H0 (Significant)" 
+                                  : "Fail to Reject H0 (Not Significant)"}
                               </td>
                               <td>
                                 {rankedSignTestData.result.positiveRankSum}
@@ -1126,7 +1136,11 @@ function StatsPanel({
                               <td>{uTestData.result.U1}</td>
                               <td>{uTestData.result.U2}</td>
                               <td>{uTestData.result.pValue}</td>
-                              <td>{String(uTestData.result.significant)}</td>
+                              <td>
+                                {uTestData.result.significant 
+                                  ? "Reject H0 (Significant)" 
+                                  : "Fail to Reject H0 (Not Significant)"}
+                              </td>
                               <td>{uTestData.result.n1}</td>
                               <td>{uTestData.result.n2}</td>
                               <td>
@@ -1294,15 +1308,19 @@ function StatsPanel({
                                   : result.columns}
                               </td>
                               <td>
-                                {result.chiSquareStatistic?.toFixed(4) ??
-                                  result.statistic?.toFixed(4) ??
+                                {result.chi2?.toFixed(4) ??
+                                  result.chi2?.toFixed(4) ??
                                   ""}
                               </td>
                               <td>{result.pValue?.toFixed(4) ?? ""}</td>
                               <td>
                                 {result.degreesOfFreedom ?? result.df ?? ""}
                               </td>
-                              <td>{result.decision ?? result.result ?? ""}</td>
+                              <td>
+                                {result.significant 
+                                  ? "Reject H0 (Significant)" 
+                                  : "Fail to Reject H0 (Not Significant)"}
+                              </td>
                               <td>
                                 <button
                                   style={{

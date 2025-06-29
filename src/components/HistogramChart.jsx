@@ -139,7 +139,11 @@ const HistogramChart = ({ data, columns }) => {
       className="chart-container"
       style={{ marginTop: "2rem", height: "400px" }}
     >
-      <Bar data={chartData} options={options} />
+      <Bar 
+        key={`histogram-${columns.join('-')}`}
+        data={chartData} 
+        options={options} 
+      />
     </div>
   );
 };
