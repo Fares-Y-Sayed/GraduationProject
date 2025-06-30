@@ -2,36 +2,39 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useTheme } from "../contexts/ThemeContext";
 
-function HypothesisTest({ 
-  selectedColumns, 
-  singleTTest, 
-  tTestData, 
+function HypothesisTest({
+  selectedColumns,
+  singleTTest,
+  tTestData,
   handleDeleteTTest,
   kolmogorovTest,
   kolmogorovData,
-  handleDeleteKolmogorov 
+  handleDeleteKolmogorov,
 }) {
   const { isDarkMode } = useTheme();
-  
+
   const [tTestParams, setTTestParams] = useState({
     alpha: 0.05,
     alternative: "two-tailed",
-    populationMean: 7.5
+    populationMean: 7.5,
   });
 
   const handleParamChange = (e) => {
     const { name, value } = e.target;
-    setTTestParams(prev => ({
+    setTTestParams((prev) => ({
       ...prev,
-      [name]: name === 'alpha' || name === 'populationMean' ? parseFloat(value) : value
+      [name]:
+        name === "alpha" || name === "populationMean"
+          ? parseFloat(value)
+          : value,
     }));
   };
 
   const safeDelete = (id) => {
-    if (typeof handleDeleteTTest === 'function') {
+    if (typeof handleDeleteTTest === "function") {
       handleDeleteTTest(id);
     } else {
-      console.warn('handleDeleteTTest is not a function');
+      console.warn("handleDeleteTTest is not a function");
     }
   };
 
@@ -48,30 +51,31 @@ function HypothesisTest({
     marginRight: "10px",
     fontSize: "0.9rem",
     fontWeight: "600",
-    color: "var(--text-primary)"
+    color: "var(--text-primary)",
   };
 
   const optionStyle = {
     backgroundColor: isDarkMode ? "#2d2d2d" : "#fafafa",
-    color: isDarkMode ? "white" : "#484b6a"
+    color: isDarkMode ? "white" : "#484b6a",
   };
 
   return (
-    <div className='tab-content'>
-      <h2>Hypothesis Tests
-       
-      </h2>
-      <div className='test-controls'>
-        <div className="test-params" style={{ 
-  marginBottom: "20px", 
-  display: "flex", 
-  gap: "20px", 
-  alignItems: "center",
-  backgroundColor: "#3d3d3d",
-  padding: "20px",
-  borderRadius: "12px",
-  color: "white"
-}}>
+    <div className="tab-content">
+      <h2>Hypothesis Tests</h2>
+      <div className="test-controls">
+        <div
+          className="test-params"
+          style={{
+            marginBottom: "20px",
+            display: "flex",
+            gap: "20px",
+            alignItems: "center",
+            backgroundColor: "#3d3d3d",
+            padding: "20px",
+            borderRadius: "12px",
+            color: "white",
+          }}
+        >
           <div>
             <label style={labelStyle}>Alpha:</label>
             <input
@@ -93,9 +97,15 @@ function HypothesisTest({
               onChange={handleParamChange}
               style={inputStyle}
             >
-              <option value="two-tailed" style={optionStyle}>Two-tailed</option>
-              <option value="greater" style={optionStyle}>greater</option>
-              <option value="less" style={optionStyle}>less</option>
+              <option value="two-tailed" style={optionStyle}>
+                Two-tailed
+              </option>
+              <option value="greater" style={optionStyle}>
+                greater
+              </option>
+              <option value="less" style={optionStyle}>
+                less
+              </option>
             </select>
           </div>
           <div>
@@ -110,16 +120,19 @@ function HypothesisTest({
             />
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={() => {
               if (selectedColumns.length === 0) {
                 alert("Please select at least one column.");
                 return;
               }
-              selectedColumns.forEach((column) => singleTTest(column, tTestParams));
+              selectedColumns.forEach((column) =>
+                singleTTest(column, tTestParams)
+              );
             }}
-            className='run-test-button'>
+            className="run-test-button"
+          >
             Run t-Test
           </button>
           <button
@@ -130,17 +143,18 @@ function HypothesisTest({
               }
               selectedColumns.forEach((column) => kolmogorovTest(column));
             }}
-            className='run-test-button'>
+            className="run-test-button"
+          >
             Run Kolmogorov Test
           </button>
         </div>
       </div>
-      
+
       {Array.isArray(tTestData) && tTestData.length > 0 && (
         <div>
-          <div className='t-test-results'>
+          <div className="t-test-results">
             <h3>Single T-Test Results {`"new"`}</h3>
-            <table className='t-test-table'>
+            <table className="t-test-table">
               <thead>
                 <tr>
                   <th>Column</th>
@@ -155,7 +169,11 @@ function HypothesisTest({
                 {tTestData.map((result) => (
                   <tr key={result.id ?? result.column}>
                     <td>{result.column}</td>
-                    <td>{result.tStatistic !== undefined ? Number(result.tStatistic).toFixed(3) : (result.tValue ?? result.t_statistic ?? "")}</td>
+                    <td>
+                      {result.tStatistic !== undefined
+                        ? Number(result.tStatistic).toFixed(3)
+                        : result.tValue ?? result.t_statistic ?? ""}
+                    </td>
                     <td>{result.pValue ?? result.p_value ?? ""}</td>
                     <td>{result.decision ?? result.result ?? ""}</td>
                     <td>{result.degreesOfFreedom ?? result.df ?? ""}</td>
@@ -165,13 +183,22 @@ function HypothesisTest({
                           background: "none",
                           border: "none",
                           cursor: "pointer",
-                          color: "#ef4444"
+                          color: "#ef4444",
                         }}
                         onClick={() => safeDelete(result.id ?? result.column)}
                         title="Delete"
                       >
                         {/* SVG Trash Icon */}
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          width="1em"
+                          height="1em"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#ef4444"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="3 6 5 6 21 6" />
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
                           <line x1="10" y1="11" x2="10" y2="17" />
@@ -190,9 +217,9 @@ function HypothesisTest({
       {/* Kolmogorov test results table */}
       {Array.isArray(kolmogorovData) && kolmogorovData.length > 0 && (
         <div>
-          <div className='t-test-results'>
+          <div className="t-test-results">
             <h3>Kolmogorov Test Results</h3>
-            <table className='t-test-table'>
+            <table className="t-test-table">
               <thead>
                 <tr>
                   <th>Column</th>
@@ -219,12 +246,21 @@ function HypothesisTest({
                           background: "none",
                           border: "none",
                           cursor: "pointer",
-                          color: "#ef4444"
+                          color: "#ef4444",
                         }}
                         onClick={() => handleDeleteKolmogorov(result.id)}
                         title="Delete"
                       >
-                        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          width="1em"
+                          height="1em"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#ef4444"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <polyline points="3 6 5 6 21 6" />
                           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
                           <line x1="10" y1="11" x2="10" y2="17" />
@@ -254,4 +290,3 @@ HypothesisTest.propTypes = {
 };
 
 export default HypothesisTest;
-

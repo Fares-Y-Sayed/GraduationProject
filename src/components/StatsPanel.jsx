@@ -337,6 +337,344 @@ function StatsPanel({
                     <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
                     T-Test Analysis
                   </h2>
+                  <div
+                    className="hypothesis-display"
+                    style={{
+                      margin: "1rem 0",
+                      padding: "1.5rem",
+                      backgroundColor: "var(--surface-color)",
+                      borderRadius: "12px",
+                      border: "1px solid var(--border-color)",
+                      boxShadow: "0 2px 12px var(--shadow-color)",
+                    }}
+                  >
+                    {tTestType === "single" && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "2rem",
+                          alignItems: "stretch",
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--primary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Null Hypothesis (H₀)
+                            </h3>
+                            <p
+                              style={{
+                                margin: 0,
+                                color: "var(--text-primary)",
+                                fontSize: "0.95rem",
+                                lineHeight: "1.5",
+                              }}
+                            >
+                              μ = μ₀ (The population mean is equal to a
+                              specified value.)
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--secondary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Alternative Hypothesis (H₁)
+                            </h3>
+                            {tTestAlternative === "two-tailed" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ ≠ μ₀
+                              </p>
+                            )}
+                            {tTestAlternative === "less" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ &lt; μ₀
+                              </p>
+                            )}
+                            {tTestAlternative === "greater" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ &gt; μ₀
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {tTestType === "independent" && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "2rem",
+                          alignItems: "stretch",
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--primary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Null Hypothesis (H₀)
+                            </h3>
+                            <p
+                              style={{
+                                margin: 0,
+                                color: "var(--text-primary)",
+                                fontSize: "0.95rem",
+                                lineHeight: "1.5",
+                              }}
+                            >
+                              μ₁ = μ₂ (The two population means are equal.)
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--secondary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Alternative Hypothesis (H₁)
+                            </h3>
+                            {tTestAlternative === "two-tailed" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ₁ ≠ μ₂
+                              </p>
+                            )}
+                            {tTestAlternative === "less" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ₁ &lt; μ₂
+                              </p>
+                            )}
+                            {tTestAlternative === "greater" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μ₁ &gt; μ₂
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {tTestType === "paired" && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "2rem",
+                          alignItems: "stretch",
+                        }}
+                      >
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--primary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Null Hypothesis (H₀)
+                            </h3>
+                            <p
+                              style={{
+                                margin: 0,
+                                color: "var(--text-primary)",
+                                fontSize: "0.95rem",
+                                lineHeight: "1.5",
+                              }}
+                            >
+                              μd = 0 (The mean of the differences between paired
+                              observations is zero.)
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            flex: 1,
+                            padding: "1.5rem",
+                            backgroundColor: "var(--background-color)",
+                            borderRadius: "8px",
+                            border: "1px solid var(--border-color)",
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            minHeight: "120px",
+                          }}
+                        >
+                          <div>
+                            <h3
+                              style={{
+                                margin: "0 0 1rem 0",
+                                color: "var(--secondary-color)",
+                                fontSize: "1.1rem",
+                                fontWeight: "600",
+                              }}
+                            >
+                              Alternative Hypothesis (H₁)
+                            </h3>
+                            {tTestAlternative === "two-tailed" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μd ≠ 0
+                              </p>
+                            )}
+                            {tTestAlternative === "less" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μd &lt; 0
+                              </p>
+                            )}
+                            {tTestAlternative === "greater" && (
+                              <p
+                                style={{
+                                  margin: 0,
+                                  color: "var(--text-primary)",
+                                  fontSize: "0.95rem",
+                                  lineHeight: "1.5",
+                                }}
+                              >
+                                μd &gt; 0
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <div className="test-parameters">
                     <div className="test-param-item">
                       <label>Test Type:</label>
