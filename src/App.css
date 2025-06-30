@@ -28,7 +28,7 @@ h1 {
 h2 {
   font-size: 1.75rem;
   font-weight: 600;
-  margin: 2rem 0;
+  margin: 1.5rem 0;
   color: var(--text-primary);
   animation: slideIn 0.5s ease;
 }
@@ -240,7 +240,7 @@ tr:hover td {
 }
 
 .column-checkbox-label input[type="checkbox"]:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -277,7 +277,7 @@ tr:hover td {
 }
 
 .column-checkbox-label input[type="radio"]:checked::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -410,7 +410,7 @@ tr:hover td {
 }
 
 .stat-checkbox-label input[type="checkbox"]:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -708,7 +708,6 @@ tr:hover td {
 }
 
 .run-test-button {
-  margin-top: 1rem;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   background-color: var(--primary-color);
@@ -731,7 +730,7 @@ tr:hover td {
   background-color: var(--surface-color);
   padding: 1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   flex-wrap: wrap;
 }
 
@@ -764,9 +763,9 @@ tr:hover td {
   box-shadow: 0 0 0 2px var(--primary-color);
 }
 
-/* .t-test-table {
+.t-test-table {
   margin-top: 15px;
-} */
+}
 
 .chart-container {
   height: 70vh; /* Increase height to 70% of viewport height */

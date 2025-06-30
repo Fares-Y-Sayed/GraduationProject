@@ -591,8 +591,8 @@ function StatsPanel({
                                 : result.pValue}
                             </td>
                             <td>
-                              {result.isNormal 
-                                ? "Normal Distribution" 
+                              {result.isNormal
+                                ? "Normal Distribution"
                                 : "Not Normal Distribution"}
                             </td>
                             <td>
@@ -819,13 +819,7 @@ function StatsPanel({
                   </div>
                   {signTestData && signTestData.result && (
                     <>
-                      <div style={{ marginTop: "2rem" }}>
-                        <h3>
-                          <FaFlask
-                            style={{ marginRight: 8, color: "#a3ffd6" }}
-                          />
-                          Sign Test Results
-                        </h3>
+                      <div>
                         <table className="t-test-table">
                           <thead>
                             <tr>
@@ -852,8 +846,8 @@ function StatsPanel({
                                   : signTestData.result.pValue}
                               </td>
                               <td>
-                                {signTestData.result.significant 
-                                  ? "Reject H0 (Significant)" 
+                                {signTestData.result.significant
+                                  ? "Reject H0 (Significant)"
                                   : "Fail to Reject H0 (Not Significant)"}
                               </td>
                               <td>{signTestData.result.positiveSigns}</td>
@@ -960,12 +954,6 @@ function StatsPanel({
                   {rankedSignTestData && rankedSignTestData.result && (
                     <>
                       <div style={{ marginTop: "2rem" }}>
-                        <h3>
-                          <FaFlask
-                            style={{ marginRight: 8, color: "#a3ffd6" }}
-                          />
-                          Ranked Sign Test Results
-                        </h3>
                         <table className="t-test-table">
                           <thead>
                             <tr>
@@ -997,8 +985,8 @@ function StatsPanel({
                                   : rankedSignTestData.result.pValue}
                               </td>
                               <td>
-                                {rankedSignTestData.result.significant 
-                                  ? "Reject H0 (Significant)" 
+                                {rankedSignTestData.result.significant
+                                  ? "Reject H0 (Significant)"
                                   : "Fail to Reject H0 (Not Significant)"}
                               </td>
                               <td>
@@ -1111,12 +1099,6 @@ function StatsPanel({
                   {uTestData && uTestData.result && (
                     <>
                       <div style={{ marginTop: "2rem" }}>
-                        <h3>
-                          <FaFlask
-                            style={{ marginRight: 8, color: "#a3ffd6" }}
-                          />
-                          U-Test Results
-                        </h3>
                         <table className="t-test-table">
                           <thead>
                             <tr>
@@ -1137,8 +1119,8 @@ function StatsPanel({
                               <td>{uTestData.result.U2}</td>
                               <td>{uTestData.result.pValue}</td>
                               <td>
-                                {uTestData.result.significant 
-                                  ? "Reject H0 (Significant)" 
+                                {uTestData.result.significant
+                                  ? "Reject H0 (Significant)"
                                   : "Fail to Reject H0 (Not Significant)"}
                               </td>
                               <td>{uTestData.result.n1}</td>
@@ -1317,8 +1299,8 @@ function StatsPanel({
                                 {result.degreesOfFreedom ?? result.df ?? ""}
                               </td>
                               <td>
-                                {result.significant 
-                                  ? "Reject H0 (Significant)" 
+                                {result.significant
+                                  ? "Reject H0 (Significant)"
                                   : "Fail to Reject H0 (Not Significant)"}
                               </td>
                               <td>
