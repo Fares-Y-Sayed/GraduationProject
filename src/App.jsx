@@ -336,13 +336,18 @@ function App() {
       console.error("fileName is missing in localStorage");
       return;
     }
-    if (columns.length < 2) {
-      alert("Please select at least two columns for the ANOVA test.");
+    if (columns.length !== 2 && columns.length !== 3) {
+      alert("Select 2 columns (one-way) or 3 columns (two-way) for ANOVA.");
       return;
     }
+    const factorNames =
+      columns.length === 2 ? [columns[0]] : [columns[0], columns[1]];
+    const valueName = columns[columns.length - 1];
     const params = {
       fileName,
-      headerNames: columns,
+      factorNames,
+      valueName,
+      alpha: 0.05, // Default, or make this user-configurable
     };
 
     try {

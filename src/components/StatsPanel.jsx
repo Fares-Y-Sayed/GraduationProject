@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
 import HistogramChart from "./HistogramChart";
-import Typewriter, { ExplanationTypewriter } from "./Typewriter";
+import { ExplanationTypewriter } from "./Typewriter";
 import { FaFlask, FaMagic, FaTrash, FaPlay } from "react-icons/fa";
 // import {handleDeleteTTest} from "../App"
 
@@ -26,7 +26,6 @@ function StatsPanel({
   tTestType,
   setTTestType,
 
-  regressionData,
   kolmogorovTest,
   kolmogorovData,
   handleDeleteKolmogorov,
@@ -55,7 +54,6 @@ function StatsPanel({
   setUTestData,
   chiSquareTest,
   chiSquareData,
-  setChiSquareData,
   handleDeleteChiSquare,
   chiSquareAlpha,
   setChiSquareAlpha,
@@ -63,7 +61,6 @@ function StatsPanel({
   setChiSquareTestType,
   zTest,
   zTestData,
-  setZTestData,
   handleDeleteZTest,
   zTestAlpha,
   setZTestAlpha,
@@ -859,7 +856,7 @@ function StatsPanel({
                             setTTestExplanation(
                               data.generatedText || "No explanation received."
                             );
-                          } catch (error) {
+                          } catch {
                             setTTestExplanation("Failed to get explanation.");
                           }
                           setTTestExplaining(false);
@@ -1080,7 +1077,7 @@ function StatsPanel({
                             setKolmogorovExplanation(
                               data.generatedText || "No explanation received."
                             );
-                          } catch (error) {
+                          } catch {
                             setKolmogorovExplanation(
                               "Failed to get explanation."
                             );
@@ -1127,6 +1124,17 @@ function StatsPanel({
                       boxShadow: "0 2px 12px var(--shadow-color)",
                     }}
                   >
+                    <div
+                      style={{
+                        marginBottom: "1rem",
+                        color: "var(--text-secondary)",
+                      }}
+                    >
+                      <b>Instructions:</b> Select <b>2 columns</b> (first:
+                      factor, second: value) for one-way ANOVA, or{" "}
+                      <b>3 columns</b> (first & second: factors, third: value)
+                      for two-way ANOVA.
+                    </div>
                     <div
                       style={{
                         display: "flex",
@@ -1221,53 +1229,201 @@ function StatsPanel({
                     </button>
                   </div>
                   {anovaData && anovaData.length > 0 && (
-                    <table className=" t-test-results t-test-table">
-                      <thead>
-                        <tr>
-                          <th>Columns</th>
-                          <th>F-Statistic</th>
-                          <th>P-Value</th>
-                          <th>DF Between</th>
-                          <th>DF Within</th>
-                          <th>SS Between</th>
-                          <th>SS Within</th>
-                          <th>MS Between</th>
-                          <th>MS Within</th>
-                          <th>Decision</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody className="anova-table">
-                        {anovaData.map((result) => (
-                          <tr key={result.id}>
-                            <td>{result.columns.join(", ")}</td>
-                            <td>{result.fStatistic?.toFixed(4)}</td>
-                            <td>{result.pValue?.toExponential(4)}</td>
-                            <td>{result.dfBetween}</td>
-                            <td>{result.dfWithin}</td>
-                            <td>{result.ssb?.toFixed(4)}</td>
-                            <td>{result.ssw?.toFixed(4)}</td>
-                            <td>{result.msb?.toFixed(4)}</td>
-                            <td>{result.msw?.toFixed(4)}</td>
-                            <td>{result.decision}</td>
-                            <td>
-                              <button
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#ef4444",
-                                }}
-                                onClick={() => handleDeleteAnova(result.id)}
-                                title="Delete"
-                              >
-                                <FaTrash style={{ marginRight: 6 }} />
-                              </button>
-                            </td>
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 8,
+                        margin: "1.5rem 0",
+                        boxShadow: "0 2px 8px var(--shadow-color)",
+                        background: "var(--background-color)",
+                        padding: "1rem",
+                      }}
+                    >
+                      <table
+                        className="t-test-results t-test-table"
+                        style={{ minWidth: 900 }}
+                      >
+                        <thead>
+                          <tr>
+                            {/* For two-way ANOVA, show Source column */}
+                            <th>Columns</th>
+                            <th>Source</th>
+                            <th>DF</th>
+                            <th>SS</th>
+                            <th>MS</th>
+                            <th>F</th>
+                            <th>p</th>
+                            <th>Decision</th>
+                            <th>Delete</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {anovaData.map((result) => {
+                            // Two-way ANOVA
+                            if (
+                              result.FactorA &&
+                              result.FactorB &&
+                              result.Interaction
+                            ) {
+                              return [
+                                <tr key={result.id + "-A"}>
+                                  <td rowSpan={5}>
+                                    {result.columns &&
+                                      result.columns.join(", ")}
+                                  </td>
+                                  <td>{`Factor A (${
+                                    Array.isArray(result.FactorA.name)
+                                      ? result.FactorA.name.join(", ")
+                                      : result.FactorA.name
+                                  })`}</td>
+                                  <td>{result.FactorA.df}</td>
+                                  <td>{result.FactorA.SS?.toFixed(4)}</td>
+                                  <td>{result.FactorA.MS?.toFixed(4)}</td>
+                                  <td>{result.FactorA.F?.toFixed(4)}</td>
+                                  <td>{result.FactorA.p?.toExponential(4)}</td>
+                                  <td>{result.FactorA.decision}</td>
+                                  <td rowSpan={5}>
+                                    <button
+                                      style={{
+                                        background: "none",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        color: "#ef4444",
+                                      }}
+                                      onClick={() =>
+                                        handleDeleteAnova(result.id)
+                                      }
+                                      title="Delete"
+                                    >
+                                      <FaTrash style={{ marginRight: 6 }} />
+                                    </button>
+                                  </td>
+                                </tr>,
+                                <tr key={result.id + "-B"}>
+                                  <td>{`Factor B (${
+                                    Array.isArray(result.FactorB.name)
+                                      ? result.FactorB.name.join(", ")
+                                      : result.FactorB.name
+                                  })`}</td>
+                                  <td>{result.FactorB.df}</td>
+                                  <td>{result.FactorB.SS?.toFixed(4)}</td>
+                                  <td>{result.FactorB.MS?.toFixed(4)}</td>
+                                  <td>{result.FactorB.F?.toFixed(4)}</td>
+                                  <td>{result.FactorB.p?.toExponential(4)}</td>
+                                  <td>{result.FactorB.decision}</td>
+                                </tr>,
+                                <tr key={result.id + "-I"}>
+                                  <td>Interaction</td>
+                                  <td>{result.Interaction.df}</td>
+                                  <td>{result.Interaction.SS?.toFixed(4)}</td>
+                                  <td>{result.Interaction.MS?.toFixed(4)}</td>
+                                  <td>{result.Interaction.F?.toFixed(4)}</td>
+                                  <td>
+                                    {result.Interaction.p?.toExponential(4)}
+                                  </td>
+                                  <td>{result.Interaction.decision}</td>
+                                </tr>,
+                                <tr key={result.id + "-E"}>
+                                  <td>Error</td>
+                                  <td>{result.Error.df}</td>
+                                  <td>{result.Error.SS?.toFixed(4)}</td>
+                                  <td>{result.Error.MS?.toFixed(4)}</td>
+                                  <td colSpan={4}></td>
+                                </tr>,
+                                <tr key={result.id + "-T"}>
+                                  <td>Total</td>
+                                  <td>{result.Total.df}</td>
+                                  <td>{result.Total.SS?.toFixed(4)}</td>
+                                  <td colSpan={5}></td>
+                                </tr>,
+                              ];
+                            }
+                            // One-way ANOVA (new structure)
+                            if (
+                              result.between &&
+                              result.within &&
+                              result.total
+                            ) {
+                              return [
+                                <tr key={result.id + "-between"}>
+                                  <td rowSpan={3}>
+                                    {result.columns &&
+                                      result.columns.join(", ")}
+                                  </td>
+                                  <td>{result.between.source}</td>
+                                  <td>{result.between.df}</td>
+                                  <td>{result.between.SS?.toFixed(4)}</td>
+                                  <td>{result.between.MS?.toFixed(4)}</td>
+                                  <td>{result.between.F?.toFixed(4)}</td>
+                                  <td>{result.between.p?.toExponential(4)}</td>
+                                  <td>{result.between.decision}</td>
+                                  <td rowSpan={3}>
+                                    <button
+                                      style={{
+                                        background: "none",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        color: "#ef4444",
+                                      }}
+                                      onClick={() =>
+                                        handleDeleteAnova(result.id)
+                                      }
+                                      title="Delete"
+                                    >
+                                      <FaTrash style={{ marginRight: 6 }} />
+                                    </button>
+                                  </td>
+                                </tr>,
+                                <tr key={result.id + "-within"}>
+                                  <td>{result.within.source}</td>
+                                  <td>{result.within.df}</td>
+                                  <td>{result.within.SS?.toFixed(4)}</td>
+                                  <td>{result.within.MS?.toFixed(4)}</td>
+                                  <td colSpan={5}></td>
+                                </tr>,
+                                <tr key={result.id + "-total"}>
+                                  <td>{result.total.source}</td>
+                                  <td>{result.total.df}</td>
+                                  <td>{result.total.SS?.toFixed(4)}</td>
+                                  <td colSpan={6}></td>
+                                </tr>,
+                              ];
+                            }
+                            // fallback (old one-way)
+                            return (
+                              <tr key={result.id}>
+                                <td>
+                                  {result.columns && result.columns.join(", ")}
+                                </td>
+                                <td>One-way ANOVA</td>
+                                <td>{result.dfBetween}</td>
+                                <td>{result.ssb?.toFixed(4)}</td>
+                                <td>{result.msb?.toFixed(4)}</td>
+                                <td>{result.fStatistic?.toFixed(4)}</td>
+                                <td>{result.pValue?.toExponential(4)}</td>
+                                <td>{result.decision}</td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => handleDeleteAnova(result.id)}
+                                    title="Delete"
+                                  >
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
@@ -1299,7 +1455,7 @@ function StatsPanel({
                           setAnovaExplanation(
                             data.generatedText || "No explanation received."
                           );
-                        } catch (error) {
+                        } catch {
                           setAnovaExplanation("Failed to get explanation.");
                         }
                         setAnovaExplaining(false);
@@ -1523,7 +1679,7 @@ function StatsPanel({
                               setSignTestExplanation(
                                 data.generatedText || "No explanation received."
                               );
-                            } catch (error) {
+                            } catch {
                               setSignTestExplanation(
                                 "Failed to get explanation."
                               );
@@ -1762,7 +1918,7 @@ function StatsPanel({
                               setRankedSignTestExplanation(
                                 data.generatedText || "No explanation received."
                               );
-                            } catch (error) {
+                            } catch {
                               setRankedSignTestExplanation(
                                 "Failed to get explanation."
                               );
@@ -1987,7 +2143,7 @@ function StatsPanel({
                               setUTestExplanation(
                                 data.generatedText || "No explanation received."
                               );
-                            } catch (error) {
+                            } catch {
                               setUTestExplanation("Failed to get explanation.");
                             }
                             setUTestExplaining(false);
@@ -2299,7 +2455,7 @@ function StatsPanel({
                             setChiSquareExplanation(
                               data.generatedText || "No explanation received."
                             );
-                          } catch (error) {
+                          } catch {
                             setChiSquareExplanation(
                               "Failed to get explanation."
                             );
@@ -2807,7 +2963,7 @@ function StatsPanel({
                             setZTestExplanation(
                               data.generatedText || "No explanation received."
                             );
-                          } catch (error) {
+                          } catch {
                             setZTestExplanation("Failed to get explanation.");
                           }
                           setZTestExplaining(false);
@@ -2880,7 +3036,6 @@ StatsPanel.propTypes = {
   setUTestData: PropTypes.func.isRequired,
   chiSquareTest: PropTypes.func.isRequired,
   chiSquareData: PropTypes.array.isRequired,
-  setChiSquareData: PropTypes.func.isRequired,
   handleDeleteChiSquare: PropTypes.func.isRequired,
   chiSquareAlpha: PropTypes.number.isRequired,
   setChiSquareAlpha: PropTypes.func.isRequired,
@@ -2888,7 +3043,6 @@ StatsPanel.propTypes = {
   setChiSquareTestType: PropTypes.func.isRequired,
   zTest: PropTypes.func.isRequired,
   zTestData: PropTypes.array.isRequired,
-  setZTestData: PropTypes.func.isRequired,
   handleDeleteZTest: PropTypes.func.isRequired,
   zTestAlpha: PropTypes.number.isRequired,
   setZTestAlpha: PropTypes.func.isRequired,
