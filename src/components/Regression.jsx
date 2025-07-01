@@ -6,7 +6,7 @@ function Regression({ regressionData }) {
   }
 
   return (
-    <div className='tab-content' style={{ marginTop: "2rem" }}>
+    <div className="tab-content" style={{ marginTop: "1rem" }}>
       <h2>Regression Results</h2>
       <table className="t-test-table">
         <thead>
@@ -20,7 +20,8 @@ function Regression({ regressionData }) {
           </tr>
         </thead>
         <tbody>
-          {Array.isArray(regressionData.slopes) && regressionData.slopes.length > 0 ? (
+          {Array.isArray(regressionData.slopes) &&
+          regressionData.slopes.length > 0 ? (
             regressionData.slopes.map((slopeObj, idx) => (
               <tr key={slopeObj.variable || idx}>
                 <td>{regressionData.coefficientOfDetermination}</td>
@@ -36,7 +37,7 @@ function Regression({ regressionData }) {
               <td>{regressionData.coefficientOfDetermination}</td>
               <td>{regressionData.intercept}</td>
               <td>{regressionData.linearRegressionEquation}</td>
-              <td colSpan={2}>{regressionData.slope || '-'}</td>
+              <td colSpan={2}>{regressionData.slope || "-"}</td>
               <td>{regressionData.standardError}</td>
             </tr>
           )}

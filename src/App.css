@@ -1,9 +1,11 @@
 :root {
   --flask-icon-color: var(--primary-color);
+  --chartline-icon-color: var(--primary-color);
 }
 
 [data-theme="dark"] {
   --flask-icon-color: #a3ffd6;
+  --chartline-icon-color: #a3ffd6;
 }
 
 h1::selection,
@@ -891,11 +893,6 @@ tr:hover td {
   word-break: break-word;
   white-space: pre-line;
   width: 100%;
-}
-
-.explanation-header {
-  color: var(--primary-color);
-  text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
 }
 
 .anova-table td {

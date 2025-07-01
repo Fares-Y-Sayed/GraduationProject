@@ -872,12 +872,6 @@ function StatsPanel({
                       </button>
                       {tTestExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header">
-                            <FaMagic
-                              style={{ marginRight: 8, color: "#10b981" }}
-                            />
-                            Explanation using AI
-                          </h3>
                           <ExplanationTypewriter text={tTestExplanation} />
                         </div>
                       )}
@@ -1102,12 +1096,6 @@ function StatsPanel({
                       </button>
                       {kolmogorovExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header">
-                            <FaMagic
-                              style={{ marginRight: 8, color: "#10b981" }}
-                            />
-                            Explanation using AI
-                          </h3>
                           <ExplanationTypewriter text={kolmogorovExplanation} />
                         </div>
                       )}
@@ -1481,12 +1469,6 @@ function StatsPanel({
                     </button>
                     {anovaExplanation && (
                       <div className="test-explanation">
-                        <h3 className="explanation-header">
-                          <FaMagic
-                            style={{ marginRight: 8, color: "#10b981" }}
-                          />
-                          Explanation using AI
-                        </h3>
                         <ExplanationTypewriter text={anovaExplanation} />
                       </div>
                     )}
@@ -1714,12 +1696,6 @@ function StatsPanel({
                         </button>
                         {signTestExplanation && (
                           <div className="test-explanation">
-                            <h3 className="explanation-header">
-                              <FaMagic
-                                style={{ marginRight: 8, color: "#10b981" }}
-                              />
-                              Explanation using AI
-                            </h3>
                             <ExplanationTypewriter text={signTestExplanation} />
                           </div>
                         )}
@@ -1958,12 +1934,6 @@ function StatsPanel({
                         </button>
                         {rankedSignTestExplanation && (
                           <div className="test-explanation">
-                            <h3 className="explanation-header">
-                              <FaMagic
-                                style={{ marginRight: 8, color: "#10b981" }}
-                              />
-                              Explanation using AI
-                            </h3>
                             <ExplanationTypewriter
                               text={rankedSignTestExplanation}
                             />
@@ -2186,12 +2156,6 @@ function StatsPanel({
                         </button>
                         {uTestExplanation && (
                           <div className="test-explanation">
-                            <h3 className="explanation-header">
-                              <FaMagic
-                                style={{ marginRight: 8, color: "#10b981" }}
-                              />
-                              Explanation using AI
-                            </h3>
                             <ExplanationTypewriter text={uTestExplanation} />
                           </div>
                         )}
@@ -2505,12 +2469,6 @@ function StatsPanel({
                       </button>
                       {chiSquareExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header">
-                            <FaMagic
-                              style={{ marginRight: 8, color: "#10b981" }}
-                            />
-                            Explanation using AI
-                          </h3>
                           <ExplanationTypewriter text={chiSquareExplanation} />
                         </div>
                       )}
@@ -3014,12 +2972,6 @@ function StatsPanel({
                       </button>
                       {zTestExplanation && (
                         <div className="test-explanation">
-                          <h3 className="explanation-header">
-                            <FaMagic
-                              style={{ marginRight: 8, color: "#10b981" }}
-                            />
-                            Explanation using AI
-                          </h3>
                           <ExplanationTypewriter text={zTestExplanation} />
                         </div>
                       )}

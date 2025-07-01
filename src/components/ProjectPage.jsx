@@ -208,9 +208,14 @@ function ProjectPage(props) {
             </div>
           )}
           {regressionData.length > 0 && (
-            <div style={{ marginTop: "2rem" }} className="fade-in-up">
+            <div style={{ marginTop: "1rem" }} className="fade-in-up">
               <h2>
-                <FaChartLine style={{ marginRight: 8, color: "#a3ffd6" }} />
+                <FaChartLine
+                  style={{
+                    marginRight: 8,
+                    color: "var(--chartline-icon-color)",
+                  }}
+                />
                 Regression Results
               </h2>
               <table className="t-test-table">
@@ -302,6 +307,7 @@ function ProjectPage(props) {
               </table>
               <button
                 className="run-test-button"
+                style={{ marginTop: "1.5rem" }}
                 disabled={regressionExplaining}
                 onClick={async () => {
                   setRegressionExplaining(true);
@@ -335,10 +341,6 @@ function ProjectPage(props) {
               </button>
               {regressionExplanation && (
                 <div className="test-explanation">
-                  <h3 className="explanation-header">
-                    <FaMagic style={{ marginRight: 8, color: "#10b981" }} />
-                    Explanation using AI
-                  </h3>
                   <ExplanationTypewriter text={regressionExplanation} />
                 </div>
               )}
