@@ -46,12 +46,11 @@ export const ExplanationTypewriter = ({ text, speed = 20, linePause = 400 }) => 
   // Split text into lines using robust rules
   const lines = React.useMemo(() => (
     (text || '')
-      .replace(/(:)(?!\n)/g, '$1\n') // break after colon
-      .replace(/(\d+\.)/g, '\n$1')   // break before 1. 2. 3.
-      .replace(/\. (?=[A-Z])/g, '.\n') // break after period+space+capital
-      .split(/\n+/)
+      // Split at a period and space followed by a capital letter, but not after a digit (e.g., '1.')
+      .split(/(?<!\d)\. (?=[A-Z])/)
       .map(line => line.trim())
       .filter(line => line.length > 0)
+      .map(line => line.endsWith('.') ? line : line + '.') // add the period back if missing
   ), [text]);
 
   const [currentLine, setCurrentLine] = React.useState(0);
@@ -92,14 +91,14 @@ export const ExplanationTypewriter = ({ text, speed = 20, linePause = 400 }) => 
   }, [currentLine, lines, speed, linePause]);
 
   return (
-    <span>
+    <div>
       {displayedLines.map((line, idx) => (
-        <span className="explanation-typewriter-line" key={idx}>{line}</span>
+        <div className="explanation-typewriter-line" key={idx}>{line}</div>
       ))}
       {currentLine < lines.length && (
-        <span className="explanation-typewriter-line">{displayedText}</span>
+        <div className="explanation-typewriter-line">{displayedText}</div>
       )}
-    </span>
+    </div>
   );
 };
 
