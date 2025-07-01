@@ -333,6 +333,12 @@ tr:hover td {
 .stats-container {
   margin-top: 2rem;
 }
+.stats-container .tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
 
 .tab-button {
   padding: 1rem 1.5rem;
@@ -344,7 +350,6 @@ tr:hover td {
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-right: 1rem;
   border-radius: 12px;
 }
 
@@ -1147,6 +1152,14 @@ tr:hover td {
 
   .adjust-icon {
     font-size: 0.9rem;
+  }
+
+  .column-checkboxes {
+    justify-content: center;
+  }
+
+  .test-parameters {
+    justify-content: center;
   }
 }
 

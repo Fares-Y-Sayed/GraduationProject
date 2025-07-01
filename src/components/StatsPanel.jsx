@@ -7,6 +7,9 @@ import { ExplanationTypewriter } from "./Typewriter";
 import { FaFlask, FaMagic, FaTrash, FaPlay } from "react-icons/fa";
 // import {handleDeleteTTest} from "../App"
 
+// At the top of the component, add:
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+
 function StatsPanel({
   activeTab,
   activeSubTab,
@@ -354,6 +357,7 @@ function StatsPanel({
                       <div
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "2rem",
                           alignItems: "stretch",
                         }}
@@ -463,6 +467,7 @@ function StatsPanel({
                       <div
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "2rem",
                           alignItems: "stretch",
                         }}
@@ -571,6 +576,7 @@ function StatsPanel({
                       <div
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "2rem",
                           alignItems: "stretch",
                         }}
@@ -917,6 +923,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -1165,6 +1172,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -1536,6 +1544,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -1779,6 +1788,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -2033,6 +2043,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -2267,6 +2278,7 @@ function StatsPanel({
                     <div
                       style={{
                         display: "flex",
+                        flexDirection: isMobile ? "column" : "row",
                         gap: "2rem",
                         alignItems: "stretch",
                       }}
@@ -2591,6 +2603,7 @@ function StatsPanel({
                       <div
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "2rem",
                           alignItems: "stretch",
                         }}
@@ -2700,6 +2713,7 @@ function StatsPanel({
                       <div
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           gap: "2rem",
                           alignItems: "stretch",
                         }}
