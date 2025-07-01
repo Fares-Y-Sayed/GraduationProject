@@ -1309,11 +1309,7 @@ function StatsPanel({
                                       {result.columns &&
                                         result.columns.join(", ")}
                                     </td>
-                                    <td>{`Factor A (${
-                                      Array.isArray(result.FactorA.name)
-                                        ? result.FactorA.name.join(", ")
-                                        : result.FactorA.name
-                                    })`}</td>
+                                    <td>Factor A</td>
                                     <td>{result.FactorA.df}</td>
                                     <td>{result.FactorA.SS?.toFixed(4)}</td>
                                     <td>{result.FactorA.MS?.toFixed(4)}</td>
@@ -1340,11 +1336,7 @@ function StatsPanel({
                                     </td>
                                   </tr>,
                                   <tr key={result.id + "-B"}>
-                                    <td>{`Factor B (${
-                                      Array.isArray(result.FactorB.name)
-                                        ? result.FactorB.name.join(", ")
-                                        : result.FactorB.name
-                                    })`}</td>
+                                    <td>Factor B</td>
                                     <td>{result.FactorB.df}</td>
                                     <td>{result.FactorB.SS?.toFixed(4)}</td>
                                     <td>{result.FactorB.MS?.toFixed(4)}</td>
