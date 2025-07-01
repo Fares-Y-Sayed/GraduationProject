@@ -1,5 +1,6 @@
 import { Bar } from "react-chartjs-2";
 import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -20,6 +21,41 @@ ChartJS.register(
 );
 
 const HistogramChart = ({ data, columns }) => {
+  // --- THEME PALETTE HOOKS ---
+  const getPalette = () => {
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+    return isDark
+      ? [
+          "rgba(96, 240, 175, 0.6)",
+          "rgba(61, 125, 96, 0.6)",
+          "rgba(96, 175, 240, 0.6)",
+          "rgba(143, 102, 224, 0.6)",
+          "rgba(80, 200, 120, 0.6)",
+        ]
+      : [
+          "#484b6acf",
+          "#9394a58a",
+          "rgba(96, 175, 240, 0.6)",
+          "rgba(143, 102, 224, 0.6)",
+          "rgba(80, 200, 120, 0.6)",
+        ];
+  };
+
+  const [colorPalette, setColorPalette] = useState(getPalette());
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setColorPalette(getPalette());
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => observer.disconnect();
+  }, []);
+  // --- END THEME PALETTE HOOKS ---
+
   if (!data || !columns || columns.length === 0) {
     return null;
   }
@@ -57,14 +93,6 @@ const HistogramChart = ({ data, columns }) => {
 
     return { labels, freqs: bins };
   };
-
-  const colorPalette = [
-    "rgba(96, 240, 175, 0.6)",
-    "rgba(61, 125, 96, 0.6)",
-    "rgba(96, 175, 240, 0.6)",
-    "rgba(143, 102, 224, 0.6)",
-    "rgba(80, 200, 120, 0.6)",
-  ];
 
   const datasets = columns.map((col, index) => {
     const columnData = data.map((row) => row[col]);
@@ -139,10 +167,10 @@ const HistogramChart = ({ data, columns }) => {
       className="chart-container"
       style={{ marginTop: "2rem", height: "400px" }}
     >
-      <Bar 
-        key={`histogram-${columns.join('-')}`}
-        data={chartData} 
-        options={options} 
+      <Bar
+        key={`histogram-${columns.join("-")}`}
+        data={chartData}
+        options={options}
       />
     </div>
   );
