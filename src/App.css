@@ -1,3 +1,11 @@
+:root {
+  --flask-icon-color: var(--primary-color);
+}
+
+[data-theme="dark"] {
+  --flask-icon-color: #a3ffd6;
+}
+
 h1::selection,
 .file-name::selection {
   -webkit-text-fill-color: var(--text-primary);

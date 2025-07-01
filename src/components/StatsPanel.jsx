@@ -331,7 +331,12 @@ function StatsPanel({
               {activeSubTab === "t-test" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     T-Test Analysis
                   </h2>
                   <div
@@ -885,7 +890,12 @@ function StatsPanel({
               {activeSubTab === "kolmogorov" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     Kolmogorov-Smirnov Test
                   </h2>
                   <div
@@ -1110,7 +1120,12 @@ function StatsPanel({
               {activeSubTab === "anova" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     ANOVA Test
                   </h2>
                   <div
@@ -1483,7 +1498,12 @@ function StatsPanel({
               {activeSubTab === "sign" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     Sign Test
                   </h2>
                   <div
@@ -1713,7 +1733,12 @@ function StatsPanel({
               {activeSubTab === "rankedSign" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     Ranked Sign Test
                   </h2>
                   <div
@@ -1954,7 +1979,12 @@ function StatsPanel({
               {activeSubTab === "u-test" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     U-Test
                   </h2>
                   <div
@@ -2175,7 +2205,12 @@ function StatsPanel({
               {activeSubTab === "chi-square" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     Chi-Square Test
                   </h2>
                   <div
@@ -2488,7 +2523,12 @@ function StatsPanel({
               {activeSubTab === "z-test" && (
                 <div className="tab-content">
                   <h2>
-                    <FaFlask style={{ marginRight: 8, color: "#a3ffd6" }} />
+                    <FaFlask
+                      style={{
+                        marginRight: 8,
+                        color: "var(--flask-icon-color)",
+                      }}
+                    />
                     Z-Test Analysis
                   </h2>
                   <div
