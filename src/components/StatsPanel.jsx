@@ -317,12 +317,12 @@ function StatsPanel({
 
               {/* Visualization SubTab */}
               {activeSubTab === "visualization" && (
-                <ChartDisplay
-                  data={data}
-                  selectedColumns={selectedColumns}
-                  chartType={chartType}
-                  setChartType={setChartType}
-                />
+                  <ChartDisplay
+                    data={data}
+                    selectedColumns={selectedColumns}
+                    chartType={chartType}
+                    setChartType={setChartType}
+                  />
               )}
             </>
           )}
@@ -789,68 +789,68 @@ function StatsPanel({
                       }}
                     >
                       <table className="t-test-table" style={{ minWidth: 900 }}>
-                        <thead>
-                          <tr>
-                            <th>Test Type</th>
-                            <th>Columns</th>
-                            <th>t-Statistic</th>
-                            <th>p-Value</th>
-                            <th>Decision</th>
-                            <th>Degrees of Freedom</th>
-                            <th>Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {tTestData.map((result) => (
-                            <tr key={result.id}>
-                              <td>
-                                {result.testType === "single"
-                                  ? "Single Sample"
-                                  : result.testType === "paired"
-                                  ? "Paired Sample"
-                                  : result.testType === "independent"
-                                  ? "Independent Sample"
-                                  : "Unknown"}
-                              </td>
-                              <td>
-                                {Array.isArray(result.columns)
-                                  ? result.columns.join(", ")
-                                  : result.columns}
-                              </td>
-                              <td>
+                          <thead>
+                            <tr>
+                              <th>Test Type</th>
+                              <th>Columns</th>
+                              <th>t-Statistic</th>
+                              <th>p-Value</th>
+                              <th>Decision</th>
+                              <th>Degrees of Freedom</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {tTestData.map((result) => (
+                              <tr key={result.id}>
+                                <td>
+                                  {result.testType === "single"
+                                    ? "Single Sample"
+                                    : result.testType === "paired"
+                                    ? "Paired Sample"
+                                    : result.testType === "independent"
+                                    ? "Independent Sample"
+                                    : "Unknown"}
+                                </td>
+                                <td>
+                                  {Array.isArray(result.columns)
+                                    ? result.columns.join(", ")
+                                    : result.columns}
+                                </td>
+                                <td>
                                 {result.tStatistic?.toFixed(3) ??
                                   result.tValue?.toFixed(3) ??
-                                  ""}
-                              </td>
+                                    ""}
+                                </td>
                               <td>{result.pValue?.toFixed(3) ?? ""}</td>
                               <td>{result.decision ?? result.result ?? ""}</td>
-                              <td>
-                                {result.degreesOfFreedom ?? result.df ?? ""}
-                              </td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() => handleDeleteTTest(result.id)}
+                                <td>
+                                  {result.degreesOfFreedom ?? result.df ?? ""}
+                                </td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => handleDeleteTTest(result.id)}
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                     </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
                     activeSubTab === "t-test" && (
-                      <HistogramChart data={data} columns={selectedColumns} />
+                        <HistogramChart data={data} columns={selectedColumns} />
                     )}
                   {tTestData && tTestData.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>
@@ -1033,58 +1033,58 @@ function StatsPanel({
                       }}
                     >
                       <table className="t-test-table" style={{ minWidth: 900 }}>
-                        <thead>
-                          <tr>
-                            <th>Column</th>
-                            <th>Statistic</th>
-                            <th>Critical Value</th>
-                            <th>p-Value</th>
-                            <th>Is Normal</th>
-                            <th>Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {kolmogorovData.map((result) => (
-                            <tr key={result.id}>
-                              <td>{result.column}</td>
+                          <thead>
+                            <tr>
+                              <th>Column</th>
+                              <th>Statistic</th>
+                              <th>Critical Value</th>
+                              <th>p-Value</th>
+                              <th>Is Normal</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {kolmogorovData.map((result) => (
+                              <tr key={result.id}>
+                                <td>{result.column}</td>
                               <td>{result.statistic?.toFixed(3)}</td>
                               <td>{result.criticalValue?.toFixed(3)}</td>
-                              <td>
-                                {typeof result.pValue === "number"
+                                <td>
+                                  {typeof result.pValue === "number"
                                   ? result.pValue.toExponential(3)
-                                  : result.pValue}
-                              </td>
-                              <td>
-                                {result.isNormal
-                                  ? "Normal Distribution"
-                                  : "Not Normal Distribution"}
-                              </td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() =>
-                                    handleDeleteKolmogorov(result.id)
-                                  }
+                                    : result.pValue}
+                                </td>
+                                <td>
+                                  {result.isNormal
+                                    ? "Normal Distribution"
+                                    : "Not Normal Distribution"}
+                                </td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() =>
+                                      handleDeleteKolmogorov(result.id)
+                                    }
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                     </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
                     activeSubTab === "kolmogorov" && (
-                      <HistogramChart data={data} columns={selectedColumns} />
+                        <HistogramChart data={data} columns={selectedColumns} />
                     )}
                   {kolmogorovData && kolmogorovData.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>
@@ -1427,84 +1427,84 @@ function StatsPanel({
                               }
                               // fallback (old one-way)
                               return (
-                                <tr key={result.id}>
+                              <tr key={result.id}>
                                   <td>
                                     {result.columns &&
                                       result.columns.join(", ")}
                                   </td>
                                   <td>One-way ANOVA</td>
-                                  <td>{result.dfBetween}</td>
+                                <td>{result.dfBetween}</td>
                                   <td>{result.ssb?.toFixed(4)}</td>
                                   <td>{result.msb?.toFixed(4)}</td>
                                   <td>{result.fStatistic?.toFixed(4)}</td>
                                   <td>{result.pValue?.toExponential(4)}</td>
-                                  <td>{result.decision}</td>
-                                  <td>
-                                    <button
-                                      style={{
-                                        background: "none",
-                                        border: "none",
-                                        cursor: "pointer",
-                                        color: "#ef4444",
-                                      }}
+                                <td>{result.decision}</td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
                                       onClick={() =>
                                         handleDeleteAnova(result.id)
                                       }
                                       title="Delete"
                                     >
-                                      <FaTrash style={{ marginRight: 6 }} />
-                                    </button>
-                                  </td>
-                                </tr>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
                               );
                             })}
                           </tbody>
                         </table>
                       </div>
-                      <div style={{ marginTop: "1rem" }}>
-                        <button
+                  <div style={{ marginTop: "1rem" }}>
+                    <button
                           className="run-test-button"
-                          disabled={anovaExplaining}
-                          onClick={async () => {
-                            setAnovaExplaining(true);
-                            setAnovaExplanation("");
-                            const prompt = `Explain the following ANOVA test results in simple terms in three lines:\n${JSON.stringify(
-                              anovaData,
-                              null,
-                              2
-                            )}`;
-                            try {
-                              const response = await fetch(
-                                "http://localhost:4000/generate",
-                                {
-                                  method: "POST",
+                      disabled={anovaExplaining}
+                      onClick={async () => {
+                        setAnovaExplaining(true);
+                        setAnovaExplanation("");
+                        const prompt = `Explain the following ANOVA test results in simple terms in three lines:\n${JSON.stringify(
+                          anovaData,
+                          null,
+                          2
+                        )}`;
+                        try {
+                          const response = await fetch(
+                            "http://localhost:4000/generate",
+                            {
+                              method: "POST",
                                   headers: {
                                     "Content-Type": "application/json",
                                   },
-                                  body: JSON.stringify({ prompt }),
-                                }
-                              );
-                              const data = await response.json();
-                              setAnovaExplanation(
-                                data.generatedText || "No explanation received."
-                              );
-                            } catch {
-                              setAnovaExplanation("Failed to get explanation.");
+                              body: JSON.stringify({ prompt }),
                             }
-                            setAnovaExplaining(false);
+                          );
+                          const data = await response.json();
+                          setAnovaExplanation(
+                            data.generatedText || "No explanation received."
+                          );
+                            } catch {
+                          setAnovaExplanation("Failed to get explanation.");
+                        }
+                        setAnovaExplaining(false);
                           }}
                         >
-                          <FaMagic style={{ marginRight: 6 }} />
+                      <FaMagic style={{ marginRight: 6 }} />
                           {anovaExplaining
                             ? "Explaining..."
                             : "Explain Results"}
-                        </button>
-                        {anovaExplanation && (
+                    </button>
+                    {anovaExplanation && (
                           <div className="test-explanation">
-                            <ExplanationTypewriter text={anovaExplanation} />
-                          </div>
-                        )}
+                        <ExplanationTypewriter text={anovaExplanation} />
                       </div>
+                    )}
+                  </div>
                     </>
                   )}
                 </div>
@@ -1653,55 +1653,55 @@ function StatsPanel({
                           className="t-test-table"
                           style={{ minWidth: 900 }}
                         >
-                          <thead>
-                            <tr>
-                              <th>Statistic</th>
-                              <th>p-Value</th>
-                              <th>Significant</th>
-                              <th>Positive Signs</th>
-                              <th>Negative Signs</th>
-                              <th>Ties</th>
-                              <th>Delete</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                {typeof signTestData.result.statistic ===
-                                "number"
+                            <thead>
+                              <tr>
+                                <th>Statistic</th>
+                                <th>p-Value</th>
+                                <th>Significant</th>
+                                <th>Positive Signs</th>
+                                <th>Negative Signs</th>
+                                <th>Ties</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  {typeof signTestData.result.statistic ===
+                                  "number"
                                   ? signTestData.result.statistic.toFixed(3)
-                                  : signTestData.result.statistic}
-                              </td>
-                              <td>
+                                    : signTestData.result.statistic}
+                                </td>
+                                <td>
                                 {typeof signTestData.result.pValue === "number"
                                   ? signTestData.result.pValue.toExponential(6)
-                                  : signTestData.result.pValue}
-                              </td>
-                              <td>
-                                {signTestData.result.significant
-                                  ? "Reject H0 (Significant)"
-                                  : "Fail to Reject H0 (Not Significant)"}
-                              </td>
-                              <td>{signTestData.result.positiveSigns}</td>
-                              <td>{signTestData.result.negativeSigns}</td>
-                              <td>{signTestData.result.ties}</td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() => setSignTestData(null)}
+                                    : signTestData.result.pValue}
+                                </td>
+                                <td>
+                                  {signTestData.result.significant
+                                    ? "Reject H0 (Significant)"
+                                    : "Fail to Reject H0 (Not Significant)"}
+                                </td>
+                                <td>{signTestData.result.positiveSigns}</td>
+                                <td>{signTestData.result.negativeSigns}</td>
+                                <td>{signTestData.result.ties}</td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => setSignTestData(null)}
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                       </div>
                       <div style={{ marginTop: "1rem" }}>
                         <button
@@ -1897,64 +1897,64 @@ function StatsPanel({
                           className="t-test-table"
                           style={{ minWidth: 900 }}
                         >
-                          <thead>
-                            <tr>
-                              <th>Statistic</th>
-                              <th>p-Value</th>
-                              <th>Significant</th>
-                              <th>Positive Rank Sum</th>
-                              <th>Negative Rank Sum</th>
-                              <th>Ties</th>
-                              <th>Delete</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
+                            <thead>
+                              <tr>
+                                <th>Statistic</th>
+                                <th>p-Value</th>
+                                <th>Significant</th>
+                                <th>Positive Rank Sum</th>
+                                <th>Negative Rank Sum</th>
+                                <th>Ties</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
                                 {typeof rankedSignTestData.result.statistic ===
                                 "number"
-                                  ? rankedSignTestData.result.statistic.toFixed(
+                                    ? rankedSignTestData.result.statistic.toFixed(
                                       3
-                                    )
-                                  : rankedSignTestData.result.statistic}
-                              </td>
-                              <td>
-                                {typeof rankedSignTestData.result.pValue ===
-                                "number"
+                                      )
+                                    : rankedSignTestData.result.statistic}
+                                </td>
+                                <td>
+                                  {typeof rankedSignTestData.result.pValue ===
+                                  "number"
                                   ? rankedSignTestData.result.pValue.toExponential(
                                       6
-                                    )
-                                  : rankedSignTestData.result.pValue}
-                              </td>
-                              <td>
-                                {rankedSignTestData.result.significant
-                                  ? "Reject H0 (Significant)"
-                                  : "Fail to Reject H0 (Not Significant)"}
-                              </td>
-                              <td>
-                                {rankedSignTestData.result.positiveRankSum}
-                              </td>
-                              <td>
-                                {rankedSignTestData.result.negativeRankSum}
-                              </td>
-                              <td>{rankedSignTestData.result.ties}</td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() => setRankedSignTestData(null)}
+                                      )
+                                    : rankedSignTestData.result.pValue}
+                                </td>
+                                <td>
+                                  {rankedSignTestData.result.significant
+                                    ? "Reject H0 (Significant)"
+                                    : "Fail to Reject H0 (Not Significant)"}
+                                </td>
+                                <td>
+                                  {rankedSignTestData.result.positiveRankSum}
+                                </td>
+                                <td>
+                                  {rankedSignTestData.result.negativeRankSum}
+                                </td>
+                                <td>{rankedSignTestData.result.ties}</td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => setRankedSignTestData(null)}
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                       </div>
                       <div style={{ marginTop: "1rem" }}>
                         <button
@@ -2152,48 +2152,48 @@ function StatsPanel({
                           className="t-test-table"
                           style={{ minWidth: 900 }}
                         >
-                          <thead>
-                            <tr>
-                              <th>U</th>
-                              <th>U1</th>
-                              <th>U2</th>
-                              <th>p-Value</th>
-                              <th>Significant</th>
-                              <th>n1</th>
-                              <th>n2</th>
-                              <th>Delete</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>{uTestData.result.U}</td>
-                              <td>{uTestData.result.U1}</td>
-                              <td>{uTestData.result.U2}</td>
+                            <thead>
+                              <tr>
+                                <th>U</th>
+                                <th>U1</th>
+                                <th>U2</th>
+                                <th>p-Value</th>
+                                <th>Significant</th>
+                                <th>n1</th>
+                                <th>n2</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{uTestData.result.U}</td>
+                                <td>{uTestData.result.U1}</td>
+                                <td>{uTestData.result.U2}</td>
                               <td>{uTestData.result.pValue}</td>
-                              <td>
-                                {uTestData.result.significant
-                                  ? "Reject H0 (Significant)"
-                                  : "Fail to Reject H0 (Not Significant)"}
-                              </td>
-                              <td>{uTestData.result.n1}</td>
-                              <td>{uTestData.result.n2}</td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() => setUTestData(null)}
+                                <td>
+                                  {uTestData.result.significant
+                                    ? "Reject H0 (Significant)"
+                                    : "Fail to Reject H0 (Not Significant)"}
+                                </td>
+                                <td>{uTestData.result.n1}</td>
+                                <td>{uTestData.result.n2}</td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => setUTestData(null)}
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                       </div>
                       <div style={{ marginTop: "1rem" }}>
                         <button
@@ -2454,70 +2454,70 @@ function StatsPanel({
                       }}
                     >
                       <table className="t-test-table" style={{ minWidth: 900 }}>
-                        <thead>
-                          <tr>
-                            <th>Test Type</th>
-                            <th>Columns</th>
-                            <th>Chi-Square Statistic</th>
-                            <th>p-Value</th>
-                            <th>Degrees of Freedom</th>
-                            <th>Decision</th>
-                            <th>Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {chiSquareData.map((result) => (
-                            <tr key={result.id}>
-                              <td>
-                                {result.testType === "independence"
-                                  ? "Independence"
-                                  : "Goodness of Fit"}
-                              </td>
-                              <td>
-                                {Array.isArray(result.columns)
-                                  ? result.columns.join(", ")
-                                  : result.columns}
-                              </td>
-                              <td>
+                          <thead>
+                            <tr>
+                              <th>Test Type</th>
+                              <th>Columns</th>
+                              <th>Chi-Square Statistic</th>
+                              <th>p-Value</th>
+                              <th>Degrees of Freedom</th>
+                              <th>Decision</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {chiSquareData.map((result) => (
+                              <tr key={result.id}>
+                                <td>
+                                  {result.testType === "independence"
+                                    ? "Independence"
+                                    : "Goodness of Fit"}
+                                </td>
+                                <td>
+                                  {Array.isArray(result.columns)
+                                    ? result.columns.join(", ")
+                                    : result.columns}
+                                </td>
+                                <td>
                                 {result.chi2?.toFixed(4) ??
                                   result.chi2?.toFixed(4) ??
-                                  ""}
-                              </td>
+                                    ""}
+                                </td>
                               <td>{result.pValue?.toFixed(4) ?? ""}</td>
-                              <td>
-                                {result.degreesOfFreedom ?? result.df ?? ""}
-                              </td>
-                              <td>
-                                {result.significant
-                                  ? "Reject H0 (Significant)"
-                                  : "Fail to Reject H0 (Not Significant)"}
-                              </td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() =>
-                                    handleDeleteChiSquare(result.id)
-                                  }
+                                <td>
+                                  {result.degreesOfFreedom ?? result.df ?? ""}
+                                </td>
+                                <td>
+                                  {result.significant
+                                    ? "Reject H0 (Significant)"
+                                    : "Fail to Reject H0 (Not Significant)"}
+                                </td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() =>
+                                      handleDeleteChiSquare(result.id)
+                                    }
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                     </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
                     activeSubTab === "chi-square" && (
-                      <HistogramChart data={data} columns={selectedColumns} />
+                        <HistogramChart data={data} columns={selectedColumns} />
                     )}
                   {chiSquareData && chiSquareData.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>
@@ -2968,76 +2968,76 @@ function StatsPanel({
                       }}
                     >
                       <table className="t-test-table" style={{ minWidth: 900 }}>
-                        <thead>
-                          <tr>
-                            <th>Test Type</th>
-                            <th>Columns</th>
-                            <th>Z-Statistic</th>
-                            <th>p-Value</th>
-                            <th>Decision</th>
-                            <th>Sample Mean(s)</th>
-                            <th>Sample Size(s)</th>
-                            <th>Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {zTestData.map((result) => (
-                            <tr key={result.id}>
-                              <td>
-                                {result.testType === "single"
-                                  ? "Single Sample"
-                                  : "Two Sample"}
-                              </td>
-                              <td>
-                                {Array.isArray(result.columns)
-                                  ? result.columns.join(" vs ")
-                                  : result.column || result.columns}
-                              </td>
-                              <td>
+                          <thead>
+                            <tr>
+                              <th>Test Type</th>
+                              <th>Columns</th>
+                              <th>Z-Statistic</th>
+                              <th>p-Value</th>
+                              <th>Decision</th>
+                              <th>Sample Mean(s)</th>
+                              <th>Sample Size(s)</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {zTestData.map((result) => (
+                              <tr key={result.id}>
+                                <td>
+                                  {result.testType === "single"
+                                    ? "Single Sample"
+                                    : "Two Sample"}
+                                </td>
+                                <td>
+                                  {Array.isArray(result.columns)
+                                    ? result.columns.join(" vs ")
+                                    : result.column || result.columns}
+                                </td>
+                                <td>
                                 {result.zStatistic?.toFixed(3) ??
                                   result.zValue?.toFixed(3) ??
-                                  ""}
-                              </td>
+                                    ""}
+                                </td>
                               <td>{result.pValue?.toFixed(3) ?? ""}</td>
                               <td>{result.decision ?? result.result ?? ""}</td>
-                              <td>
-                                {result.testType === "single"
+                                <td>
+                                  {result.testType === "single"
                                   ? result.sampleMean?.toFixed(3) ?? ""
                                   : (result.mean1?.toFixed(3) ?? "") +
-                                    " - " +
+                                      " - " +
                                     (result.mean2?.toFixed(3) ?? "")}
-                              </td>
-                              <td>
-                                {result.testType === "single"
-                                  ? result.sampleSize ?? result.n ?? ""
-                                  : (result.sampleSize1 ?? result.n1 ?? "") +
-                                    " - " +
-                                    (result.sampleSize2 ?? result.n2 ?? "")}
-                              </td>
-                              <td>
-                                <button
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    color: "#ef4444",
-                                  }}
-                                  onClick={() => handleDeleteZTest(result.id)}
+                                </td>
+                                <td>
+                                  {result.testType === "single"
+                                    ? result.sampleSize ?? result.n ?? ""
+                                    : (result.sampleSize1 ?? result.n1 ?? "") +
+                                      " - " +
+                                      (result.sampleSize2 ?? result.n2 ?? "")}
+                                </td>
+                                <td>
+                                  <button
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "#ef4444",
+                                    }}
+                                    onClick={() => handleDeleteZTest(result.id)}
                                   title="Delete"
                                 >
-                                  <FaTrash style={{ marginRight: 6 }} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                                    <FaTrash style={{ marginRight: 6 }} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                     </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
                     activeSubTab === "z-test" && (
-                      <HistogramChart data={data} columns={selectedColumns} />
+                        <HistogramChart data={data} columns={selectedColumns} />
                     )}
                   {zTestData && zTestData.length > 0 && (
                     <div style={{ marginTop: "1rem" }}>

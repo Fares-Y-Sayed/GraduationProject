@@ -320,6 +320,16 @@ tr:hover td {
   border-radius: 50%;
 }
 
+.reg {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 1rem 0px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  background: var(--background-color);
+  padding: 1rem;
+}
 .column-checkbox-label input[type="radio"]:hover {
   border-color: var(--primary-color);
   transform: scale(1.05);
@@ -965,10 +975,10 @@ tr:hover td {
 
 .explanation-typewriter-line {
   display: block;
-  margin-bottom: 1.1em;
+  margin-bottom: 2em;
   font-size: 1rem;
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 2;
   white-space: pre-line;
   word-break: break-word;
   max-width: 100%;
