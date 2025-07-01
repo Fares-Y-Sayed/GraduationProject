@@ -6,9 +6,20 @@ function Regression({ regressionData }) {
   }
 
   return (
-    <div className="tab-content" style={{ marginTop: "1rem" }}>
+    <div
+      style={{
+        maxWidth: "100%",
+        overflowX: "auto",
+        border: "1px solid var(--border-color)",
+        borderRadius: 8,
+        margin: "1rem 0",
+        boxShadow: "0 2px 8px var(--shadow-color)",
+        background: "var(--background-color)",
+        padding: "1rem",
+      }}
+    >
       <h2>Regression Results</h2>
-      <table className="t-test-table">
+      <table className="t-test-table" style={{ minWidth: 900 }}>
         <thead>
           <tr>
             <th>Coefficient of Determination</th>

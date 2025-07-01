@@ -165,7 +165,7 @@ const HistogramChart = ({ data, columns }) => {
   return (
     <div
       className="chart-container"
-      style={{ marginTop: "2rem", height: "400px" }}
+      style={{ marginTop: "1rem", height: "400px" }}
     >
       <Bar
         key={`histogram-${columns.join("-")}`}

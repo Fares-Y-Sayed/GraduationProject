@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import StatCard from "./StatCard";
 import ChartDisplay from "./ChartDisplay";
@@ -770,8 +770,19 @@ function StatsPanel({
                     </button>
                   </div>
                   {tTestData && tTestData.length > 0 && (
-                    <div className="t-test-results">
-                      <table className="t-test-table">
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 8,
+                        margin: "1rem 0",
+                        boxShadow: "0 2px 8px var(--shadow-color)",
+                        background: "var(--background-color)",
+                        padding: "1rem",
+                      }}
+                    >
+                      <table className="t-test-table" style={{ minWidth: 900 }}>
                         <thead>
                           <tr>
                             <th>Test Type</th>
@@ -1002,53 +1013,66 @@ function StatsPanel({
                     </button>
                   </div>
                   {kolmogorovData && kolmogorovData.length > 0 && (
-                    <table className="t-test-table">
-                      <thead>
-                        <tr>
-                          <th>Column</th>
-                          <th>Statistic</th>
-                          <th>Critical Value</th>
-                          <th>p-Value</th>
-                          <th>Is Normal</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {kolmogorovData.map((result) => (
-                          <tr key={result.id}>
-                            <td>{result.column}</td>
-                            <td>{result.statistic?.toFixed(3)}</td>
-                            <td>{result.criticalValue?.toFixed(3)}</td>
-                            <td>
-                              {typeof result.pValue === "number"
-                                ? result.pValue.toExponential(3)
-                                : result.pValue}
-                            </td>
-                            <td>
-                              {result.isNormal
-                                ? "Normal Distribution"
-                                : "Not Normal Distribution"}
-                            </td>
-                            <td>
-                              <button
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  cursor: "pointer",
-                                  color: "#ef4444",
-                                }}
-                                onClick={() =>
-                                  handleDeleteKolmogorov(result.id)
-                                }
-                                title="Delete"
-                              >
-                                <FaTrash style={{ marginRight: 6 }} />
-                              </button>
-                            </td>
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 8,
+                        margin: "1rem 0",
+                        boxShadow: "0 2px 8px var(--shadow-color)",
+                        background: "var(--background-color)",
+                        padding: "1rem",
+                      }}
+                    >
+                      <table className="t-test-table" style={{ minWidth: 900 }}>
+                        <thead>
+                          <tr>
+                            <th>Column</th>
+                            <th>Statistic</th>
+                            <th>Critical Value</th>
+                            <th>p-Value</th>
+                            <th>Is Normal</th>
+                            <th>Delete</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {kolmogorovData.map((result) => (
+                            <tr key={result.id}>
+                              <td>{result.column}</td>
+                              <td>{result.statistic?.toFixed(3)}</td>
+                              <td>{result.criticalValue?.toFixed(3)}</td>
+                              <td>
+                                {typeof result.pValue === "number"
+                                  ? result.pValue.toExponential(3)
+                                  : result.pValue}
+                              </td>
+                              <td>
+                                {result.isNormal
+                                  ? "Normal Distribution"
+                                  : "Not Normal Distribution"}
+                              </td>
+                              <td>
+                                <button
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    color: "#ef4444",
+                                  }}
+                                  onClick={() =>
+                                    handleDeleteKolmogorov(result.id)
+                                  }
+                                  title="Delete"
+                                >
+                                  <FaTrash style={{ marginRight: 6 }} />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                   {data &&
                     selectedColumns.length > 0 &&
@@ -1232,137 +1256,190 @@ function StatsPanel({
                     </button>
                   </div>
                   {anovaData && anovaData.length > 0 && (
-                    <div
-                      style={{
-                        maxWidth: "100%",
-                        overflowX: "auto",
-                        border: "1px solid var(--border-color)",
-                        borderRadius: 8,
-                        margin: "1.5rem 0",
-                        boxShadow: "0 2px 8px var(--shadow-color)",
-                        background: "var(--background-color)",
-                        padding: "1rem",
-                      }}
-                    >
-                      <table
-                        className="t-test-results t-test-table"
-                        style={{ minWidth: 900 }}
+                    <>
+                      <div
+                        style={{
+                          maxWidth: "100%",
+                          overflowX: "auto",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: 8,
+                          margin: "1rem 0",
+                          boxShadow: "0 2px 8px var(--shadow-color)",
+                          background: "var(--background-color)",
+                          padding: "1rem",
+                        }}
                       >
-                        <thead>
-                          <tr>
-                            {/* For two-way ANOVA, show Source column */}
-                            <th>Columns</th>
-                            <th>Source</th>
-                            <th>DF</th>
-                            <th>SS</th>
-                            <th>MS</th>
-                            <th>F</th>
-                            <th>p</th>
-                            <th>Decision</th>
-                            <th>Delete</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {anovaData.map((result) => {
-                            // Two-way ANOVA
-                            if (
-                              result.FactorA &&
-                              result.FactorB &&
-                              result.Interaction
-                            ) {
-                              return [
-                                <tr key={result.id + "-A"}>
-                                  <td rowSpan={5}>
-                                    {result.columns &&
-                                      result.columns.join(", ")}
-                                  </td>
-                                  <td>{`Factor A (${
-                                    Array.isArray(result.FactorA.name)
-                                      ? result.FactorA.name.join(", ")
-                                      : result.FactorA.name
-                                  })`}</td>
-                                  <td>{result.FactorA.df}</td>
-                                  <td>{result.FactorA.SS?.toFixed(4)}</td>
-                                  <td>{result.FactorA.MS?.toFixed(4)}</td>
-                                  <td>{result.FactorA.F?.toFixed(4)}</td>
-                                  <td>{result.FactorA.p?.toExponential(4)}</td>
-                                  <td>{result.FactorA.decision}</td>
-                                  <td rowSpan={5}>
-                                    <button
-                                      style={{
-                                        background: "none",
-                                        border: "none",
-                                        cursor: "pointer",
-                                        color: "#ef4444",
-                                      }}
-                                      onClick={() =>
-                                        handleDeleteAnova(result.id)
-                                      }
-                                      title="Delete"
-                                    >
-                                      <FaTrash style={{ marginRight: 6 }} />
-                                    </button>
-                                  </td>
-                                </tr>,
-                                <tr key={result.id + "-B"}>
-                                  <td>{`Factor B (${
-                                    Array.isArray(result.FactorB.name)
-                                      ? result.FactorB.name.join(", ")
-                                      : result.FactorB.name
-                                  })`}</td>
-                                  <td>{result.FactorB.df}</td>
-                                  <td>{result.FactorB.SS?.toFixed(4)}</td>
-                                  <td>{result.FactorB.MS?.toFixed(4)}</td>
-                                  <td>{result.FactorB.F?.toFixed(4)}</td>
-                                  <td>{result.FactorB.p?.toExponential(4)}</td>
-                                  <td>{result.FactorB.decision}</td>
-                                </tr>,
-                                <tr key={result.id + "-I"}>
-                                  <td>Interaction</td>
-                                  <td>{result.Interaction.df}</td>
-                                  <td>{result.Interaction.SS?.toFixed(4)}</td>
-                                  <td>{result.Interaction.MS?.toFixed(4)}</td>
-                                  <td>{result.Interaction.F?.toFixed(4)}</td>
+                        <table
+                          className="t-test-results t-test-table"
+                          style={{ minWidth: 900 }}
+                        >
+                          <thead>
+                            <tr>
+                              {/* For two-way ANOVA, show Source column */}
+                              <th>Columns</th>
+                              <th>Source</th>
+                              <th>DF</th>
+                              <th>SS</th>
+                              <th>MS</th>
+                              <th>F</th>
+                              <th>p</th>
+                              <th>Decision</th>
+                              <th>Delete</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {anovaData.map((result) => {
+                              // Two-way ANOVA
+                              if (
+                                result.FactorA &&
+                                result.FactorB &&
+                                result.Interaction
+                              ) {
+                                return [
+                                  <tr key={result.id + "-A"}>
+                                    <td rowSpan={5}>
+                                      {result.columns &&
+                                        result.columns.join(", ")}
+                                    </td>
+                                    <td>{`Factor A (${
+                                      Array.isArray(result.FactorA.name)
+                                        ? result.FactorA.name.join(", ")
+                                        : result.FactorA.name
+                                    })`}</td>
+                                    <td>{result.FactorA.df}</td>
+                                    <td>{result.FactorA.SS?.toFixed(4)}</td>
+                                    <td>{result.FactorA.MS?.toFixed(4)}</td>
+                                    <td>{result.FactorA.F?.toFixed(4)}</td>
+                                    <td>
+                                      {result.FactorA.p?.toExponential(4)}
+                                    </td>
+                                    <td>{result.FactorA.decision}</td>
+                                    <td rowSpan={5}>
+                                      <button
+                                        style={{
+                                          background: "none",
+                                          border: "none",
+                                          cursor: "pointer",
+                                          color: "#ef4444",
+                                        }}
+                                        onClick={() =>
+                                          handleDeleteAnova(result.id)
+                                        }
+                                        title="Delete"
+                                      >
+                                        <FaTrash style={{ marginRight: 6 }} />
+                                      </button>
+                                    </td>
+                                  </tr>,
+                                  <tr key={result.id + "-B"}>
+                                    <td>{`Factor B (${
+                                      Array.isArray(result.FactorB.name)
+                                        ? result.FactorB.name.join(", ")
+                                        : result.FactorB.name
+                                    })`}</td>
+                                    <td>{result.FactorB.df}</td>
+                                    <td>{result.FactorB.SS?.toFixed(4)}</td>
+                                    <td>{result.FactorB.MS?.toFixed(4)}</td>
+                                    <td>{result.FactorB.F?.toFixed(4)}</td>
+                                    <td>
+                                      {result.FactorB.p?.toExponential(4)}
+                                    </td>
+                                    <td>{result.FactorB.decision}</td>
+                                  </tr>,
+                                  <tr key={result.id + "-I"}>
+                                    <td>Interaction</td>
+                                    <td>{result.Interaction.df}</td>
+                                    <td>{result.Interaction.SS?.toFixed(4)}</td>
+                                    <td>{result.Interaction.MS?.toFixed(4)}</td>
+                                    <td>{result.Interaction.F?.toFixed(4)}</td>
+                                    <td>
+                                      {result.Interaction.p?.toExponential(4)}
+                                    </td>
+                                    <td>{result.Interaction.decision}</td>
+                                  </tr>,
+                                  <tr key={result.id + "-E"}>
+                                    <td>Error</td>
+                                    <td>{result.Error.df}</td>
+                                    <td>{result.Error.SS?.toFixed(4)}</td>
+                                    <td>{result.Error.MS?.toFixed(4)}</td>
+                                    <td colSpan={4}></td>
+                                  </tr>,
+                                  <tr key={result.id + "-T"}>
+                                    <td>Total</td>
+                                    <td>{result.Total.df}</td>
+                                    <td>{result.Total.SS?.toFixed(4)}</td>
+                                    <td colSpan={5}></td>
+                                  </tr>,
+                                ];
+                              }
+                              // One-way ANOVA (new structure)
+                              if (
+                                result.between &&
+                                result.within &&
+                                result.total
+                              ) {
+                                return [
+                                  <tr key={result.id + "-between"}>
+                                    <td rowSpan={3}>
+                                      {result.columns &&
+                                        result.columns.join(", ")}
+                                    </td>
+                                    <td>{result.between.source}</td>
+                                    <td>{result.between.df}</td>
+                                    <td>{result.between.SS?.toFixed(4)}</td>
+                                    <td>{result.between.MS?.toFixed(4)}</td>
+                                    <td>{result.between.F?.toFixed(4)}</td>
+                                    <td>
+                                      {result.between.p?.toExponential(4)}
+                                    </td>
+                                    <td>{result.between.decision}</td>
+                                    <td rowSpan={3}>
+                                      <button
+                                        style={{
+                                          background: "none",
+                                          border: "none",
+                                          cursor: "pointer",
+                                          color: "#ef4444",
+                                        }}
+                                        onClick={() =>
+                                          handleDeleteAnova(result.id)
+                                        }
+                                        title="Delete"
+                                      >
+                                        <FaTrash style={{ marginRight: 6 }} />
+                                      </button>
+                                    </td>
+                                  </tr>,
+                                  <tr key={result.id + "-within"}>
+                                    <td>{result.within.source}</td>
+                                    <td>{result.within.df}</td>
+                                    <td>{result.within.SS?.toFixed(4)}</td>
+                                    <td>{result.within.MS?.toFixed(4)}</td>
+                                    <td colSpan={5}></td>
+                                  </tr>,
+                                  <tr key={result.id + "-total"}>
+                                    <td>{result.total.source}</td>
+                                    <td>{result.total.df}</td>
+                                    <td>{result.total.SS?.toFixed(4)}</td>
+                                    <td colSpan={6}></td>
+                                  </tr>,
+                                ];
+                              }
+                              // fallback (old one-way)
+                              return (
+                                <tr key={result.id}>
                                   <td>
-                                    {result.Interaction.p?.toExponential(4)}
-                                  </td>
-                                  <td>{result.Interaction.decision}</td>
-                                </tr>,
-                                <tr key={result.id + "-E"}>
-                                  <td>Error</td>
-                                  <td>{result.Error.df}</td>
-                                  <td>{result.Error.SS?.toFixed(4)}</td>
-                                  <td>{result.Error.MS?.toFixed(4)}</td>
-                                  <td colSpan={4}></td>
-                                </tr>,
-                                <tr key={result.id + "-T"}>
-                                  <td>Total</td>
-                                  <td>{result.Total.df}</td>
-                                  <td>{result.Total.SS?.toFixed(4)}</td>
-                                  <td colSpan={5}></td>
-                                </tr>,
-                              ];
-                            }
-                            // One-way ANOVA (new structure)
-                            if (
-                              result.between &&
-                              result.within &&
-                              result.total
-                            ) {
-                              return [
-                                <tr key={result.id + "-between"}>
-                                  <td rowSpan={3}>
                                     {result.columns &&
                                       result.columns.join(", ")}
                                   </td>
-                                  <td>{result.between.source}</td>
-                                  <td>{result.between.df}</td>
-                                  <td>{result.between.SS?.toFixed(4)}</td>
-                                  <td>{result.between.MS?.toFixed(4)}</td>
-                                  <td>{result.between.F?.toFixed(4)}</td>
-                                  <td>{result.between.p?.toExponential(4)}</td>
-                                  <td>{result.between.decision}</td>
-                                  <td rowSpan={3}>
+                                  <td>One-way ANOVA</td>
+                                  <td>{result.dfBetween}</td>
+                                  <td>{result.ssb?.toFixed(4)}</td>
+                                  <td>{result.msb?.toFixed(4)}</td>
+                                  <td>{result.fStatistic?.toFixed(4)}</td>
+                                  <td>{result.pValue?.toExponential(4)}</td>
+                                  <td>{result.decision}</td>
+                                  <td>
                                     <button
                                       style={{
                                         background: "none",
@@ -1378,101 +1455,58 @@ function StatsPanel({
                                       <FaTrash style={{ marginRight: 6 }} />
                                     </button>
                                   </td>
-                                </tr>,
-                                <tr key={result.id + "-within"}>
-                                  <td>{result.within.source}</td>
-                                  <td>{result.within.df}</td>
-                                  <td>{result.within.SS?.toFixed(4)}</td>
-                                  <td>{result.within.MS?.toFixed(4)}</td>
-                                  <td colSpan={5}></td>
-                                </tr>,
-                                <tr key={result.id + "-total"}>
-                                  <td>{result.total.source}</td>
-                                  <td>{result.total.df}</td>
-                                  <td>{result.total.SS?.toFixed(4)}</td>
-                                  <td colSpan={6}></td>
-                                </tr>,
-                              ];
-                            }
-                            // fallback (old one-way)
-                            return (
-                              <tr key={result.id}>
-                                <td>
-                                  {result.columns && result.columns.join(", ")}
-                                </td>
-                                <td>One-way ANOVA</td>
-                                <td>{result.dfBetween}</td>
-                                <td>{result.ssb?.toFixed(4)}</td>
-                                <td>{result.msb?.toFixed(4)}</td>
-                                <td>{result.fStatistic?.toFixed(4)}</td>
-                                <td>{result.pValue?.toExponential(4)}</td>
-                                <td>{result.decision}</td>
-                                <td>
-                                  <button
-                                    style={{
-                                      background: "none",
-                                      border: "none",
-                                      cursor: "pointer",
-                                      color: "#ef4444",
-                                    }}
-                                    onClick={() => handleDeleteAnova(result.id)}
-                                    title="Delete"
-                                  >
-                                    <FaTrash style={{ marginRight: 6 }} />
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                  {data &&
-                    selectedColumns.length > 0 &&
-                    activeSubTab === "anova" && (
-                      <HistogramChart data={data} columns={selectedColumns} />
-                    )}
-                  <div style={{ marginTop: "1rem" }}>
-                    <button
-                      className="run-test-button"
-                      disabled={anovaExplaining}
-                      onClick={async () => {
-                        setAnovaExplaining(true);
-                        setAnovaExplanation("");
-                        const prompt = `Explain the following ANOVA test results in simple terms in three lines:\n${JSON.stringify(
-                          anovaData,
-                          null,
-                          2
-                        )}`;
-                        try {
-                          const response = await fetch(
-                            "http://localhost:4000/generate",
-                            {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ prompt }),
-                            }
-                          );
-                          const data = await response.json();
-                          setAnovaExplanation(
-                            data.generatedText || "No explanation received."
-                          );
-                        } catch {
-                          setAnovaExplanation("Failed to get explanation.");
-                        }
-                        setAnovaExplaining(false);
-                      }}
-                    >
-                      <FaMagic style={{ marginRight: 6 }} />
-                      {anovaExplaining ? "Explaining..." : "Explain Results"}
-                    </button>
-                    {anovaExplanation && (
-                      <div className="test-explanation">
-                        <ExplanationTypewriter text={anovaExplanation} />
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
-                    )}
-                  </div>
+                      <div style={{ marginTop: "1rem" }}>
+                        <button
+                          className="run-test-button"
+                          disabled={anovaExplaining}
+                          onClick={async () => {
+                            setAnovaExplaining(true);
+                            setAnovaExplanation("");
+                            const prompt = `Explain the following ANOVA test results in simple terms in three lines:\n${JSON.stringify(
+                              anovaData,
+                              null,
+                              2
+                            )}`;
+                            try {
+                              const response = await fetch(
+                                "http://localhost:4000/generate",
+                                {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                  body: JSON.stringify({ prompt }),
+                                }
+                              );
+                              const data = await response.json();
+                              setAnovaExplanation(
+                                data.generatedText || "No explanation received."
+                              );
+                            } catch {
+                              setAnovaExplanation("Failed to get explanation.");
+                            }
+                            setAnovaExplaining(false);
+                          }}
+                        >
+                          <FaMagic style={{ marginRight: 6 }} />
+                          {anovaExplaining
+                            ? "Explaining..."
+                            : "Explain Results"}
+                        </button>
+                        {anovaExplanation && (
+                          <div className="test-explanation">
+                            <ExplanationTypewriter text={anovaExplanation} />
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -1602,8 +1636,22 @@ function StatsPanel({
                   </div>
                   {signTestData && signTestData.result && (
                     <>
-                      <div>
-                        <table className="t-test-table">
+                      <div
+                        style={{
+                          maxWidth: "100%",
+                          overflowX: "auto",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: 8,
+                          margin: "1rem 0",
+                          boxShadow: "0 2px 8px var(--shadow-color)",
+                          background: "var(--background-color)",
+                          padding: "1rem",
+                        }}
+                      >
+                        <table
+                          className="t-test-table"
+                          style={{ minWidth: 900 }}
+                        >
                           <thead>
                             <tr>
                               <th>Statistic</th>
@@ -1831,8 +1879,22 @@ function StatsPanel({
                   </div>
                   {rankedSignTestData && rankedSignTestData.result && (
                     <>
-                      <div style={{ marginTop: "2rem" }}>
-                        <table className="t-test-table">
+                      <div
+                        style={{
+                          maxWidth: "100%",
+                          overflowX: "auto",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: 8,
+                          margin: "1rem 0",
+                          boxShadow: "0 2px 8px var(--shadow-color)",
+                          background: "var(--background-color)",
+                          padding: "1rem",
+                        }}
+                      >
+                        <table
+                          className="t-test-table"
+                          style={{ minWidth: 900 }}
+                        >
                           <thead>
                             <tr>
                               <th>Statistic</th>
@@ -2071,8 +2133,22 @@ function StatsPanel({
                   </div>
                   {uTestData && uTestData.result && (
                     <>
-                      <div style={{ marginTop: "2rem" }}>
-                        <table className="t-test-table">
+                      <div
+                        style={{
+                          maxWidth: "100%",
+                          overflowX: "auto",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: 8,
+                          margin: "1rem 0",
+                          boxShadow: "0 2px 8px var(--shadow-color)",
+                          background: "var(--background-color)",
+                          padding: "1rem",
+                        }}
+                      >
+                        <table
+                          className="t-test-table"
+                          style={{ minWidth: 900 }}
+                        >
                           <thead>
                             <tr>
                               <th>U</th>
@@ -2361,8 +2437,19 @@ function StatsPanel({
                     </button>
                   </div>
                   {chiSquareData && chiSquareData.length > 0 && (
-                    <div className="t-test-results">
-                      <table className="t-test-table">
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 8,
+                        margin: "1rem 0",
+                        boxShadow: "0 2px 8px var(--shadow-color)",
+                        background: "var(--background-color)",
+                        padding: "1rem",
+                      }}
+                    >
+                      <table className="t-test-table" style={{ minWidth: 900 }}>
                         <thead>
                           <tr>
                             <th>Test Type</th>
@@ -2862,8 +2949,19 @@ function StatsPanel({
                     </button>
                   </div>
                   {zTestData && zTestData.length > 0 && (
-                    <div className="t-test-results">
-                      <table className="t-test-table">
+                    <div
+                      style={{
+                        maxWidth: "100%",
+                        overflowX: "auto",
+                        border: "1px solid var(--border-color)",
+                        borderRadius: 8,
+                        margin: "1rem 0",
+                        boxShadow: "0 2px 8px var(--shadow-color)",
+                        background: "var(--background-color)",
+                        padding: "1rem",
+                      }}
+                    >
+                      <table className="t-test-table" style={{ minWidth: 900 }}>
                         <thead>
                           <tr>
                             <th>Test Type</th>
