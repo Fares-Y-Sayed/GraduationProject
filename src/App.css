@@ -282,8 +282,8 @@ tr:hover td {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.6rem;
+  height: 0.6rem;
   background: var(--primary-color);
   border-radius: 50%;
 }
@@ -1163,6 +1163,63 @@ tr:hover td {
 [data-theme="light"] .column-checkbox-label input[type="checkbox"]:hover,
 [data-theme="light"] .column-checkbox-label input[type="radio"]:hover,
 [data-theme="light"] .stat-checkbox-label input[type="checkbox"]:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgb(72 75 106 / 25%);
+}
+
+[data-theme="light"] .stat-checkbox-label input[type="checkbox"]:hover,
+[data-theme="light"] .stat-checkbox-label input[type="checkbox"]:focus {
+  box-shadow: 0 0 0 2px rgb(72 75 106 / 25%);
+}
+
+[data-theme="dark"] .stat-checkbox-label input[type="checkbox"]:checked::after {
+  color: black;
+  font-size: 1rem;
+}
+
+[data-theme="light"]
+  .stat-checkbox-label
+  input[type="checkbox"]:checked::after {
+  font-size: 1rem;
+}
+
+.stat-checkbox-label input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--text-muted);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.stat-checkbox-label input[type="radio"]:checked {
+  border-color: var(--primary-color);
+}
+
+.stat-checkbox-label input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--primary-color);
+  border-radius: 50%;
+}
+
+[data-theme="light"] .stat-checkbox-label input[type="radio"]:hover,
+[data-theme="light"] .stat-checkbox-label input[type="radio"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgb(72 75 106 / 25%);
+}
+
+[data-theme="dark"] .stat-checkbox-label input[type="radio"]:hover,
+[data-theme="dark"] .stat-checkbox-label input[type="radio"]:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.2);
 }

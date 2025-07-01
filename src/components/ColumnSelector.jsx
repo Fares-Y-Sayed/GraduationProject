@@ -27,7 +27,7 @@ function ColumnSelector({
         <h3>{title}</h3>
         <div className="column-checkboxes">
           {columns.map((column) => (
-            <label key={column} className="column-checkbox-label">
+            <label key={column} className="stat-checkbox-label">
               <input
                 type={isRadio ? "radio" : "checkbox"}
                 name={isRadio ? "dependent-column" : undefined} // Group radio buttons
@@ -39,7 +39,7 @@ function ColumnSelector({
                     : selectedColumns.includes(column)
                 }
                 onChange={() => handleColumnSelect(column, isRadio)}
-                className="column-checkbox"
+                className="stat-checkbox"
               />
               {column}
             </label>
