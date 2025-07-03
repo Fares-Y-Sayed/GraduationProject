@@ -2,8 +2,6 @@ export const VARIABLE_TYPES = {
     METRIC: "metric",
     ORDINAL: "ordinal",
     NOMINAL: "nominal",
-    DEPENDENT: "dependent",
-    INDEPENDENT: "independent"
 };
 
 export const TESTS = {

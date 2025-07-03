@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 function DataPreview({ data }) {
   if (!data || data.length === 0) return null;
 
@@ -29,5 +31,9 @@ function DataPreview({ data }) {
     </div>
   );
 }
+
+DataPreview.propTypes = {
+  data: PropTypes.array,
+};
 
 export default DataPreview;

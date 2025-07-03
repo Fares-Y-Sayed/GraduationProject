@@ -1,4 +1,5 @@
-import { Line, Bar, Scatter } from "react-chartjs-2";
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -6,63 +7,71 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { BoxPlotChart } from "@sgratzl/chartjs-chart-boxplot";
+import { Line, Bar, Scatter, Pie } from "react-chartjs-2";
+import Plot from "react-plotly.js";
+import { useTheme } from "../contexts/ThemeContext";
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
 );
 
-function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
-  const calculateBoxPlotData = (values) => {
-    const sorted = values.sort((a, b) => a - b);
-    const q1 = sorted[Math.floor(sorted.length * 0.25)];
-    const median = sorted[Math.floor(sorted.length * 0.5)];
-    const q3 = sorted[Math.floor(sorted.length * 0.75)];
-    const iqr = q3 - q1;
-    const min = Math.max(q1 - 1.5 * iqr, sorted[0]);
-    const max = Math.min(q3 + 1.5 * iqr, sorted[sorted.length - 1]);
-
-    return values; // Return all values for the boxplot plugin to calculate
-  };
+const ChartDisplay = ({ data, selectedColumns, chartType, setChartType }) => {
+  const { isDarkMode } = useTheme();
 
   const generateChartData = () => {
     if (!data || selectedColumns.length === 0) return null;
 
-    if (chartType === "boxplot") {
+    if (chartType === "pie") {
+      // For pie chart, calculate averages
+      const averages = selectedColumns.map((column) => {
+        const values = data
+          .map((row) => parseFloat(row[column]))
+          .filter((val) => !isNaN(val));
+        return values.length > 0
+          ? values.reduce((sum, val) => sum + val, 0) / values.length
+          : 0;
+      });
+
       return {
         labels: selectedColumns,
         datasets: [
           {
-            label: "Box Plot",
-            data: selectedColumns.map((column) => {
-              const values = data
-                .map((row) => parseFloat(row[column]))
-                .filter((val) => !isNaN(val));
-              return calculateBoxPlotData(values);
-            }),
-            backgroundColor: selectedColumns.map(
-              (_, index) => `hsla(${index * 60}, 70%, 60%, 0.5)`
-            ),
-            borderColor: selectedColumns.map(
-              (_, index) => `hsla(${index * 60}, 70%, 60%, 1)`
-            ),
-            borderWidth: 2,
+            data: averages,
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.8)",
+              "rgba(54, 162, 235, 0.8)",
+              "rgba(255, 206, 86, 0.8)",
+              "rgba(75, 192, 192, 0.8)",
+              "rgba(153, 102, 255, 0.8)",
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+            ],
+            borderWidth: 1,
           },
         ],
       };
     }
 
+    // Return data for other chart types
     return {
       labels: data.map((_, index) => `${index + 1}`),
       datasets: selectedColumns.map((column, index) => ({
@@ -72,30 +81,70 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
           .filter((val) => !isNaN(val)),
         backgroundColor: `hsla(${index * 60}, 70%, 60%, 0.5)`,
         borderColor: `hsla(${index * 60}, 70%, 60%, 1)`,
-        borderWidth: 2,
+        borderWidth: 1,
         pointRadius: chartType === "scatter" ? 4 : 2,
       })),
     };
   };
 
+  const generateBoxPlotData = () => {
+    if (!data || selectedColumns.length === 0) return null;
+
+    return selectedColumns.map((column) => {
+      const values = data
+        .map((row) => parseFloat(row[column]))
+        .filter((val) => !isNaN(val));
+      return {
+        y: values,
+        type: "box",
+        name: column,
+        boxpoints: "all",
+        jitter: 0.3,
+        pointpos: -1.8,
+      };
+    });
+  };
+
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Data Comparison" },
+      legend: {
+        position: chartType === "pie" ? "right" : "top",
+        labels: {
+          padding: 20,
+          color: isDarkMode ? "#fff" : "#484b6a",
+        },
+      },
+      title: {
+        display: true,
+        text: chartType === "pie" ? "Variable Averages" : "Data Comparison",
+        color: isDarkMode ? "#fff" : "#484b6a",
+      },
     },
-    scales: { y: { beginAtZero: true } },
+    scales:
+      chartType === "pie"
+        ? {}
+        : {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: isDarkMode
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(72, 75, 106, 0.1)",
+              },
+            },
+          },
   };
 
   const chartData = generateChartData();
-  if (!chartData) return null;
+  const boxPlotData = generateBoxPlotData();
 
-  const ChartComponent = {
-    line: Line,
-    bar: Bar,
-    scatter: Scatter,
-    boxplot: BoxPlotChart,
-  }[chartType];
+  if (!chartData && !boxPlotData) return null;
+
+  const ChartType = { line: Line, bar: Bar, scatter: Scatter, pie: Pie }[
+    chartType
+  ];
 
   return (
     <div className="tab-content">
@@ -108,17 +157,47 @@ function ChartDisplay({ data, selectedColumns, chartType, setChartType }) {
           <option value="line">Line Chart</option>
           <option value="bar">Bar Chart</option>
           <option value="scatter">Scatter Plot</option>
-          <option value="boxplot">Box Plot</option>
+          <option value="pie">Pie Chart</option>
+          <option value="box">Box Plot</option> {/* Add Box Plot option */}
         </select>
       </div>
       <div className="column-visualization">
         <h2>Variable Comparison</h2>
         <div className="chart-container">
-          <ChartComponent data={chartData} options={chartOptions} />
+          {chartType === "box" ? (
+            <Plot
+              data={boxPlotData}
+              layout={{
+                title: "Box Plot",
+                xaxis: { title: "Variables" },
+                yaxis: { title: "Values" },
+                boxmode: "group",
+                paper_bgcolor: isDarkMode ? "#2d2d2d" : "#fafafa",
+                plot_bgcolor: isDarkMode ? "#2d2d2d" : "#fafafa",
+                font: {
+                  color: isDarkMode ? "#fff" : "#484b6a",
+                },
+              }}
+              config={{ responsive: true }}
+            />
+          ) : (
+            <ChartType 
+              key={`${chartType}-${selectedColumns.join('-')}`}
+              data={chartData} 
+              options={chartOptions} 
+            />
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+ChartDisplay.propTypes = {
+  data: PropTypes.array,
+  selectedColumns: PropTypes.array.isRequired,
+  chartType: PropTypes.string.isRequired,
+  setChartType: PropTypes.func.isRequired,
+};
 
 export default ChartDisplay;

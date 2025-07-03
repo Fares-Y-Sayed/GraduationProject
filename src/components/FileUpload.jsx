@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import * as XLSX from "xlsx";
 import axios from "axios";
 
@@ -26,44 +27,21 @@ function FileUpload({ onDataLoaded }) {
     };
 
     reader.readAsBinaryString(file);
+    sendSheetData(file);
   };
 
   const sendSheetData = async (file) => {
-    if (!file) return;
+    const formData = new FormData();
+    formData.append("files", file);
+    formData.append("message", "Upload successful");
 
     try {
-      const formData = new FormData();
-      formData.append("files", file);
-      formData.append("message", "Upload successful");
-
       const res = await axios.post("http://localhost:3000/api/v1/tests/upload", formData, {
-        headers: { 
-          "Content-Type": "multipart/form-data"
-        },
-        // Add error handling configurations
-        timeout: 10000, // 10 second timeout
-        validateStatus: function (status) {
-          return status >= 200 && status < 300; // Accept only success status codes
-        }
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      if (res.data?.files?.[0]) {
-        window.localStorage.setItem("fileName", res.data.files[0]);
-      }
+      window.localStorage.setItem("fileName", res.data.files[0]);
     } catch (error) {
       console.error("Error uploading file:", error);
-      // Handle the error gracefully without throwing
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Server responded with error:", error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received from server");
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error setting up request:", error.message);
-      }
     }
   };
 
@@ -76,13 +54,7 @@ function FileUpload({ onDataLoaded }) {
           name="file"
           type="file"
           accept=".xlsx, .xls"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              handleFileUpload(e);
-              sendSheetData(file);
-            }
-          }}
+          onChange={handleFileUpload}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -106,5 +78,9 @@ function FileUpload({ onDataLoaded }) {
     </div>
   );
 }
+
+FileUpload.propTypes = {
+  onDataLoaded: PropTypes.func.isRequired,
+};
 
 export default FileUpload;
